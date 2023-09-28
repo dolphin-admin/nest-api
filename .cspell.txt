@@ -1,0 +1,17 @@
+autoincrement
+brucesong
+compodoc
+datasource
+falso
+msword
+nestjs
+ngneat
+officedocument
+openxmlformats
+preinstall
+presentationml
+spreadsheetml
+Timestamptz
+tsbuildinfo
+websockets
+wordprocessingml
