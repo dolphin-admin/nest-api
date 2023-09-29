@@ -6,9 +6,9 @@ services:
     container_name: dolphin-admin-db
     restart: always
     ports:
-      - 5432:5432
+      - 5433:5432
     env_file:
-      - .env
+      - .env.development
   # dolphin-admin-api:
   #   container_name: dolphin-admin-api
   #   env_file:

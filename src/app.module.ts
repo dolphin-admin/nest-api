@@ -38,8 +38,7 @@ import { AppService } from './app.service'
       exclude: ['/api/(.*)']
     }),
     ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: '.env.development'
+      isGlobal: true
     }),
     I18nModule.forRoot({
       fallbackLanguage: 'zh_CN',
