@@ -3,16 +3,12 @@ module.exports = {
     {
       name: 'Dolphin Admin Nest API',
       script: './dist/main.js',
-      env_development: {
-        NODE_ENV: 'development',
-        PORT: 4061,
-        FILE_STORAGE_PATH: 'storage'
-      },
-      env_production: {
-        NODE_ENV: 'production',
-        PORT: 4061,
-        FILE_STORAGE_PATH: 'storage'
-      }
+      max_memory_restart: '1452M',
+      exec_mode: 'cluster',
+      instances: 4,
+      exp_backoff_restart_delay: 100,
+      min_uptime: '5m',
+      max_restarts: 5
     }
   ]
 }
