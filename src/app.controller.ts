@@ -23,11 +23,9 @@ export class AppController {
   @ApiOperation({ summary: '应用信息' })
   @ApiBaseResponse()
   @Get('app-info')
-  getVersion(@I18n() i18n: I18nContext<I18nTranslations>) {
-    const appInfo = this.appService.getAppInfo()
-    appInfo.name = i18n.t('common.APP.NAME')
+  getVersion() {
     return new BaseResponseVo({
-      data: appInfo
+      data: this.appService.getAppInfo()
     })
   }
 
