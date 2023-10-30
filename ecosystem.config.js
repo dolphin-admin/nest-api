@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: 'Dolphin Admin Nest API',
+      name: 'Nest TypeScript Starter Template',
       script: './dist/main.js',
       max_memory_restart: '1452M',
       exec_mode: 'cluster',

@@ -1,3 +1,6 @@
 {
-  "extends": "@brucesong/eslint-config-ts"
+  "extends": "@brucesong/eslint-config-ts",
+  "rules": {
+    "import/no-extraneous-dependencies": "off"
+  }
 }

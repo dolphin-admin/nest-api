@@ -1,23 +1,28 @@
-import { PrismaClient } from '@prisma/client'
-import { CustomLogger, LoggerType } from '../src/custom.logger'
-import { randAvatar } from '@ngneat/falso'
 import { hash } from '@node-rs/bcrypt'
-import type { Prisma, Role, User } from '@prisma/client'
+import type { Prisma } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
-const SEED_LOGGER_CONTEXT = 'PrismaSeed'
-const SEED_SUPER_ADMIN_USERNAME = 'SuperAdmin'
+const SEED_SUPER_ADMIN_USERNAME = 'admin'
 const SEED_SUPER_ADMIN_PASSWORD = '123456'
 
-const main = async () => {
-  CustomLogger.customLog('🦁 Seeding......', SEED_LOGGER_CONTEXT)
-
+async function main() {
+  // 创建超级管理员
   const defaultUser: Prisma.UserCreateInput = {
     username: SEED_SUPER_ADMIN_USERNAME,
     password: await hash(SEED_SUPER_ADMIN_PASSWORD, 10),
-    avatarUrl: randAvatar(),
-    enabled: true
+    email: 'recall4056@gmail.com',
+    nickName: 'Bruce',
+    firstName: 'Bruce',
+    lastName: 'Song',
+    avatarUrl: 'https://avatars.githubusercontent.com/u/62941121?v=4',
+    country: 'China',
+    province: 'Jiangsu',
+    city: 'Suzhou',
+    biography: 'Author of Nest TypeScript Starter Template',
+    enabled: true,
+    builtIn: true
   }
 
   const superAdmin = await prisma.user.findUnique({
@@ -27,11 +32,7 @@ const main = async () => {
   })
 
   if (superAdmin) {
-    CustomLogger.customLog(
-      '🐻 SuperAdmin already exists!',
-      SEED_LOGGER_CONTEXT,
-      LoggerType.WARN
-    )
+    console.log('超级管理员已存在，请勿重复创建')
     return
   }
 
@@ -40,28 +41,17 @@ const main = async () => {
       ...defaultUser
     }
   })
-
-  CustomLogger.customLog(
-    '🐻‍❄️ SuperAdmin has already been created: ',
-    SEED_LOGGER_CONTEXT
-  )
 }
 
 main()
-  .then(() =>
-    CustomLogger.customLog(
-      '🐼 Seed your database successfully!',
-      SEED_LOGGER_CONTEXT
-    )
-  )
+  .then(() => {
+    console.log('Seed your database successfully!')
+  })
   .catch((err) => {
     if (err instanceof Error) {
-      CustomLogger.customLog(
-        err.message,
-        SEED_LOGGER_CONTEXT,
-        LoggerType.ERROR,
-        err.stack
-      )
+      console.error(err)
     }
   })
-  .finally(async () => await prisma.$disconnect())
+  .finally(() => {
+    prisma.$disconnect().catch(() => {})
+  })

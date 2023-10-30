@@ -10,64 +10,65 @@ generator client {
 
 /// 用户
 model User {
-  /// ID
-  id                  Int       @id @default(autoincrement())
+  /// 唯一标识
+  id          Int       @id @default(autoincrement())
   /// 用户名
-  username            String    @unique @db.VarChar(50)
-  /// 密码
-  password            String    @db.VarChar(255)
-  /// 邮箱
-  email               String?   @unique @db.VarChar(50)
-  /// 手机号
-  phoneNumber         String?   @map("phone_number") @db.VarChar(25)
-  /// 姓名
-  name                String?   @db.VarChar(30)
-  /// 名
-  firstName           String?   @map("first_name") @db.VarChar(30)
-  /// 中间名
-  middleName          String?   @map("middle_name") @db.VarChar(30)
-  /// 姓
-  lastName            String?   @map("last_name") @db.VarChar(30)
+  username    String    @unique @db.VarChar(30)
   /// 昵称
-  nickName            String?   @map("nick_name") @db.VarChar(50)
+  nickName    String?   @map("nick_name") @db.VarChar(50)
+  /// 密码
+  password    String?   @db.VarChar(100)
+  /// 邮箱
+  email       String?   @unique @db.VarChar(50)
+  /// 手机号
+  phoneNumber String?   @map("phone_number") @db.VarChar(25)
+  /// 名
+  firstName   String?   @map("first_name") @db.VarChar(10)
+  /// 中间名
+  middleName  String?   @map("middle_name") @db.VarChar(10)
+  /// 姓
+  lastName    String?   @map("last_name") @db.VarChar(10)
   /// 头像
-  avatarUrl           String?   @map("avatar_url") @db.VarChar(1000)
+  avatarUrl   String?   @map("avatar_url") @db.VarChar(100)
   /// 性别：数据字典
-  gender              String?   @db.VarChar(255)
+  gender      String?   @db.VarChar(100)
   /// 国家
-  country             String?   @db.VarChar(50)
+  country     String?   @db.VarChar(25)
   /// 省份
-  province            String?   @db.VarChar(50)
+  province    String?   @db.VarChar(25)
   /// 城市
-  city                String?   @db.VarChar(50)
+  city        String?   @db.VarChar(25)
   /// 地址
-  address             String?   @db.VarChar(1000)
+  address     String?   @db.VarChar(100)
   /// 个人简介
-  biography           String?   @db.VarChar(2000)
+  biography   String?   @db.VarChar(500)
   /// 个人网站
-  website             String?   @db.VarChar(1000)
+  website     String?   @db.VarChar(50)
   /// 个人主页
-  profile             String?   @db.VarChar(1000)
+  profile     String?   @db.VarChar(50)
   /// 出生日期
-  birthDate           DateTime? @map("birth_date") @db.Date
-  /// 邮箱是否验证
-  emailVerified       Boolean   @default(false) @map("email_verified")
-  /// 手机号是否验证
-  phoneNumberVerified Boolean   @default(false) @map("phone_number_verified")
+  birthDate   DateTime? @map("birth_date") @db.Date
   /// 是否启用
-  enabled             Boolean   @default(true)
+  enabled     Boolean   @default(true)
   /// 是否内置
-  builtIn             Boolean   @default(false) @map("built_in")
+  builtIn     Boolean   @default(false) @map("built_in")
 
-  /// 认证
-  auth   Auth?
-  /// 认证 ID
-  authId Int?  @map("auth_id")
-
+  /// 用户 - 认证
+  auths         Auth[]
   /// 用户 - 角色
-  userRoles    UserRole[]
-  /// 用户 - 访问记录
-  userTraffics UserTraffic[]
+  userRoles     UserRole[]
+  /// 用户 - 部门
+  userPositions UserPosition[]
+  /// 设置
+  settings      Setting[]
+  /// 系统通知
+  notifications Notification[]
+  /// 用户流量记录
+  userTraffics  UserTraffic[]
+  /// 登录日志
+  loginLogs     LoginLog[]
+  /// 操作日志
+  operationLogs OperationLog[]
 
   /// 创建时间
   createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
@@ -87,21 +88,21 @@ model User {
 
 /// 认证
 model Auth {
-  /// ID
-  id        Int    @id @default(autoincrement())
-  /// 认证类型：数据字典
-  authType  Int    @map("auth_type")
-  /// OpenID
-  openId    String @map("open_id") @db.VarChar(255)
+  /// 唯一标识
+  id       Int      @id @default(autoincrement())
+  /// 认证类型
+  authType AuthType @map("auth_type")
+  /// 认证唯一标识
+  openId   String   @map("open_id") @db.VarChar(50)
   /// Token
-  authToken String @map("auth_token") @db.VarChar(255)
+  token    String?  @map("token") @db.VarChar(255)
   /// 数据
-  data      Json?  @db.Json
+  data     Json?    @db.Json
 
   /// 用户
   user   User @relation(fields: [userId], references: [id])
   /// 用户 ID
-  userId Int  @unique @map("user_id")
+  userId Int  @map("user_id")
 
   /// 创建时间
   createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
@@ -122,26 +123,25 @@ model Auth {
 
 /// 角色
 model Role {
-  /// ID
-  id           Int     @id @default(autoincrement())
-  /// 角色标识
-  code         String  @unique @db.VarChar(255)
-  /// 备注
-  remark       String? @db.VarChar(2000)
-  /// 最大用户数：若为空则不限制
-  userCapacity Int?    @map("user_capacity")
+  /// 唯一标识
+  id        Int     @id @default(autoincrement())
+  /// 角色编码
+  code      String  @unique @db.VarChar(50)
   /// 是否启用
-  enabled      Boolean @default(true)
+  enabled   Boolean @default(true)
   /// 是否内置
-  builtIn      Boolean @default(false) @map("built_in")
+  builtIn   Boolean @default(false) @map("built_in")
   /// 排序
-  sortOrder    Int?    @default(0) @map("sort_order")
+  sortOrder Int?    @default(0) @map("sort_order")
 
   /// 用户 - 角色
-  userRoles UserRole[]
-
-  /// 角色 - 权限
-  rolePermissions RolePermission[]
+  userRoles       UserRole[]
+  /// 角色 - 菜单
+  roleMenuItems   RoleMenuItem[]
+  /// 角色 - 部门
+  roleDepartments RoleDepartment[]
+  /// 角色 - 翻译
+  roleTrans       RoleTrans[]
 
   /// 创建时间
   createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
@@ -159,9 +159,42 @@ model Role {
   @@map("system_role")
 }
 
-///用户 - 角色
+/// 角色 - 翻译
+model RoleTrans {
+  /// 唯一标识
+  id     Int     @id @default(autoincrement())
+  /// 语言
+  lang   Lang
+  /// 展示名称
+  label  String  @db.VarChar(50)
+  /// 备注
+  remark String? @db.VarChar(500)
+
+  /// 角色
+  role   Role @relation(fields: [roleId], references: [id])
+  /// 角色 ID
+  roleId Int  @map("role_id")
+
+  /// 创建时间
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
+  /// 创建人
+  createdBy Int?      @map("created_by")
+  /// 更新时间
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  /// 更新人
+  updatedBy Int?      @map("updated_by")
+  /// 删除时间
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+  /// 删除人
+  deletedBy Int?      @map("deleted_by")
+
+  @@unique([roleId, lang])
+  @@map("system_role_trans")
+}
+
+/// 用户 - 角色
 model UserRole {
-  /// ID
+  /// 唯一标识
   id Int @id @default(autoincrement())
 
   /// 用户
@@ -190,286 +223,20 @@ model UserRole {
   @@map("system_user_role")
 }
 
-/// 权限
-model Permission {
-  /// ID
-  id        Int     @id @default(autoincrement())
-  /// 权限标识
-  code      String  @unique @db.VarChar(255)
-  /// 备注
-  remark    String? @db.VarChar(2000)
-  /// 是否启用
-  enabled   Boolean @default(true)
-  /// 是否内置
-  builtIn   Boolean @default(false) @map("built_in")
-  /// 排序
-  sortOrder Int?    @default(0) @map("sort_order")
-
-  /// 角色 - 权限
-  rolePermissions RolePermission[]
-
-  /// 创建时间
-  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
-  /// 创建人
-  createdBy Int?      @map("created_by")
-  /// 更新时间
-  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
-  /// 更新人
-  updatedBy Int?      @map("updated_by")
-  /// 删除时间
-  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
-  /// 删除人
-  deletedBy Int?      @map("deleted_by")
-
-  @@map("system_permission")
-}
-
-/// 角色 - 权限
-model RolePermission {
-  /// ID
-  id Int @id @default(autoincrement())
-
-  /// 角色
-  role   Role @relation(fields: [roleId], references: [id])
-  /// 角色 ID
-  roleId Int
-
-  /// 权限
-  permission   Permission @relation(fields: [permissionId], references: [id])
-  /// 权限 ID
-  permissionId Int        @map("permission_id")
-
-  /// 创建时间
-  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
-  /// 创建人
-  createdBy Int?      @map("created_by")
-  /// 更新时间
-  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
-  /// 更新人
-  updatedBy Int?      @map("updated_by")
-  /// 删除时间
-  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
-  /// 删除人
-  deletedBy Int?      @map("deleted_by")
-
-  @@map("system_role_permission")
-}
-
-/// 字典
-model Dictionary {
-  /// ID
-  id      Int     @id @default(autoincrement())
-  // 字典代码
-  code    String  @unique @db.VarChar(255)
-  /// 是否启用
-  enabled Boolean @default(true)
-  /// 是否内置
-  builtIn Boolean @default(false) @map("built_in")
-
-  /// 字典 - 字典项
-  dictionaryKVs DictionaryKV[]
-
-  /// 字典 - 翻译
-  dictionaryTrans DictionaryTrans[]
-
-  /// 创建时间
-  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
-  /// 创建人
-  createdBy Int?      @map("created_by")
-  /// 更新时间
-  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
-  /// 更新人
-  updatedBy Int?      @map("updated_by")
-  /// 删除时间
-  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
-  /// 删除人
-  deletedBy Int?      @map("deleted_by")
-
-  @@map("system_dictionary")
-}
-
-// 字典 - 翻译
-model DictionaryTrans {
-  /// ID
-  id     Int     @id @default(autoincrement())
-  /// 语言
-  lang   Lang
-  /// 展示名称
-  label  String? @db.VarChar(255)
-  /// 备注
-  remark String? @db.VarChar(2000)
-
-  /// 字典
-  dictionary   Dictionary @relation(fields: [dictionaryId], references: [id])
-  /// 字典 ID
-  dictionaryId Int        @map("dictionary_id")
-
-  /// 创建时间
-  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
-  /// 创建人
-  createdBy Int?      @map("created_by")
-  /// 更新时间
-  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
-  /// 更新人
-  updatedBy Int?      @map("updated_by")
-  /// 删除时间
-  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
-  /// 删除人
-  deletedBy Int?      @map("deleted_by")
-
-  @@unique([dictionaryId, lang])
-  @@map("system_dictionary_trans")
-}
-
-/// 字典键值对
-model DictionaryKV {
-  /// ID
-  id        Int     @id @default(autoincrement())
-  /// 键
-  key       String  @unique @db.VarChar(255)
-  /// 值
-  value     String? @db.VarChar(255)
-  /// 是否启用
-  enabled   Boolean @default(true)
-  /// 是否内置
-  builtIn   Boolean @default(false) @map("built_in")
-  /// 排序
-  sortOrder Int?    @default(0) @map("sort_order")
-
-  /// 字典
-  dictionary   Dictionary @relation(fields: [dictionaryId], references: [id])
-  /// 字典 ID
-  dictionaryId Int        @map("dictionary_id")
-
-  DictionaryKVTrans DictionaryKVTrans[]
-
-  /// 创建时间
-  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
-  /// 创建人
-  createdBy Int?      @map("created_by")
-  /// 更新时间
-  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
-  /// 更新人
-  updatedBy Int?      @map("updated_by")
-  /// 删除时间
-  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
-  /// 删除人
-  deletedBy Int?      @map("deleted_by")
-
-  @@map("system_dictionary_item")
-}
-
-// 字典键值对 - 翻译
-model DictionaryKVTrans {
-  /// ID
-  id     Int     @id @default(autoincrement())
-  /// 语言
-  lang   Lang
-  /// 展示名称
-  label  String? @db.VarChar(255)
-  /// 备注
-  remark String? @db.VarChar(2000)
-
-  /// 字典
-  dictionaryKV   DictionaryKV @relation(fields: [dictionaryKVId], references: [id])
-  /// 字典 ID
-  dictionaryKVId Int          @map("dictionary_kv_id")
-
-  /// 创建时间
-  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
-  /// 创建人
-  createdBy Int?      @map("created_by")
-  /// 更新时间
-  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
-  /// 更新人
-  updatedBy Int?      @map("updated_by")
-  /// 删除时间
-  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
-  /// 删除人
-  deletedBy Int?      @map("deleted_by")
-
-  @@unique([dictionaryKVId, lang])
-  @@map("system_dictionary_kv_trans")
-}
-
-/// 参数
-model Setting {
-  /// ID
-  id      Int     @id @default(autoincrement())
-  /// 键
-  key     String  @unique @db.VarChar(255)
-  /// 值
-  value   String? @db.VarChar(255)
-  /// 是否启用
-  enabled Boolean @default(true)
-  /// 是否内置
-  builtIn Boolean @default(false) @map("built_in")
-
-  settingTrans SettingTrans[]
-
-  /// 创建时间
-  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
-  /// 创建人
-  createdBy Int?      @map("created_by")
-  /// 更新时间
-  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
-  /// 更新人
-  updatedBy Int?      @map("updated_by")
-  /// 删除时间
-  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
-  /// 删除人
-  deletedBy Int?      @map("deleted_by")
-
-  @@map("system_setting")
-}
-
-/// 参数 - 翻译
-model SettingTrans {
-  /// ID
-  id     Int     @id @default(autoincrement())
-  /// 语言
-  lang   Lang
-  /// 展示名称
-  label  String? @db.VarChar(255)
-  /// 备注
-  remark String? @db.VarChar(2000)
-
-  /// 参数
-  setting   Setting @relation(fields: [settingId], references: [id])
-  /// 参数 ID
-  settingId Int     @map("setting_id")
-
-  /// 创建时间
-  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
-  /// 创建人
-  createdBy Int?      @map("created_by")
-  /// 更新时间
-  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
-  /// 更新人
-  updatedBy Int?      @map("updated_by")
-  /// 删除时间
-  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
-  /// 删除人
-  deletedBy Int?      @map("deleted_by")
-
-  @@unique([settingId, lang])
-  @@map("system_setting_trans")
-}
-
 /// 菜单
 model MenuItem {
-  /// ID
+  /// 唯一标识
   id            Int          @id @default(autoincrement())
   /// 类型
   type          MenuItemType
   /// URL 路径
-  url           String?      @db.VarChar(255)
+  path          String?      @db.VarChar(255)
   /// 图标
   icon          String?      @db.VarChar(50)
   /// 组件路径
   componentPath String?      @map("component_path") @db.VarChar(255)
-  /// 是否缓存
-  cached        Boolean      @default(false)
+  /// 权限编码
+  code          String?      @db.VarChar(255)
   /// 是否隐藏
   hidden        Boolean      @default(false)
   /// 是否启用
@@ -478,19 +245,17 @@ model MenuItem {
   builtIn       Boolean      @default(false) @map("built_in")
   /// 排序
   sortOrder     Int          @default(0) @map("sort_order")
-  /// 权限代码
-  authCode      String?      @map("auth_code") @db.VarChar(255)
 
   /// 父级菜单
-  parent   MenuItem? @relation("MenuItemToMenuItem", fields: [parentId], references: [id])
+  parent        MenuItem?       @relation("MenuItemToParent", fields: [parentId], references: [id])
   /// 父级菜单 ID
-  parentId Int?      @map("parent_id")
-
+  parentId      Int?            @map("parent_id")
   /// 子级菜单
-  children MenuItem[] @relation("MenuItemToMenuItem")
-
+  children      MenuItem[]      @relation("MenuItemToParent")
+  /// 角色 - 菜单
+  roleMenuItems RoleMenuItem[]
   /// 菜单 - 翻译
-  MenuItemTrans MenuItemTrans[]
+  menuItemTrans MenuItemTrans[]
 
   /// 创建时间
   createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
@@ -510,14 +275,14 @@ model MenuItem {
 
 /// 菜单 - 翻译
 model MenuItemTrans {
-  /// ID
+  /// 唯一标识
   id     Int     @id @default(autoincrement())
   /// 语言
   lang   String
   /// 展示名称
-  label  String? @db.VarChar(255)
+  label  String? @db.VarChar(50)
   /// 备注
-  remark String? @db.VarChar(2000)
+  remark String? @db.VarChar(500)
 
   /// 参数
   menuItem   MenuItem @relation(fields: [menuItemId], references: [id])
@@ -541,24 +306,537 @@ model MenuItemTrans {
   @@map("system_menu_item_trans")
 }
 
+/// 角色 - 菜单
+model RoleMenuItem {
+  /// 唯一标识
+  id Int @id @default(autoincrement())
+
+  /// 角色
+  role   Role @relation(fields: [roleId], references: [id])
+  /// 角色 ID
+  roleId Int
+
+  /// 菜单
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id])
+  /// 权限 ID
+  menuItemId Int      @map("menu_id")
+
+  /// 创建时间
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
+  /// 创建人
+  createdBy Int?      @map("created_by")
+  /// 更新时间
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  /// 更新人
+  updatedBy Int?      @map("updated_by")
+  /// 删除时间
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+  /// 删除人
+  deletedBy Int?      @map("deleted_by")
+
+  @@map("system_role_menu_item")
+}
+
+/// 部门
+model Department {
+  /// 唯一标识
+  id          Int     @id @default(autoincrement())
+  /// 负责人
+  leader      String? @db.VarChar(50)
+  /// 联系电话
+  phoneNumber String? @map("phone_number") @db.VarChar(20)
+  /// 邮箱
+  email       String? @db.VarChar(50)
+  /// 是否启用
+  enabled     Boolean @default(true)
+  /// 是否内置
+  builtIn     Boolean @default(false) @map("built_in")
+  /// 排序
+  sortOrder   Int     @default(0) @map("sort_order")
+  /// 祖先部门
+  parentIds   Int[]   @map("parent_Ids")
+
+  /// 父级部门
+  parent          Department?       @relation("DepartmentToParent", fields: [parentId], references: [id])
+  /// 父级部门 ID
+  parentId        Int?              @map("parent_id")
+  /// 子级部门
+  children        Department[]      @relation("DepartmentToParent")
+  /// 角色 - 部门
+  roleDepartments RoleDepartment[]
+  /// 部门 - 翻译
+  departmentTrans DepartmentTrans[]
+
+  /// 创建时间
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
+  /// 创建人
+  createdBy Int?      @map("created_by")
+  /// 更新时间
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  /// 更新人
+  updatedBy Int?      @map("updated_by")
+  /// 删除时间
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+  /// 删除人
+  deletedBy Int?      @map("deleted_by")
+
+  @@map("system_department")
+}
+
+/// 部门 - 翻译
+model DepartmentTrans {
+  /// 唯一标识
+  id     Int     @id @default(autoincrement())
+  /// 语言
+  lang   String
+  /// 展示名称
+  label  String? @db.VarChar(50)
+  /// 备注
+  remark String? @db.VarChar(500)
+
+  /// 部门
+  department   Department @relation(fields: [departmentId], references: [id])
+  /// 部门 ID
+  departmentId Int        @map("department_id")
+
+  /// 创建时间
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
+  /// 创建人
+  createdBy Int?      @map("created_by")
+  /// 更新时间
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  /// 更新人
+  updatedBy Int?      @map("updated_by")
+  /// 删除时间
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+  /// 删除人
+  deletedBy Int?      @map("deleted_by")
+
+  @@map("system_department_trans")
+}
+
+/// 角色 - 部门
+model RoleDepartment {
+  /// 唯一标识
+  id Int @id @default(autoincrement())
+
+  /// 角色
+  role   Role @relation(fields: [roleId], references: [id])
+  /// 角色 ID
+  roleId Int
+
+  /// 部门
+  department   Department @relation(fields: [departmentId], references: [id])
+  /// 部门 ID
+  departmentId Int        @map("department_id")
+
+  /// 创建时间
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
+  /// 创建人
+  createdBy Int?      @map("created_by")
+  /// 更新时间
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  /// 更新人
+  updatedBy Int?      @map("updated_by")
+  /// 删除时间
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+  /// 删除人
+  deletedBy Int?      @map("deleted_by")
+
+  @@map("system_role_department")
+}
+
+/// 职位
+model Position {
+  /// 唯一标识
+  id        Int     @id @default(autoincrement())
+  /// 职位编码
+  code      String  @unique @db.VarChar(50)
+  /// 是否启用
+  enabled   Boolean @default(true)
+  /// 是否内置
+  builtIn   Boolean @default(false) @map("built_in")
+  /// 排序
+  sortOrder Int?    @default(0) @map("sort_order")
+
+  /// 用户 - 部门
+  userPositions UserPosition[]
+  /// 职位 - 翻译
+  positionTrans PositionTrans[]
+
+  /// 创建时间
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
+  /// 创建人
+  createdBy Int?      @map("created_by")
+  /// 更新时间
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  /// 更新人
+  updatedBy Int?      @map("updated_by")
+  /// 删除时间
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+  /// 删除人
+  deletedBy Int?      @map("deleted_by")
+
+  @@map("system_position")
+}
+
+/// 职位 - 翻译
+model PositionTrans {
+  /// 唯一标识
+  id     Int     @id @default(autoincrement())
+  /// 语言
+  lang   Lang
+  /// 展示名称
+  label  String  @db.VarChar(50)
+  /// 备注
+  remark String? @db.VarChar(500)
+
+  /// 职位
+  position   Position @relation(fields: [positionId], references: [id])
+  /// 职位 ID
+  positionId Int      @map("position_id")
+
+  /// 创建时间
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
+  /// 创建人
+  createdBy Int?      @map("created_by")
+  /// 更新时间
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  /// 更新人
+  updatedBy Int?      @map("updated_by")
+  /// 删除时间
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+  /// 删除人
+  deletedBy Int?      @map("deleted_by")
+
+  @@unique([positionId, lang])
+  @@map("system_position_trans")
+}
+
+/// 用户 - 职位
+model UserPosition {
+  /// 唯一标识
+  id Int @id @default(autoincrement())
+
+  /// 用户
+  user       User     @relation(fields: [userId], references: [id])
+  /// 用户 ID
+  userId     Int      @map("user_id")
+  /// 职位
+  position   Position @relation(fields: [positionId], references: [id])
+  /// 职位 ID
+  positionId Int      @map("position_id")
+
+  /// 创建时间
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
+  /// 创建人
+  createdBy Int?      @map("created_by")
+  /// 更新时间
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  /// 更新人
+  updatedBy Int?      @map("updated_by")
+  /// 删除时间
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+  /// 删除人
+  deletedBy Int?      @map("deleted_by")
+
+  @@map("system_user_position")
+}
+
+// 设置
+model Setting {
+  /// 唯一标识
+  id        Int     @id @default(autoincrement())
+  /// 键
+  key       String  @unique @db.VarChar(100)
+  /// 值
+  value     String? @db.VarChar(255)
+  /// 是否启用
+  enabled   Boolean @default(true)
+  /// 是否内置
+  builtIn   Boolean @default(false) @map("built_in")
+  /// 排序
+  sortOrder Int?    @default(0) @map("sort_order")
+
+  /// 用户
+  user         User           @relation(fields: [userId], references: [id])
+  /// 用户 ID
+  userId       Int            @unique @map("user_id")
+  /// 设置 - 翻译
+  settingTrans SettingTrans[]
+
+  /// 创建时间
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
+  /// 创建人
+  createdBy Int?      @map("created_by")
+  /// 更新时间
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  /// 更新人
+  updatedBy Int?      @map("updated_by")
+  /// 删除时间
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+  /// 删除人
+  deletedBy Int?      @map("deleted_by")
+
+  @@map("system_setting")
+}
+
+/// 设置 - 翻译
+model SettingTrans {
+  /// 唯一标识
+  id     Int     @id @default(autoincrement())
+  /// 语言
+  lang   Lang
+  /// 展示名称
+  label  String  @db.VarChar(50)
+  /// 备注
+  remark String? @db.VarChar(500)
+
+  /// 参数
+  setting   Setting @relation(fields: [settingId], references: [id])
+  /// 参数 ID
+  settingId Int     @map("setting_id")
+
+  /// 创建时间
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
+  /// 创建人
+  createdBy Int?      @map("created_by")
+  /// 更新时间
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  /// 更新人
+  updatedBy Int?      @map("updated_by")
+  /// 删除时间
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+  /// 删除人
+  deletedBy Int?      @map("deleted_by")
+
+  @@unique([settingId, lang])
+  @@map("system_setting_trans")
+}
+
+/// 字典
+model Dictionary {
+  /// ID
+  id        Int     @id @default(autoincrement())
+  // 字典编码
+  code      String  @unique @db.VarChar(50)
+  /// 是否启用
+  enabled   Boolean @default(true)
+  /// 是否内置
+  builtIn   Boolean @default(false) @map("built_in")
+  /// 排序
+  sortOrder Int?    @default(0) @map("sort_order")
+
+  /// 字典 - 字典项
+  dictionaryItems DictionaryItem[]
+  /// 字典 - 翻译
+  dictionaryTrans DictionaryTrans[]
+
+  /// 创建时间
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
+  /// 创建人
+  createdBy Int?      @map("created_by")
+  /// 更新时间
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  /// 更新人
+  updatedBy Int?      @map("updated_by")
+  /// 删除时间
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+  /// 删除人
+  deletedBy Int?      @map("deleted_by")
+
+  @@map("system_dictionary")
+}
+
+// 字典 - 翻译
+model DictionaryTrans {
+  /// 唯一标识
+  id     Int     @id @default(autoincrement())
+  /// 语言
+  lang   Lang
+  /// 展示名称
+  label  String  @db.VarChar(50)
+  /// 备注
+  remark String? @db.VarChar(500)
+
+  /// 字典
+  dictionary   Dictionary @relation(fields: [dictionaryId], references: [id])
+  /// 字典 ID
+  dictionaryId Int        @map("dictionary_id")
+
+  /// 创建时间
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
+  /// 创建人
+  createdBy Int?      @map("created_by")
+  /// 更新时间
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  /// 更新人
+  updatedBy Int?      @map("updated_by")
+  /// 删除时间
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+  /// 删除人
+  deletedBy Int?      @map("deleted_by")
+
+  @@unique([dictionaryId, lang])
+  @@map("system_dictionary_trans")
+}
+
+/// 字典数据
+model DictionaryItem {
+  /// 唯一标识
+  id        Int     @id @default(autoincrement())
+  /// 键
+  key       String  @unique @db.VarChar(100)
+  /// 值
+  value     String? @db.VarChar(255)
+  /// 是否启用
+  enabled   Boolean @default(true)
+  /// 是否内置
+  builtIn   Boolean @default(false) @map("built_in")
+  /// 排序
+  sortOrder Int?    @default(0) @map("sort_order")
+
+  /// 字典
+  dictionary          Dictionary            @relation(fields: [dictionaryId], references: [id])
+  /// 字典 ID
+  dictionaryId        Int                   @map("dictionary_id")
+  /// 字典数据 - 翻译
+  dictionaryItemTrans DictionaryItemTrans[]
+
+  /// 创建时间
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
+  /// 创建人
+  createdBy Int?      @map("created_by")
+  /// 更新时间
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  /// 更新人
+  updatedBy Int?      @map("updated_by")
+  /// 删除时间
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+  /// 删除人
+  deletedBy Int?      @map("deleted_by")
+
+  @@map("system_dictionary_item")
+}
+
+// 字典数据 - 翻译
+model DictionaryItemTrans {
+  /// 唯一标识
+  id     Int     @id @default(autoincrement())
+  /// 语言
+  lang   Lang
+  /// 展示名称
+  label  String  @db.VarChar(50)
+  /// 备注
+  remark String? @db.VarChar(500)
+
+  /// 字典
+  dictionaryItem   DictionaryItem @relation(fields: [dictionaryItemId], references: [id])
+  /// 字典 ID
+  dictionaryItemId Int            @map("dictionary_Item_id")
+
+  /// 创建时间
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
+  /// 创建人
+  createdBy Int?      @map("created_by")
+  /// 更新时间
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  /// 更新人
+  updatedBy Int?      @map("updated_by")
+  /// 删除时间
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+  /// 删除人
+  deletedBy Int?      @map("deleted_by")
+
+  @@unique([dictionaryItemId, lang])
+  @@map("system_dictionary_item_trans")
+}
+
+/// 系统通知
+model Notification {
+  /// 唯一标识
+  id      Int     @id @default(autoincrement())
+  /// 类型：数据字典
+  type    String  @db.VarChar(50)
+  /// 是否启用
+  enabled Boolean @default(true)
+
+  /// 用户
+  user              User                @relation(fields: [userId], references: [id])
+  /// 用户 ID
+  userId            Int                 @map("user_id")
+  /// 系统通知 - 翻译
+  notificationTrans NotificationTrans[]
+
+  /// 创建时间
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
+  // 创建人
+  createdBy Int?      @map("created_by")
+  /// 更新时间
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  // 更新人
+  updatedBy Int?      @map("updated_by")
+  /// 删除时间
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+  // 删除人
+  deletedBy Int?      @map("deleted_by")
+
+  @@map("system_notification")
+}
+
+// 系统通知 - 翻译
+model NotificationTrans {
+  /// 唯一标识
+  id      Int     @id @default(autoincrement())
+  /// 语言
+  lang    Lang
+  /// 标题
+  title   String  @db.VarChar(50)
+  /// 内容
+  content String? @db.VarChar(500)
+  /// 备注
+  remark  String? @db.VarChar(500)
+
+  /// 系统通知
+  notification   Notification @relation(fields: [notificationId], references: [id])
+  /// 系统通知 ID
+  notificationId Int          @map("notification_id")
+
+  /// 创建时间
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
+  /// 创建人
+  createdBy Int?      @map("created_by")
+  /// 更新时间
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  /// 更新人
+  updatedBy Int?      @map("updated_by")
+  /// 删除时间
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+  /// 删除人
+  deletedBy Int?      @map("deleted_by")
+
+  @@unique([notificationId, lang])
+  @@map("system_notification_trans")
+}
+
 /// 用户流量记录
 model UserTraffic {
-  /// ID
+  /// 唯一标识
   id        Int       @id @default(autoincrement())
   /// 应用名称
-  app       String?   @db.VarChar(50)
+  app       String?   @db.VarChar(25)
   /// 应用版本
-  version   String?   @db.VarChar(50)
+  version   String?   @db.VarChar(25)
   /// 应用环境
-  env       String?   @db.VarChar(50)
-  /// 访问来源（例如：GitHub、Google）
-  source    String?   @db.VarChar(50)
+  env       String?   @db.VarChar(25)
+  /// 访问来源（例如：Web 端、手机端、桌面端）
+  source    String?   @db.VarChar(25)
   /// 用户代理
   userAgent String?   @map("user_agent") @db.VarChar(1000)
   /// 用户 IP
-  ip        String?   @db.VarChar(50)
+  ip        String?   @db.VarChar(25)
   /// 用户地区
-  area      String?   @db.VarChar(255)
+  area      String?   @db.VarChar(100)
   /// 经度
   longitude Float?
   /// 纬度
@@ -573,10 +851,9 @@ model UserTraffic {
   duration  Int?
 
   /// 用户
-  user   User @relation(fields: [userId], references: [id])
+  user               User                @relation(fields: [userId], references: [id])
   /// 用户 ID
-  userId Int  @map("user_id")
-
+  userId             Int                 @map("user_id")
   /// 访问记录
   userTrafficRecords UserTrafficRecord[]
 
@@ -596,16 +873,16 @@ model UserTraffic {
   @@map("system_user_traffic")
 }
 
-/// 用户访问记录（用户访问路由的记录）
+/// 用户路由访问记录
 model UserTrafficRecord {
-  /// ID
+  /// 唯一标识
   id       Int       @id @default(autoincrement())
   /// 路由标题
-  title    String?   @db.VarChar(255)
+  title    String?   @db.VarChar(50)
   /// 路由 URL
-  url      String?   @db.VarChar(1000)
+  url      String?   @db.VarChar(255)
   /// 路由路径
-  path     String?   @db.VarChar(1000)
+  path     String?   @db.VarChar(255)
   /// 进入路由时间
   enterAt  DateTime? @map("enter_at") @db.Timestamptz(3)
   /// 离开路由时间
@@ -634,14 +911,131 @@ model UserTrafficRecord {
   @@map("system_user_traffic_record")
 }
 
+/// 登录日志
+model LoginLog {
+  /// 唯一标识
+  id        Int      @id @default(autoincrement())
+  /// 用户 IP
+  ip        String   @db.VarChar(25)
+  /// 登录类型
+  type      AuthType
+  /// 用户地区
+  area      String?  @db.VarChar(100)
+  /// 访问来源（例如：Web 端、手机端、桌面端）
+  source    String?  @db.VarChar(25)
+  /// 用户代理
+  userAgent String?  @map("user_agent") @db.VarChar(1000)
+  /// 提示信息
+  message   String?  @db.VarChar(255)
+  /// 是否成功
+  isSuccess Boolean  @default(true) @map("is_success")
+
+  /// 用户
+  user   User @relation(fields: [userId], references: [id])
+  /// 用户 ID
+  userId Int  @map("user_id")
+
+  /// 创建时间
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
+  /// 创建人
+  createdBy Int?      @map("created_by")
+  /// 更新时间
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  /// 更新人
+  updatedBy Int?      @map("updated_by")
+  /// 删除时间
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+  /// 删除人
+  deletedBy Int?      @map("deleted_by")
+
+  @@map("system_login_log")
+}
+
+/// 操作日志
+model OperationLog {
+  /// 唯一标识
+  id                 Int     @id @default(autoincrement())
+  /// 模块名称
+  moduleName         String? @db.VarChar(25)
+  /// 操作类型
+  type               String? @db.VarChar(25)
+  /// 方法名称
+  method             String? @db.VarChar(100)
+  /// 请求方法
+  requestMethod      String? @map("request_method") @db.VarChar(25)
+  /// 请求路径
+  requestUrl         String? @map("request_url") @db.VarChar(255)
+  /// 请求查询参数
+  requestQueries     Json?   @map("request_queries")
+  /// 请求路径参数
+  requestParams      Json?   @map("request_params")
+  /// 请求体
+  requestBody        Json?   @map("request_body")
+  /// 响应体
+  responseBody       Json?   @map("response_body")
+  /// 响应状态码
+  responseStatusCode Int?    @map("response_status_code")
+  /// 响应业务码
+  responseCode       String? @map("response_code") @db.VarChar(10)
+  /// 错误信息
+  errorMessage       String? @map("error_message") @db.VarChar(255)
+  /// 操作时间
+  duration           Int?
+  /// 用户 IP
+  ip                 String  @db.VarChar(25)
+  /// 用户地区
+  area               String? @db.VarChar(100)
+  /// 访问来源（例如：Web 端、手机端、桌面端）
+  source             String? @db.VarChar(25)
+  /// 用户代理
+  userAgent          String? @map("user_agent") @db.VarChar(1000)
+  /// 提示信息
+  message            String? @db.VarChar(255)
+  /// 是否成功
+  isSuccess          Boolean @default(true) @map("is_success")
+
+  /// 用户
+  user   User @relation(fields: [userId], references: [id])
+  /// 用户 ID
+  userId Int  @map("user_id")
+
+  /// 创建时间
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
+  /// 创建人
+  createdBy Int?      @map("created_by")
+  /// 更新时间
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  /// 更新人
+  updatedBy Int?      @map("updated_by")
+  /// 删除时间
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+  /// 删除人
+  deletedBy Int?      @map("deleted_by")
+
+  @@map("system_operation_log")
+}
+
+/// 认证类型
+enum AuthType {
+  USERNAME
+  PHONE_NUMBER
+  EMAIL
+  GITHUB
+  GOOGLE
+  WECHAT
+  ALIPAY
+}
+
+/// 菜单类型
+enum MenuItemType {
+  DIR
+  MENU
+  LINK
+  BUTTON
+}
+
+/// 语言
 enum Lang {
   zh_CN
   en_US
-}
-
-enum MenuItemType {
-  Dir
-  MENU
-  BUTTON
-  LINK
 }

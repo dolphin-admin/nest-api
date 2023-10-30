@@ -1,7 +1,6 @@
 # compiled output
 /dist
 /node_modules
-*.tsbuildinfo
 
 # Logs
 logs
@@ -40,7 +39,4 @@ lerna-debug.log*
 .env.*
 !.env.example
 
-documentation
-storage
-
-src/generated
+uploads

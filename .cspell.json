@@ -24,9 +24,9 @@
     "**/**/CONTRIBUTORS.md",
     "pnpm-lock.yaml",
     "README.md",
+    "coverage",
+    "public",
     "prisma/migrations",
-    "documentation",
-    "tsconfig.build.tsbuildinfo"
-  ],
-  "enableFiletypes": ["prisma"]
+    "uploads"
+  ]
 }

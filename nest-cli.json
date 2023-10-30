@@ -2,8 +2,22 @@
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
+  "entryFile": "main",
+  "generateOptions": {
+    "flat": false
+  },
   "compilerOptions": {
+    "watchAssets": false,
+    "assets": [
+      "**/*.css",
+      { "include": "**/*.html", "watchAssets": true },
+      { "include": "i18n/**/*", "watchAssets": true }
+    ],
+    "tsConfigPath": "tsconfig.build.json",
+    "webpackConfigPath": "webpack.config.js",
     "deleteOutDir": true,
+    "builder": "swc",
+    "typeCheck": true,
     "plugins": [
       {
         "name": "@nestjs/swagger",
@@ -12,15 +26,6 @@
           "introspectComments": true
         }
       }
-    ],
-    "assets": [
-      {
-        "include": "i18n/**/*",
-        "watchAssets": true
-      }
     ]
-  },
-  "generateOptions": {
-    "spec": false
   }
 }
