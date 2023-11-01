@@ -3,7 +3,8 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { I18n, I18nContext } from 'nestjs-i18n'
 
 import { AppService } from './app.service'
-import { ApiBaseResponse, BaseResponseVo } from './common'
+import { BaseResponseVo } from './class'
+import { ApiBaseResponse } from './decorators'
 import type { I18nTranslations } from './generated/i18n.generated'
 
 @ApiTags('应用')

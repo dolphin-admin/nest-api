@@ -10,10 +10,9 @@ import figlet from 'figlet'
 import gradient from 'gradient-string'
 import { I18nValidationPipe } from 'nestjs-i18n'
 
-import { I18nValidationExceptionFilter } from '@/common'
-
 import { AppConfig } from './app.config'
 import { AppModule } from './app.module'
+import { I18nValidationExceptionFilter } from './filters'
 import metadata from './metadata'
 
 async function bootstrap() {
