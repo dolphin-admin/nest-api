@@ -13,35 +13,35 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
 import Joi from 'joi'
 import { AcceptLanguageResolver, I18nModule, QueryResolver } from 'nestjs-i18n'
 
-import { AppController } from './app.controller'
-import { AppService } from './app.service'
-import { AuthGuard } from './guards'
+import { AuthGuard } from '../guards'
 import {
   ErrorsInterceptor,
   LoggingInterceptor,
   TimeoutInterceptor
-} from './interceptors'
-import { AuthModule } from './modules/auth/auth.module'
-import { CosModule } from './modules/cos/cos.module'
-import { CronJobLogsModule } from './modules/cron-job-logs/cron-job-logs.module'
-import { CronJobsModule } from './modules/cron-jobs/cron-jobs.module'
-import { DepartmentsModule } from './modules/departments/departments.module'
-import { DictionariesModule } from './modules/dictionaries/dictionaries.module'
-import { DictionaryItemsModule } from './modules/dictionary-items/dictionary-items.module'
-import { FilesModule } from './modules/files/files.module'
-import { LoggerModule } from './modules/logger/logger.module'
-import { LoginLogsModule } from './modules/login-logs/login-logs.module'
-import { MenuItemsModule } from './modules/menu-items/menu-items.module'
-import { NotificationsModule } from './modules/notifications/notifications.module'
-import { OperationLogsModule } from './modules/operation-logs/operation-logs.module'
-import { PermissionsModule } from './modules/permissions/permissions.module'
-import { PositionsModule } from './modules/positions/positions.module'
-import { PrismaModule } from './modules/prisma/prisma.module'
-import { RolesModule } from './modules/roles/roles.module'
-import { SettingsModule } from './modules/settings/settings.module'
-import { UserTrafficRecordsModule } from './modules/user-traffic-records/user-traffic-records.module'
-import { UserTrafficsModule } from './modules/user-traffics/user-traffics.module'
-import { UsersModule } from './modules/users/users.module'
+} from '../interceptors'
+import { AppController } from './app.controller'
+import { AppService } from './app.service'
+import { AuthModule } from './auth/auth.module'
+import { CosModule } from './cos/cos.module'
+import { CronJobLogsModule } from './cron-job-logs/cron-job-logs.module'
+import { CronJobsModule } from './cron-jobs/cron-jobs.module'
+import { DepartmentsModule } from './departments/departments.module'
+import { DictionariesModule } from './dictionaries/dictionaries.module'
+import { DictionaryItemsModule } from './dictionary-items/dictionary-items.module'
+import { FilesModule } from './files/files.module'
+import { LoggerModule } from './logger/logger.module'
+import { LoginLogsModule } from './login-logs/login-logs.module'
+import { MenuItemsModule } from './menu-items/menu-items.module'
+import { NotificationsModule } from './notifications/notifications.module'
+import { OperationLogsModule } from './operation-logs/operation-logs.module'
+import { PermissionsModule } from './permissions/permissions.module'
+import { PositionsModule } from './positions/positions.module'
+import { PrismaModule } from './prisma/prisma.module'
+import { RolesModule } from './roles/roles.module'
+import { SettingsModule } from './settings/settings.module'
+import { UserTrafficRecordsModule } from './user-traffic-records/user-traffic-records.module'
+import { UserTrafficsModule } from './user-traffics/user-traffics.module'
+import { UsersModule } from './users/users.module'
 
 @Module({
   imports: [
@@ -59,7 +59,7 @@ import { UsersModule } from './modules/users/users.module'
     I18nModule.forRoot({
       fallbackLanguage: 'en-US',
       loaderOptions: {
-        path: path.join(__dirname, '/i18n/'),
+        path: path.join(__dirname, '../i18n/'),
         watch: true
       },
       resolvers: [

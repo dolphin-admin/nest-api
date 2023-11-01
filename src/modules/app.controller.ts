@@ -2,10 +2,11 @@ import { Controller, Get, Inject, Redirect, Render } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { I18n, I18nContext } from 'nestjs-i18n'
 
+import { BaseResponseVo } from '@/class'
+import { ApiBaseResponse } from '@/decorators'
+import type { I18nTranslations } from '@/generated/i18n.generated'
+
 import { AppService } from './app.service'
-import { BaseResponseVo } from './class'
-import { ApiBaseResponse } from './decorators'
-import type { I18nTranslations } from './generated/i18n.generated'
 
 @ApiTags('应用')
 @Controller()

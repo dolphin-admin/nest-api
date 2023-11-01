@@ -8,9 +8,7 @@ import { I18nContext } from 'nestjs-i18n'
 
 import { SKIP_AUTH } from '@/constants'
 import type { I18nTranslations } from '@/generated/i18n.generated'
-import type { CustomRequest } from '@/interfaces'
-
-import type { JWTPayload } from '../interfaces'
+import type { CustomRequest, JWTPayload } from '@/interfaces'
 
 @Injectable()
 export class AuthGuard implements CanActivate {

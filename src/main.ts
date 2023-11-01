@@ -10,10 +10,10 @@ import figlet from 'figlet'
 import gradient from 'gradient-string'
 import { I18nValidationPipe } from 'nestjs-i18n'
 
-import { AppConfig } from './app.config'
-import { AppModule } from './app.module'
 import { I18nValidationExceptionFilter } from './filters'
 import metadata from './metadata'
+import { AppConfig } from './modules/app.config'
+import { AppModule } from './modules/app.module'
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
