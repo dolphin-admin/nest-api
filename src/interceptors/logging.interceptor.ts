@@ -21,6 +21,10 @@ export class LoggingInterceptor implements NestInterceptor {
     const now = Date.now()
     return next
       .handle()
-      .pipe(tap(() => console.log(`执行了 ${(Date.now() - now) / 1000}s`)))
+      .pipe(
+        tap(() =>
+          console.log(`执行了 ${(Number(Date.now() - now) / 1000).toFixed(1)}s`)
+        )
+      )
   }
 }

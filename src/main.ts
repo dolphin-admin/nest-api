@@ -1,7 +1,11 @@
 import { join } from 'node:path'
 import { stdout } from 'node:process'
 
-import { ClassSerializerInterceptor, VersioningType } from '@nestjs/common'
+import {
+  ClassSerializerInterceptor,
+  HttpStatus,
+  VersioningType
+} from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { NestFactory, Reflector } from '@nestjs/core'
 import type { NestExpressApplication } from '@nestjs/platform-express'
@@ -21,10 +25,8 @@ async function bootstrap() {
     bufferLogs: true
   })
 
-  // app.useLogger(app.get())
-
   const configService = app.get(ConfigService)
-  const isDev = configService.get<string>('NODE_ENV') === 'development'
+  const isDev = configService.get<string>('ENV') === 'DEV'
 
   // 跨域白名单
   const corsOriginWhiteList = ['https://bit-ocean.studio']
@@ -39,7 +41,7 @@ async function bootstrap() {
     origin: corsOriginWhiteList, // 允许跨域的域名
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     preflightContinue: false,
-    optionsSuccessStatus: 204
+    optionsSuccessStatus: HttpStatus.NO_CONTENT
   })
 
   // 全局管道 - 验证/国际化

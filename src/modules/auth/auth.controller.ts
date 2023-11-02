@@ -97,7 +97,7 @@ export class AuthController {
         }
       })
     )
-    type: LoginType,
+    type: string,
     @Body() loginDto: LoginDto,
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {

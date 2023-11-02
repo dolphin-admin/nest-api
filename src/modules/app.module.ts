@@ -14,11 +14,7 @@ import Joi from 'joi'
 import { AcceptLanguageResolver, I18nModule, QueryResolver } from 'nestjs-i18n'
 
 import { AuthGuard } from '../guards'
-import {
-  ErrorsInterceptor,
-  LoggingInterceptor,
-  TimeoutInterceptor
-} from '../interceptors'
+import { ErrorsInterceptor, LoggingInterceptor } from '../interceptors'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { AuthModule } from './auth/auth.module'
@@ -87,7 +83,7 @@ import { UsersModule } from './users/users.module'
     ThrottlerModule.forRoot([
       {
         ttl: 60000,
-        limit: 10
+        limit: 20
       }
     ]),
     // Mongoose 模块
@@ -163,11 +159,6 @@ import { UsersModule } from './users/users.module'
     {
       provide: APP_INTERCEPTOR,
       useClass: LoggingInterceptor
-    },
-    // 注册全局超时拦截器
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: TimeoutInterceptor
     },
     // 注册全局错误拦截器
     {
