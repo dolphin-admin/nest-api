@@ -39,6 +39,7 @@ import { PositionsModule } from './positions/positions.module'
 import { PrismaModule } from './prisma/prisma.module'
 import { RolesModule } from './roles/roles.module'
 import { SettingsModule } from './settings/settings.module'
+import { SseModule } from './sse/sse.module'
 import { UserTrafficRecordsModule } from './user-traffic-records/user-traffic-records.module'
 import { UserTrafficsModule } from './user-traffics/user-traffics.module'
 import { UsersModule } from './users/users.module'
@@ -68,7 +69,7 @@ import { UsersModule } from './users/users.module'
       ],
       typesOutputPath: path.join(
         __dirname,
-        '../src/generated/i18n.generated.ts'
+        '../../src/generated/i18n.generated.ts'
       )
     }),
     // JWT 模块
@@ -138,6 +139,7 @@ import { UsersModule } from './users/users.module'
     CosModule,
     NotificationsModule,
     CronJobsModule,
+    SseModule,
     UserTrafficsModule,
     UserTrafficRecordsModule,
     OperationLogsModule,
