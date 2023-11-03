@@ -52,8 +52,8 @@ async function bootstrap() {
       transformOptions: {
         enableImplicitConversion: true // 允许隐式转换
       },
+      stopAtFirstError: true // 遇到错误立即停止
       // disableErrorMessages: true, // 禁用错误消息
-      stopAtFirstError: true
     })
   )
 

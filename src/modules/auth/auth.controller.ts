@@ -58,11 +58,11 @@ export class AuthController {
   @ApiNotImplementedResponse({ description: '不支持该登录方式' })
   @ApiQuery({
     name: 'type',
-    type: String,
-    description: '登录类型，支持：username、email',
+    type: Number,
+    description: '登录类型，支持用户名、邮箱登录',
     required: true,
     enum: LoginType,
-    example: LoginType.username
+    example: LoginType.USERNAME
   })
   @ApiBody({
     type: LoginDto,
@@ -86,31 +86,29 @@ export class AuthController {
   })
   @Post('login')
   async login(
+    @Body() loginDto: LoginDto,
     @Query(
       'type',
       new ParseEnumPipe(LoginType, {
         exceptionFactory: () => {
           const i18n = I18nContext.current<I18nTranslations>()!
-          return new BadRequestException(
-            i18n.t('auth.LOGIN.TYPE_NOT_SUPPORTED')
-          )
+          throw new BadRequestException(i18n.t('auth.LOGIN.TYPE_NOT_SUPPORTED'))
         }
       })
     )
-    type: string,
-    @Body() loginDto: LoginDto,
+    type: LoginType,
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
     let user: User
 
     switch (type) {
       // 用户名登录
-      case LoginType.username:
+      case LoginType.USERNAME:
         user = await this.authService.loginByUsername(loginDto)
         break
       // 邮箱登录
-      case LoginType.email:
-        return this.authService.loginByEmail(loginDto)
+      case LoginType.EMAIL:
+        return this.authService.loginByEmail()
       default:
         return new BadRequestException(i18n.t('auth.LOGIN.TYPE_NOT_SUPPORTED'))
     }

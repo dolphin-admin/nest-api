@@ -13,8 +13,9 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
 import Joi from 'joi'
 import { AcceptLanguageResolver, I18nModule, QueryResolver } from 'nestjs-i18n'
 
-import { AuthGuard } from '../guards'
-import { ErrorsInterceptor, LoggingInterceptor } from '../interceptors'
+import { AuthGuard } from '@/guards'
+import { ErrorsInterceptor, LoggingInterceptor } from '@/interceptors'
+
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { AuthModule } from './auth/auth.module'

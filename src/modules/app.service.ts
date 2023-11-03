@@ -9,9 +9,10 @@ export class AppService {
   constructor(private readonly i18nService: I18nService<I18nTranslations>) {}
 
   getAppInfo() {
+    const i18n = I18nContext.current()
     return {
       name: this.i18nService.t('common.APP.NAME', {
-        lang: I18nContext.current()?.lang
+        lang: i18n?.lang
       }),
       version: AppConfig.APP_VERSION
     }

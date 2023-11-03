@@ -52,8 +52,9 @@ export class AuthService {
   }
 
   // 邮箱登录
-  loginByEmail(loginDto: LoginDto) {
-    console.log(loginDto)
-    throw new BadRequestException('不支持该登录方式: email')
+  loginByEmail() {
+    throw new BadRequestException(
+      this.i18nService.t('auth.LOGIN.TYPE_NOT_SUPPORTED')
+    )
   }
 }
