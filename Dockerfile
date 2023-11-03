@@ -1,1 +1,1 @@
-FROM node:18.18.2 AS builder
+FROM node:21.1.0 AS builder
