@@ -29,23 +29,18 @@ export class AuthService {
 
   // 注册
   signup() {
-    return this.prismaService
-      .$queryRaw`SELECT * FROM "system_user" Where id = 2`
+    return this.prismaService.$queryRaw`SELECT * FROM "system_user" Where id = 2`
   }
 
   // 用户名登录
   async loginByUsername(loginDto: LoginDto): Promise<User> {
     const user = await this.usersService.findOneByUsername(loginDto.username)
     if (!user) {
-      throw new BadRequestException(
-        this.i18nService.t('auth.USERNAME.NOT_EXIST')
-      )
+      throw new BadRequestException(this.i18nService.t('auth.USERNAME.NOT_EXIST'))
     }
 
     if (!(await compare(loginDto.password, user.password ?? ''))) {
-      throw new BadRequestException(
-        this.i18nService.t('auth.USERNAME_OR_PASSWORD_ERROR')
-      )
+      throw new BadRequestException(this.i18nService.t('auth.USERNAME_OR_PASSWORD_ERROR'))
     }
 
     return user
@@ -53,8 +48,6 @@ export class AuthService {
 
   // 邮箱登录
   loginByEmail() {
-    throw new BadRequestException(
-      this.i18nService.t('auth.LOGIN.TYPE_NOT_SUPPORTED')
-    )
+    throw new BadRequestException(this.i18nService.t('auth.LOGIN.TYPE_NOT_SUPPORTED'))
   }
 }

@@ -9,10 +9,7 @@ import { PrismaClient } from '@prisma/client'
 
 // TODO: 读取配置文件
 @Injectable()
-export class PrismaService
-  extends PrismaClient
-  implements OnModuleInit, OnModuleDestroy
-{
+export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
   constructor() {
     super({
       log: [],
@@ -37,9 +34,7 @@ export class PrismaService
             const start = performance.now()
             const end = performance.now()
             const time = end - start
-            process.stdout.write(
-              '------------ Prisma parameters: ------------\n'
-            )
+            process.stdout.write('------------ Prisma parameters: ------------\n')
             console.log(
               util.inspect(
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment

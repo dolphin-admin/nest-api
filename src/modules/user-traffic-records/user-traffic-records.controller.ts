@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post
-} from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common'
 
 import { CreateUserTrafficRecordDto } from './dto/create-user-traffic-record.dto'
 import { UpdateUserTrafficRecordDto } from './dto/update-user-traffic-record.dto'
@@ -14,9 +6,7 @@ import { UserTrafficRecordsService } from './user-traffic-records.service'
 
 @Controller('user-traffic-records')
 export class UserTrafficRecordsController {
-  constructor(
-    private readonly userTrafficRecordsService: UserTrafficRecordsService
-  ) {}
+  constructor(private readonly userTrafficRecordsService: UserTrafficRecordsService) {}
 
   @Post()
   create(@Body() createUserTrafficRecordDto: CreateUserTrafficRecordDto) {
@@ -34,14 +24,8 @@ export class UserTrafficRecordsController {
   }
 
   @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateUserTrafficRecordDto: UpdateUserTrafficRecordDto
-  ) {
-    return this.userTrafficRecordsService.update(
-      +id,
-      updateUserTrafficRecordDto
-    )
+  update(@Param('id') id: string, @Body() updateUserTrafficRecordDto: UpdateUserTrafficRecordDto) {
+    return this.userTrafficRecordsService.update(+id, updateUserTrafficRecordDto)
   }
 
   @Delete(':id')

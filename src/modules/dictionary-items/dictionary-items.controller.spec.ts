@@ -13,9 +13,7 @@ describe('DictionaryItemsController', () => {
       providers: [DictionaryItemsService]
     }).compile()
 
-    controller = module.get<DictionaryItemsController>(
-      DictionaryItemsController
-    )
+    controller = module.get<DictionaryItemsController>(DictionaryItemsController)
   })
 
   it('should be defined', () => {

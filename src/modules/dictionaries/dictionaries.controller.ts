@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-  Query
-} from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common'
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -69,10 +60,7 @@ export class DictionariesController {
   @ApiNotFoundResponse({ description: '字典不存在' })
   @ApiParam({ name: 'id', description: '字典 ID', required: true, example: 1 })
   @Patch(':id(\\d+)')
-  update(
-    @Param('id') id: number,
-    @Body() updateDictionaryDto: UpdateDictionaryDto
-  ) {
+  update(@Param('id') id: number, @Body() updateDictionaryDto: UpdateDictionaryDto) {
     return this.dictionariesService.update(id, updateDictionaryDto)
   }
 

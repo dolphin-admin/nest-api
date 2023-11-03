@@ -2,27 +2,20 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
   HttpStatus,
+  NotImplementedException,
   ParseEnumPipe,
   Post,
   Query
 } from '@nestjs/common'
-import {
-  ApiBadRequestResponse,
-  ApiBody,
-  ApiConflictResponse,
-  ApiNotImplementedResponse,
-  ApiOperation,
-  ApiQuery,
-  ApiTags,
-  ApiUnauthorizedResponse
-} from '@nestjs/swagger'
+import { ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger'
 import type { User } from '@prisma/client'
 import { plainToClass } from 'class-transformer'
 import { I18n, I18nContext } from 'nestjs-i18n'
 
 import { BaseResponseVo } from '@/class'
-import { ApiBaseResponse, SkipAuth } from '@/decorators'
+import { ApiBadResponse, ApiBaseResponse, Auth, SkipAuth } from '@/decorators'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 import { UserVo } from '@/modules/users/vo'
 
@@ -38,24 +31,30 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @ApiOperation({ summary: '注册' })
-  @ApiBaseResponse({
-    description: '注册成功',
-    status: HttpStatus.CREATED,
-    type: AuthVo
-  })
-  @ApiBadRequestResponse({ description: '输入有误' })
-  @ApiUnauthorizedResponse({ description: '认证失败' })
-  @ApiConflictResponse({ description: '用户名已存在' })
+  @ApiBaseResponse({ description: '注册成功', status: HttpStatus.CREATED, type: AuthVo })
+  @ApiBadResponse([
+    HttpStatus.BAD_REQUEST,
+    { status: HttpStatus.CONFLICT, description: '用户名已存在' }
+  ])
   @Post('signup')
   signup() {
-    return this.authService.signup()
+    const user = this.authService.signup()
+
+    return new BaseResponseVo({
+      data: new AuthVo({
+        user: plainToClass(UserVo, user),
+        accessToken: ''
+      }),
+      message: '注册成功'
+    })
   }
 
   @ApiOperation({ summary: '登录' })
   @ApiBaseResponse({ description: '登录成功', type: AuthVo })
-  @ApiBadRequestResponse({ description: '用户名或密码不正确' })
-  @ApiUnauthorizedResponse({ description: '认证失败' })
-  @ApiNotImplementedResponse({ description: '不支持该登录方式' })
+  @ApiBadResponse([
+    { status: HttpStatus.BAD_REQUEST, description: '用户名或密码不正确' },
+    { status: HttpStatus.NOT_IMPLEMENTED, description: '不支持该登录方式' }
+  ])
   @ApiQuery({
     name: 'type',
     type: Number,
@@ -92,7 +91,7 @@ export class AuthController {
       new ParseEnumPipe(LoginType, {
         exceptionFactory: () => {
           const i18n = I18nContext.current<I18nTranslations>()!
-          throw new BadRequestException(i18n.t('auth.LOGIN.TYPE_NOT_SUPPORTED'))
+          throw new NotImplementedException(i18n.t('auth.LOGIN.TYPE_NOT_SUPPORTED'))
         }
       })
     )
@@ -119,6 +118,17 @@ export class AuthController {
         accessToken: this.authService.generateToken(user)
       }),
       message: i18n.t('auth.LOGIN.SUCCESS')
+    })
+  }
+
+  @ApiOperation({ summary: '退出登录' })
+  @ApiBaseResponse({ description: '退出成功' })
+  @ApiBadResponse([{ status: HttpStatus.NOT_FOUND, description: '该用户已退出' }])
+  @Auth()
+  @Get('logout')
+  logout() {
+    return new BaseResponseVo({
+      message: '退出成功'
     })
   }
 }

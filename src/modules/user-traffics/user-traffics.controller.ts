@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post
-} from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common'
 
 import { CreateUserTrafficDto } from './dto/create-user-traffic.dto'
 import { UpdateUserTrafficDto } from './dto/update-user-traffic.dto'
@@ -32,10 +24,7 @@ export class UserTrafficsController {
   }
 
   @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateUserTrafficDto: UpdateUserTrafficDto
-  ) {
+  update(@Param('id') id: string, @Body() updateUserTrafficDto: UpdateUserTrafficDto) {
     return this.userTrafficsService.update(+id, updateUserTrafficDto)
   }
 

@@ -23,8 +23,7 @@ import { CosService } from './cos.service'
       useFactory: () => ({
         storage: diskStorage({
           destination: 'uploads',
-          filename: (_, file, callback) =>
-            callback(null, `${uuid() + extname(file.originalname)}`)
+          filename: (_, file, callback) => callback(null, `${uuid() + extname(file.originalname)}`)
         }),
         limits: {
           fileSize: MAX_UPLOAD_FILE_SIZE
@@ -33,10 +32,7 @@ import { CosService } from './cos.service'
           if (fileExtensionMap.get(file.mimetype)) {
             callback(null, true)
           } else {
-            callback(
-              new UnprocessableEntityException('无法处理的文件类型'),
-              false
-            )
+            callback(new UnprocessableEntityException('无法处理的文件类型'), false)
           }
         }
       })

@@ -13,9 +13,7 @@ describe('UserTrafficRecordsController', () => {
       providers: [UserTrafficRecordsService]
     }).compile()
 
-    controller = module.get<UserTrafficRecordsController>(
-      UserTrafficRecordsController
-    )
+    controller = module.get<UserTrafficRecordsController>(UserTrafficRecordsController)
   })
 
   it('should be defined', () => {

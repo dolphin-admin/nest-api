@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Param,
-  Post,
-  Res,
-  UploadedFiles,
-  UseInterceptors
-} from '@nestjs/common'
+import { Controller, Get, Param, Post, Res, UploadedFiles, UseInterceptors } from '@nestjs/common'
 import { AnyFilesInterceptor } from '@nestjs/platform-express'
 import {
   ApiBadRequestResponse,

@@ -1,8 +1,4 @@
-import type {
-  CallHandler,
-  ExecutionContext,
-  NestInterceptor
-} from '@nestjs/common'
+import type { CallHandler, ExecutionContext, NestInterceptor } from '@nestjs/common'
 import { Injectable } from '@nestjs/common'
 import type { Observable } from 'rxjs'
 import { tap } from 'rxjs/operators'
@@ -21,10 +17,6 @@ export class LoggingInterceptor implements NestInterceptor {
     const now = Date.now()
     return next
       .handle()
-      .pipe(
-        tap(() =>
-          console.log(`执行了 ${(Number(Date.now() - now) / 1000).toFixed(1)}s`)
-        )
-      )
+      .pipe(tap(() => console.log(`执行了 ${(Number(Date.now() - now) / 1000).toFixed(1)}s`)))
   }
 }

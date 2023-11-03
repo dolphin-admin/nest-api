@@ -4,6 +4,7 @@ import { ApiExtraModels, ApiResponse, getSchemaPath } from '@nestjs/swagger'
 
 import { BaseResponseVo } from '@/class'
 
+// 根据状态码返回对应描述
 const getDescription = (description?: string, status?: number) => {
   if (description) {
     return description

@@ -26,7 +26,7 @@ import {
 import { plainToClass } from 'class-transformer'
 
 import { BaseResponseVo, PageDateDto, PageResponseVo } from '@/class'
-import { ApiPageQuery, User } from '@/decorators'
+import { User } from '@/decorators'
 import { ApiPageResponse } from '@/decorators/swagger/api-page-response.decorator'
 import { JWTPayload } from '@/interfaces'
 
@@ -55,7 +55,6 @@ export class UsersController {
   @ApiOperation({ summary: '用户列表' })
   @ApiPageResponse(UserVo)
   @ApiUnauthorizedResponse({ description: '认证失败' })
-  @ApiPageQuery('searchText', 'date')
   @Get()
   async findMany(@Query() pageDto: PageDateDto) {
     const { page, pageSize } = pageDto

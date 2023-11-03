@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post
-} from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common'
 
 import { DictionaryItemsService } from './dictionary-items.service'
 import { CreateDictionaryItemDto } from './dto/create-dictionary-item.dto'
@@ -14,9 +6,7 @@ import { UpdateDictionaryItemDto } from './dto/update-dictionary-item.dto'
 
 @Controller('dictionary-items')
 export class DictionaryItemsController {
-  constructor(
-    private readonly dictionaryItemsService: DictionaryItemsService
-  ) {}
+  constructor(private readonly dictionaryItemsService: DictionaryItemsService) {}
 
   @Post()
   create(@Body() createDictionaryItemDto: CreateDictionaryItemDto) {
@@ -34,10 +24,7 @@ export class DictionaryItemsController {
   }
 
   @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateDictionaryItemDto: UpdateDictionaryItemDto
-  ) {
+  update(@Param('id') id: string, @Body() updateDictionaryItemDto: UpdateDictionaryItemDto) {
     return this.dictionaryItemsService.update(+id, updateDictionaryItemDto)
   }
 

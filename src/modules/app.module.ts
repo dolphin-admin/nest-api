@@ -60,14 +60,8 @@ import { UsersModule } from './users/users.module'
         path: path.join(__dirname, '../i18n/'),
         watch: true
       },
-      resolvers: [
-        { use: QueryResolver, options: ['lang'] },
-        AcceptLanguageResolver
-      ],
-      typesOutputPath: path.join(
-        __dirname,
-        '../../src/generated/i18n.generated.ts'
-      )
+      resolvers: [{ use: QueryResolver, options: ['lang'] }, AcceptLanguageResolver],
+      typesOutputPath: path.join(__dirname, '../../src/generated/i18n.generated.ts')
     }),
     // JWT 模块
     JwtModule.registerAsync({
