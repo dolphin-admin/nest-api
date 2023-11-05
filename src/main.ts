@@ -19,7 +19,8 @@ import { AppModule } from './modules/app.module'
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     abortOnError: false,
-    bufferLogs: true
+    bufferLogs: true,
+    bodyParser: true
   })
 
   const configService = app.get(ConfigService)
@@ -95,7 +96,7 @@ async function bootstrap() {
 
   // Swagger 配置
   const config = new DocumentBuilder()
-    .setTitle('Nest API')
+    .setTitle('Dolphin Admin Nest API')
     .setDescription(
       `<p>Dolphin Admin 后台管理系统的接口文档 Nest 版本，基于 Nest.js + TypeScript + Prisma + PostgreSQL。</p>
   <p>Apifox 线上地址：<a>https://dolphin-admin-nest.apifox.cn/</a></p>`
@@ -116,7 +117,23 @@ async function bootstrap() {
    * Swagger JSON 地址为 /api/docs-json
    * 例如：http://localhost:3000/api/docs-json
    */
-  SwaggerModule.setup('api/docs', app, document)
+  SwaggerModule.setup('api/docs', app, document, {
+    swaggerOptions: {
+      displayOperationId: true, // 显示操作 ID
+      defaultModelsExpandDepth: 2, // 默认模型展开深度
+      defaultModelExpandDepth: 2, // 默认模型展开深度
+      docExpansion: 'none', // 折叠
+      filter: true, // 显示过滤
+      syntaxHighlight: {
+        activated: true,
+        theme: 'monokai' // ["agate"*, "arta", "monokai", "nord", "obsidian", "tomorrow-night", "idea"]
+      }, // 语法高亮
+      tryItOutEnabled: false, // 自动启用尝试
+      // maxDisplayedTags: 10, // 最大显示标签数量，不启用显示全部
+      displayRequestDuration: true, // 显示请求持续时间
+      persistAuthorization: true // 持久化授权
+    }
+  })
 
   const port = configService.get<string>('PORT') ?? 3000
 
