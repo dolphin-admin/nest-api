@@ -14,7 +14,7 @@ import { I18nValidationPipe } from 'nestjs-i18n'
 import type { AppConfig } from './configs'
 import { I18nValidationExceptionFilter } from './filters'
 import metadata from './metadata'
-import { AppModule } from './modules/app.module'
+import { AppModule } from './modules/app/app.module'
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {

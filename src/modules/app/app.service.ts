@@ -3,8 +3,7 @@ import { ConfigType } from '@nestjs/config'
 import { I18nContext, I18nService } from 'nestjs-i18n'
 
 import { AppConfig } from '@/configs'
-
-import type { I18nTranslations } from '../generated/i18n.generated'
+import type { I18nTranslations } from '@/generated/i18n.generated'
 
 @Injectable()
 export class AppService {
