@@ -10,9 +10,16 @@ import { JwtModule } from '@nestjs/jwt'
 import { MongooseModule } from '@nestjs/mongoose'
 import { ScheduleModule } from '@nestjs/schedule'
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
-import Joi from 'joi'
 import { AcceptLanguageResolver, I18nModule, QueryResolver } from 'nestjs-i18n'
 
+import {
+  AppConfig,
+  CosConfig,
+  JwtConfig,
+  MongoConfig,
+  PostgresConfig,
+  RedisConfig
+} from '@/configs'
 import { AuthGuard } from '@/guards'
 import { ErrorsInterceptor, LoggingInterceptor } from '@/interceptors'
 
@@ -45,12 +52,10 @@ import { UsersModule } from './users/users.module'
   imports: [
     // 配置模块
     ConfigModule.forRoot({
-      envFilePath: ['.env.development.local', '.env.development', '.env'], // 优先匹配 .env
       isGlobal: true, // 声明为全局模块
+      envFilePath: ['.env'], // 指定环境变量文件
+      load: [AppConfig, JwtConfig, PostgresConfig, MongoConfig, RedisConfig, CosConfig], // 加载配置文件
       cache: true, // 开启缓存，提高性能
-      validationSchema: Joi.object({
-        PORT: Joi.number().default(3000)
-      }),
       expandVariables: true // 允许变量扩展
     }),
     // i18n 模块
@@ -99,7 +104,8 @@ import { UsersModule } from './users/users.module'
       useFactory: async (configService: ConfigService) => ({
         redis: {
           host: configService.get<string>('REDIS_HOST'),
-          port: configService.get<number>('REDIS_PORT')
+          port: configService.get<number>('REDIS_PORT'),
+          password: configService.get<string>('REDIS_PASSWORD')
         }
       }),
       inject: [ConfigService]

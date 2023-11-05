@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable, NotImplementedException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { compare } from '@node-rs/bcrypt'
 import type { User } from '@prisma/client'
@@ -48,6 +48,6 @@ export class AuthService {
 
   // 邮箱登录
   loginByEmail() {
-    throw new BadRequestException(this.i18nService.t('auth.LOGIN.TYPE_NOT_SUPPORTED'))
+    throw new NotImplementedException(this.i18nService.t('auth.LOGIN.TYPE_NOT_SUPPORTED'))
   }
 }

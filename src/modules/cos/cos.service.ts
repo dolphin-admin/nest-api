@@ -1,8 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
+import { BadRequestException, Inject, Injectable } from '@nestjs/common'
+import { ConfigType } from '@nestjs/config'
 import COS from 'cos-nodejs-sdk-v5'
 import { sep } from 'path'
 
+import { CosConfig } from '@/configs'
 import { FileVo } from '@/modules/files/vo'
 
 @Injectable()
@@ -15,13 +16,10 @@ export class CosService {
 
   private readonly MIN_SLICE_SIZE = 1024 * 1024 * 10
 
-  constructor(private readonly configService: ConfigService) {
-    const secretID = this.configService.get<string>('COS_SECRET_ID')
-    const secretKey = this.configService.get<string>('COS_SECRET_KEY')
-    const bucket = this.configService.get<string>('COS_BUCKET')
-    const region = this.configService.get<string>('COS_REGION')
+  constructor(@Inject(CosConfig.KEY) private readonly cosConfig: ConfigType<typeof CosConfig>) {
+    const { secretId, secretKey, bucket, region } = this.cosConfig
     this.cos = new COS({
-      SecretId: secretID,
+      SecretId: secretId,
       SecretKey: secretKey,
       FileParallelLimit: 3, // 控制文件上传并发数
       ChunkParallelLimit: 8, // 控制单个文件下分片上传并发数

@@ -95,7 +95,7 @@ export class AuthController {
         }
       })
     )
-    type: LoginType,
+    type: number,
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
     let user: User

@@ -2,6 +2,7 @@ import { join } from 'node:path'
 import { stdout } from 'node:process'
 
 import { ClassSerializerInterceptor, HttpStatus, VersioningType } from '@nestjs/common'
+import type { ConfigType } from '@nestjs/config'
 import { ConfigService } from '@nestjs/config'
 import { NestFactory, Reflector } from '@nestjs/core'
 import type { NestExpressApplication } from '@nestjs/platform-express'
@@ -10,9 +11,9 @@ import figlet from 'figlet'
 import gradient from 'gradient-string'
 import { I18nValidationPipe } from 'nestjs-i18n'
 
+import type { AppConfig } from './configs'
 import { I18nValidationExceptionFilter } from './filters'
 import metadata from './metadata'
-import { AppConfig } from './modules/app.config'
 import { AppModule } from './modules/app.module'
 
 async function bootstrap() {
@@ -22,13 +23,13 @@ async function bootstrap() {
   })
 
   const configService = app.get(ConfigService)
-  const isDev = configService.get<string>('ENV') === 'DEV'
+  const appConfig = configService.get<ConfigType<typeof AppConfig>>('app')!
 
   // 跨域白名单
   const corsOriginWhiteList = ['https://bit-ocean.studio']
 
   // 开发环境允许跨域
-  if (isDev) {
+  if (appConfig.isDEV) {
     corsOriginWhiteList.push('http://localhost:*')
   }
 
@@ -120,10 +121,13 @@ async function bootstrap() {
   const port = configService.get<string>('PORT') ?? 3000
 
   await app.listen(+port)
+
+  return appConfig
 }
+
 bootstrap()
-  .then(() => {
-    figlet(AppConfig.APP_NAME, (err, data) => {
+  .then((config) => {
+    figlet(config.name, (err, data) => {
       if (err) {
         stdout.write('Something went wrong...')
         return
