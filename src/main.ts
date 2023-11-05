@@ -1,14 +1,12 @@
 import { join } from 'node:path'
-import { stdout } from 'node:process'
 
+import { bootstrapLog } from '@dolphin-admin/bootstrap-animation'
 import { ClassSerializerInterceptor, HttpStatus, VersioningType } from '@nestjs/common'
 import type { ConfigType } from '@nestjs/config'
 import { ConfigService } from '@nestjs/config'
 import { NestFactory, Reflector } from '@nestjs/core'
 import type { NestExpressApplication } from '@nestjs/platform-express'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
-import figlet from 'figlet'
-import gradient from 'gradient-string'
 import { I18nValidationPipe } from 'nestjs-i18n'
 
 import type { AppConfig } from './configs'
@@ -138,20 +136,8 @@ async function bootstrap() {
   const port = configService.get<string>('PORT') ?? 3000
 
   await app.listen(+port)
-
-  return appConfig
 }
 
 bootstrap()
-  .then((config) => {
-    figlet(config.name, (err, data) => {
-      if (err) {
-        stdout.write('Something went wrong...')
-        return
-      }
-      stdout.write(`\n${gradient.rainbow(data)}\n\n`)
-    })
-  })
-  .catch((err) => {
-    console.log(err)
-  })
+  .then(() => bootstrapLog())
+  .catch((err) => console.log(err))
