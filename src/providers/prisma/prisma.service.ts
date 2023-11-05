@@ -7,7 +7,6 @@ import type { OnModuleDestroy, OnModuleInit } from '@nestjs/common'
 import { Injectable } from '@nestjs/common'
 import { PrismaClient } from '@prisma/client'
 
-// TODO: 读取配置文件
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
   constructor() {
@@ -23,6 +22,8 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
    */
   async onModuleInit() {
     await this.$connect()
+
+    // Prisma 扩展
     Object.assign(
       this,
       this.$extends({

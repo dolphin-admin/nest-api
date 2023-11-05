@@ -23,8 +23,9 @@ import {
 import { AuthGuard } from '@/guards'
 import { ErrorsInterceptor, LoggingInterceptor } from '@/interceptors'
 
+import { CosModule } from '../../providers/cos/cos.module'
+import { PrismaModule } from '../../providers/prisma/prisma.module'
 import { AuthModule } from '../auth/auth.module'
-import { CosModule } from '../cos/cos.module'
 import { CronJobLogsModule } from '../cron-job-logs/cron-job-logs.module'
 import { CronJobsModule } from '../cron-jobs/cron-jobs.module'
 import { DepartmentsModule } from '../departments/departments.module'
@@ -38,7 +39,6 @@ import { NotificationsModule } from '../notifications/notifications.module'
 import { OperationLogsModule } from '../operation-logs/operation-logs.module'
 import { PermissionsModule } from '../permissions/permissions.module'
 import { PositionsModule } from '../positions/positions.module'
-import { PrismaModule } from '../prisma/prisma.module'
 import { RolesModule } from '../roles/roles.module'
 import { SettingsModule } from '../settings/settings.module'
 import { SseModule } from '../sse/sse.module'
@@ -116,8 +116,11 @@ import { AppService } from './app.service'
         maxRedirects: 5
       })
     }),
+    // Providers
     PrismaModule,
     LoggerModule,
+    CosModule,
+    // Modules
     AuthModule,
     UsersModule,
     RolesModule,
@@ -129,7 +132,6 @@ import { AppService } from './app.service'
     DictionariesModule,
     DictionaryItemsModule,
     FilesModule,
-    CosModule,
     NotificationsModule,
     CronJobsModule,
     SseModule,
@@ -142,15 +144,15 @@ import { AppService } from './app.service'
   controllers: [AppController],
   providers: [
     AppService,
-    // 注册全局认证守卫
-    {
-      provide: APP_GUARD,
-      useClass: AuthGuard
-    },
     // 注册全局限流守卫
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard
+    },
+    // 注册全局认证守卫
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard
     },
     // 注册全局日志拦截器
     {

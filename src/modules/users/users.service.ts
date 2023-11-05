@@ -4,7 +4,7 @@ import { plainToClass, plainToInstance } from 'class-transformer'
 
 import type { PageDateDto } from '@/class'
 import { BaseResponseVo } from '@/class'
-import { PrismaService } from '@/modules/prisma/prisma.service'
+import { PrismaService } from '@/providers/prisma/prisma.service'
 
 import type { CreateUserDto } from './dto/create-user.dto'
 import type { UpdateUserDto } from './dto/update-user.dto'

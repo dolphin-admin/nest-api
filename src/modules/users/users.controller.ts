@@ -7,8 +7,7 @@ import {
   Param,
   Patch,
   Post,
-  Query,
-  UnauthorizedException
+  Query
 } from '@nestjs/common'
 import {
   ApiBadRequestResponse,
@@ -28,7 +27,6 @@ import { plainToClass } from 'class-transformer'
 import { BaseResponseVo, PageDateDto, PageResponseVo } from '@/class'
 import { User } from '@/decorators'
 import { ApiPageResponse } from '@/decorators/swagger/api-page-response.decorator'
-import { JWTPayload } from '@/interfaces'
 
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
@@ -67,11 +65,8 @@ export class UsersController {
   @ApiUnauthorizedResponse({ description: '认证失败' })
   @ApiNotFoundResponse({ description: '用户不存在' })
   @Get('me')
-  async findCurrent(@User() user: JWTPayload) {
-    if (!user) {
-      throw new UnauthorizedException('认证失败')
-    }
-    const currentUser = await this.usersService.findOneById(user.sub)
+  async findCurrent(@User('sub') id: number) {
+    const currentUser = await this.usersService.findOneById(id)
     if (!currentUser) {
       throw new NotFoundException('用户不存在')
     }

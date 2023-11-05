@@ -2,8 +2,8 @@ import { JwtModule } from '@nestjs/jwt'
 import type { TestingModule } from '@nestjs/testing'
 import { Test } from '@nestjs/testing'
 
-import { PrismaModule } from '@/modules/prisma/prisma.module'
 import { UsersModule } from '@/modules/users/users.module'
+import { PrismaModule } from '@/providers/prisma/prisma.module'
 
 import { AuthService } from './auth.service'
 

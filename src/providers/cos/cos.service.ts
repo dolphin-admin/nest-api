@@ -30,6 +30,8 @@ export class CosService {
     })
     this.bucket = bucket
     this.region = region
+
+    // TODO: 检查配置的逻辑应该在构造函数中执行
   }
 
   private checkConfig() {

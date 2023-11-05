@@ -7,6 +7,6 @@ export class ErrorResponseVo {
   @ApiProperty({ description: '提示信息', example: '认证失败' })
   readonly message: string
 
-  @ApiPropertyOptional({ description: '错误信息', example: 'Unauthorized' })
-  readonly error: string
+  @ApiPropertyOptional({ description: '错误信息', example: ['认证失败'], type: [String] })
+  readonly errors: string[]
 }

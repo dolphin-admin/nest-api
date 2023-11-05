@@ -1,5 +1,5 @@
 // 登录类型
 export enum LoginType {
-  USERNAME = 0, // 用户名登录
-  EMAIL = 1 // 邮箱登录
+  USERNAME = 1, // 用户名登录
+  EMAIL = 2 // 邮箱登录
 }

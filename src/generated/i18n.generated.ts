@@ -14,6 +14,8 @@ export type I18nTranslations = {
             "NOT_EMPTY": string;
             "LENGTH": string;
             "NO_WHITESPACE": string;
+            "CONTAIN_ONE_DIGITAL_CHARACTER": string;
+            "CONTAIN_ONE_LETTER": string;
         };
         "LOGIN": {
             "TYPE_NOT_SUPPORTED": string;
@@ -24,6 +26,18 @@ export type I18nTranslations = {
     "common": {
         "APP": {
             "NAME": string;
+        };
+    };
+    "user": {
+        "FIRST_NAME": {
+            "NO_WHITESPACE": string;
+            "NOT_EMPTY": string;
+            "INVALID": string;
+        };
+        "LAST_NAME": {
+            "NO_WHITESPACE": string;
+            "NOT_EMPTY": string;
+            "INVALID": string;
         };
     };
 };

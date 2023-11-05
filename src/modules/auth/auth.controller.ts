@@ -85,7 +85,6 @@ export class AuthController {
   })
   @Post('login')
   async login(
-    @Body() loginDto: LoginDto,
     @Query(
       'type',
       new ParseEnumPipe(LoginType, {
@@ -96,6 +95,7 @@ export class AuthController {
       })
     )
     type: number,
+    @Body() loginDto: LoginDto,
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
     let user: User
