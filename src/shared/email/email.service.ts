@@ -11,8 +11,9 @@ export class EmailService {
   private transporter: Transporter
 
   constructor(
-    @Inject(AppConfig.KEY) private appConfig: ConfigType<typeof AppConfig>,
-    @Inject(NodemailerConfig.KEY) private nodemailerConfig: ConfigType<typeof NodemailerConfig>
+    @Inject(AppConfig.KEY) private readonly appConfig: ConfigType<typeof AppConfig>,
+    @Inject(NodemailerConfig.KEY)
+    private readonly nodemailerConfig: ConfigType<typeof NodemailerConfig>
   ) {
     const { host, port, auth } = nodemailerConfig
     const { user, pass } = auth

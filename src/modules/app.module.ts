@@ -17,6 +17,7 @@ import {
   CosConfig,
   JwtConfig,
   MongoConfig,
+  NodemailerConfig,
   PostgresConfig,
   RedisConfig
 } from '@/configs'
@@ -56,7 +57,15 @@ import { UsersModule } from './users/users.module'
     ConfigModule.forRoot({
       isGlobal: true, // 声明为全局模块
       envFilePath: ['.env'], // 指定环境变量文件
-      load: [AppConfig, JwtConfig, PostgresConfig, MongoConfig, RedisConfig, CosConfig], // 加载配置文件
+      load: [
+        AppConfig,
+        JwtConfig,
+        PostgresConfig,
+        MongoConfig,
+        RedisConfig,
+        NodemailerConfig,
+        CosConfig
+      ], // 加载配置文件
       cache: true, // 开启缓存，提高性能
       expandVariables: true // 允许变量扩展
     }),
