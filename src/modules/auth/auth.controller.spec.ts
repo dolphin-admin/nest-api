@@ -3,7 +3,7 @@ import type { TestingModule } from '@nestjs/testing'
 import { Test } from '@nestjs/testing'
 
 import { UsersModule } from '@/modules/users/users.module'
-import { PrismaModule } from '@/providers/prisma/prisma.module'
+import { PrismaModule } from '@/shared/prisma/prisma.module'
 
 import { AuthController } from './auth.controller'
 import { AuthService } from './auth.service'

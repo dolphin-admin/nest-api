@@ -1,20 +1,17 @@
 import type { TestingModule } from '@nestjs/testing'
 import { Test } from '@nestjs/testing'
 
-import { PrismaModule } from '@/shared/prisma/prisma.module'
+import { RedisService } from './redis.service'
 
-import { UsersService } from './users.service'
-
-describe('UsersService', () => {
-  let service: UsersService
+describe('RedisService', () => {
+  let service: RedisService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [PrismaModule],
-      providers: [UsersService]
+      providers: [RedisService]
     }).compile()
 
-    service = module.get<UsersService>(UsersService)
+    service = module.get<RedisService>(RedisService)
   })
 
   it('should be defined', () => {

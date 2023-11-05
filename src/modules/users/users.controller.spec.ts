@@ -1,7 +1,7 @@
 import type { TestingModule } from '@nestjs/testing'
 import { Test } from '@nestjs/testing'
 
-import { PrismaModule } from '@/providers/prisma/prisma.module'
+import { PrismaModule } from '@/shared/prisma/prisma.module'
 
 import { UsersController } from './users.controller'
 import { UsersService } from './users.service'

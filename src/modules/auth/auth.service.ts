@@ -7,7 +7,7 @@ import { I18nService } from 'nestjs-i18n'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 import type { JWTPayload } from '@/interfaces'
 import { UsersService } from '@/modules/users/users.service'
-import { PrismaService } from '@/providers/prisma/prisma.service'
+import { PrismaService } from '@/shared/prisma/prisma.service'
 
 import type { LoginDto } from './dto'
 

@@ -5,8 +5,10 @@ import { registerAs } from '@nestjs/config'
 // Redis 配置
 export const RedisConfig = registerAs('mongo', () =>
   Object.freeze({
+    user: env.REDIS_USER ?? 'redis',
+    password: env.REDIS_PASSWORD ?? '',
+    db: env.REDIS_DATABASE ?? 'dolphin-admin-redis',
     host: env.REDIS_HOST ?? 'localhost',
-    port: env.REDIS_PORT ? parseInt(env.REDIS_PORT, 10) : 6379,
-    password: env.REDIS_PASSWORD ?? ''
+    port: env.REDIS_PORT ? parseInt(env.REDIS_PORT, 10) : 6379
   })
 )

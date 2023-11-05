@@ -23,30 +23,31 @@ import {
 import { AuthGuard } from '@/guards'
 import { ErrorsInterceptor, LoggingInterceptor } from '@/interceptors'
 
-import { CosModule } from '../../providers/cos/cos.module'
-import { PrismaModule } from '../../providers/prisma/prisma.module'
-import { AuthModule } from '../auth/auth.module'
-import { CronJobLogsModule } from '../cron-job-logs/cron-job-logs.module'
-import { CronJobsModule } from '../cron-jobs/cron-jobs.module'
-import { DepartmentsModule } from '../departments/departments.module'
-import { DictionariesModule } from '../dictionaries/dictionaries.module'
-import { DictionaryItemsModule } from '../dictionary-items/dictionary-items.module'
-import { FilesModule } from '../files/files.module'
-import { LoggerModule } from '../logger/logger.module'
-import { LoginLogsModule } from '../login-logs/login-logs.module'
-import { MenuItemsModule } from '../menu-items/menu-items.module'
-import { NotificationsModule } from '../notifications/notifications.module'
-import { OperationLogsModule } from '../operation-logs/operation-logs.module'
-import { PermissionsModule } from '../permissions/permissions.module'
-import { PositionsModule } from '../positions/positions.module'
-import { RolesModule } from '../roles/roles.module'
-import { SettingsModule } from '../settings/settings.module'
-import { SseModule } from '../sse/sse.module'
-import { UserTrafficRecordsModule } from '../user-traffic-records/user-traffic-records.module'
-import { UserTrafficsModule } from '../user-traffics/user-traffics.module'
-import { UsersModule } from '../users/users.module'
+import { CosModule } from '../shared/cos/cos.module'
+import { PrismaModule } from '../shared/prisma/prisma.module'
+import { RedisModule } from '../shared/redis/redis.module'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
+import { AuthModule } from './auth/auth.module'
+import { CronJobLogsModule } from './cron-job-logs/cron-job-logs.module'
+import { CronJobsModule } from './cron-jobs/cron-jobs.module'
+import { DepartmentsModule } from './departments/departments.module'
+import { DictionariesModule } from './dictionaries/dictionaries.module'
+import { DictionaryItemsModule } from './dictionary-items/dictionary-items.module'
+import { FilesModule } from './files/files.module'
+import { LoggerModule } from './logger/logger.module'
+import { LoginLogsModule } from './login-logs/login-logs.module'
+import { MenuItemsModule } from './menu-items/menu-items.module'
+import { NotificationsModule } from './notifications/notifications.module'
+import { OperationLogsModule } from './operation-logs/operation-logs.module'
+import { PermissionsModule } from './permissions/permissions.module'
+import { PositionsModule } from './positions/positions.module'
+import { RolesModule } from './roles/roles.module'
+import { SettingsModule } from './settings/settings.module'
+import { SseModule } from './sse/sse.module'
+import { UserTrafficRecordsModule } from './user-traffic-records/user-traffic-records.module'
+import { UserTrafficsModule } from './user-traffics/user-traffics.module'
+import { UsersModule } from './users/users.module'
 
 @Module({
   imports: [
@@ -62,11 +63,11 @@ import { AppService } from './app.service'
     I18nModule.forRoot({
       fallbackLanguage: 'en-US',
       loaderOptions: {
-        path: path.join(__dirname, '../../i18n/'),
+        path: path.join(__dirname, '../i18n/'),
         watch: true
       },
       resolvers: [{ use: QueryResolver, options: ['lang'] }, AcceptLanguageResolver],
-      typesOutputPath: path.join(__dirname, '../../../src/generated/i18n.generated.ts')
+      typesOutputPath: path.join(__dirname, '../../src/generated/i18n.generated.ts')
     }),
     // JWT 模块
     JwtModule.registerAsync({
@@ -118,6 +119,7 @@ import { AppService } from './app.service'
     }),
     // Providers
     PrismaModule,
+    RedisModule,
     LoggerModule,
     CosModule,
     // Modules

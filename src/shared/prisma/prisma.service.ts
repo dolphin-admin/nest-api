@@ -77,6 +77,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
     )
   }
 
+  // NOTE: 使用 OnModuleDestroy 来确保在应用程序关闭时断开数据库连接
   async onModuleDestroy() {
     await this.$disconnect()
   }
