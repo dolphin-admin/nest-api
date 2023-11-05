@@ -6,6 +6,7 @@ brucesong
 CASL
 datasource
 fieldname
+FLUSHALL
 monokai
 msword
 nestjs

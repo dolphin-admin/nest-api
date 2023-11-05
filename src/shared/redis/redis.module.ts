@@ -28,6 +28,7 @@ import { RedisService } from './redis.service'
       },
       inject: [ConfigService]
     }
-  ]
+  ],
+  exports: [RedisService]
 })
 export class RedisModule {}

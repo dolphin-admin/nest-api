@@ -24,6 +24,7 @@ import { AuthGuard } from '@/guards'
 import { ErrorsInterceptor, LoggingInterceptor } from '@/interceptors'
 
 import { CosModule } from '../shared/cos/cos.module'
+import { EmailModule } from '../shared/email/email.module'
 import { PrismaModule } from '../shared/prisma/prisma.module'
 import { RedisModule } from '../shared/redis/redis.module'
 import { AppController } from './app.controller'
@@ -120,6 +121,7 @@ import { UsersModule } from './users/users.module'
     // Providers
     PrismaModule,
     RedisModule,
+    EmailModule,
     LoggerModule,
     CosModule,
     // Modules

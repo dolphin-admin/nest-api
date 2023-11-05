@@ -89,6 +89,9 @@ dependencies:
   nestjs-i18n:
     specifier: ^10.3.7
     version: 10.3.7(@nestjs/common@10.2.8)(@nestjs/core@10.2.8)(class-validator@0.14.0)(rxjs@7.8.1)
+  nodemailer:
+    specifier: ^6.9.7
+    version: 6.9.7
   pug:
     specifier: ^3.0.2
     version: 3.0.2
@@ -148,6 +151,9 @@ devDependencies:
   '@types/node':
     specifier: ^20.8.10
     version: 20.8.10
+  '@types/nodemailer':
+    specifier: ^6.4.13
+    version: 6.4.13
   '@types/supertest':
     specifier: ^2.0.15
     version: 2.0.15
@@ -2563,6 +2569,12 @@ packages:
     resolution: {integrity: sha512-TlgT8JntpcbmKUFzjhsyhGfP2fsiz1Mv56im6enJ905xG1DAYesxJaeSbGqQmAw8OWPdhyJGhGSQGKRNJ45u9w==}
     dependencies:
       undici-types: 5.26.5
+
+  /@types/nodemailer@6.4.13:
+    resolution: {integrity: sha512-889Vq/77eEpidCwh52sVWpbnqQmIwL8yVBekNbrztVEaWKOCRH3Eq6hjIJh1jwsGDEAJEH0RR+YhpH9mfELLKA==}
+    dependencies:
+      '@types/node': 20.8.10
+    dev: true
 
   /@types/normalize-package-data@2.4.3:
     resolution: {integrity: sha512-ehPtgRgaULsFG8x0NeYJvmyH1hmlfsNLujHe9dQEia/7MAJYdzMSi19JtchUHjmBA6XC/75dK55mzZH+RyieSg==}
@@ -7721,6 +7733,11 @@ packages:
   /node-releases@2.0.13:
     resolution: {integrity: sha512-uYr7J37ae/ORWdZeQ1xxMJe3NtdmqMC/JZK+geofDrkLUApKRHPd18/TxtBOJ4A0/+uUIliorNrfYV6s1b02eQ==}
     dev: true
+
+  /nodemailer@6.9.7:
+    resolution: {integrity: sha512-rUtR77ksqex/eZRLmQ21LKVH5nAAsVicAtAYudK7JgwenEDZ0UIQ1adUGqErz7sMkWYxWTTU1aeP2Jga6WQyJw==}
+    engines: {node: '>=6.0.0'}
+    dev: false
 
   /normalize-package-data@2.5.0:
     resolution: {integrity: sha512-/5CMN3T0R4XTj4DcGaexo+roZSdSFW/0AOOTROrjxzCG1wrWXEsGbRKevjlIL+ZDE4sZlJr5ED4YW0yqmkK+eA==}
