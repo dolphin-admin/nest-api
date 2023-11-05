@@ -71,7 +71,7 @@
     "uuid": "^9.0.1"
   },
   "devDependencies": {
-    "@brucesong/eslint-config-ts": "^1.0.12",
+    "@brucesong/eslint-config-ts": "^1.0.13",
     "@commitlint/cli": "^18.2.0",
     "@commitlint/config-conventional": "^18.1.0",
     "@nestjs/cli": "^10.2.1",
@@ -90,7 +90,7 @@
     "commitizen": "^4.3.0",
     "cspell": "^7.3.8",
     "cz-git": "^1.7.1",
-    "eslint": "^8.52.0",
+    "eslint": "^8.53.0",
     "husky": "^8.0.3",
     "jest": "^29.7.0",
     "lint-staged": "^15.0.2",

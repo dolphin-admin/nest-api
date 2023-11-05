@@ -96,7 +96,7 @@ async function bootstrap() {
 
   // Swagger 配置
   const config = new DocumentBuilder()
-    .setTitle('Dolphin Admin Nest API')
+    .setTitle(appConfig.name)
     .setDescription(
       `<p>Dolphin Admin 后台管理系统的接口文档 Nest 版本，基于 Nest.js + TypeScript + Prisma + PostgreSQL。</p>
   <p>Apifox 线上地址：<a>https://dolphin-admin-nest.apifox.cn/</a></p>`

@@ -29,7 +29,6 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
         query: {
           // 日志
           async $allOperations({ operation, model, args, query }) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             const result = await query(args)
             const start = performance.now()
             const end = performance.now()
@@ -37,14 +36,12 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
             process.stdout.write('------------ Prisma parameters: ------------\n')
             console.log(
               util.inspect(
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 { model, operation, args, time },
                 { showHidden: false, depth: null, colors: true }
               )
             )
             process.stdout.write('------------ Prisma results: ------------\n')
             console.log(result)
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return result
           },
           $allModels: {

@@ -72,7 +72,6 @@ import { UsersModule } from './users/users.module'
     JwtModule.registerAsync({
       global: true,
       imports: [ConfigModule],
-      // eslint-disable-next-line @typescript-eslint/require-await
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
         signOptions: { expiresIn: '1d' }
@@ -89,7 +88,6 @@ import { UsersModule } from './users/users.module'
     // Mongoose 模块
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
-      // eslint-disable-next-line @typescript-eslint/require-await
       useFactory: async (configService: ConfigService) => ({
         uri: configService.get<string>('MONGO_URL')
       }),
@@ -100,7 +98,6 @@ import { UsersModule } from './users/users.module'
     // 队列模块
     BullModule.forRootAsync({
       imports: [ConfigModule],
-      // eslint-disable-next-line @typescript-eslint/require-await
       useFactory: async (configService: ConfigService) => ({
         redis: {
           host: configService.get<string>('REDIS_HOST'),
@@ -114,7 +111,6 @@ import { UsersModule } from './users/users.module'
     EventEmitterModule.forRoot(),
     // HTTP 模块
     HttpModule.registerAsync({
-      // eslint-disable-next-line @typescript-eslint/require-await
       useFactory: async () => ({
         timeout: 5000,
         maxRedirects: 5
