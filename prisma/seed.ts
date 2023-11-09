@@ -4,15 +4,14 @@ import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
-const SEED_SUPER_ADMIN_USERNAME = 'admin'
-const SEED_SUPER_ADMIN_PASSWORD = '123456'
+const SEED_ADMIN_USERNAME = 'admin'
+const SEED_ADMIN_PASSWORD = '123456'
+const SEED_VISITOR_USERNAME = 'visitor'
+const SEED_VISITOR_PASSWORD = '123456'
 
 async function main() {
   // 创建超级管理员
-  const defaultUser: Prisma.UserCreateInput = {
-    username: SEED_SUPER_ADMIN_USERNAME,
-    password: await hash(SEED_SUPER_ADMIN_PASSWORD, 10),
-    email: 'recall4056@gmail.com',
+  const commonUserInfo = {
     nickName: 'Bruce',
     firstName: 'Bruce',
     lastName: 'Song',
@@ -25,22 +24,41 @@ async function main() {
     builtIn: true
   }
 
-  const superAdmin = await prisma.user.findUnique({
-    where: {
-      username: SEED_SUPER_ADMIN_USERNAME
-    }
-  })
-
-  if (superAdmin) {
-    console.log('超级管理员已存在，请勿重复创建')
-    return
+  const defaultAdminUser: Prisma.UserCreateInput = {
+    ...commonUserInfo,
+    username: SEED_ADMIN_USERNAME,
+    password: await hash(SEED_ADMIN_PASSWORD, 10),
+    email: 'recall4056@gmail.com'
   }
 
-  await prisma.user.create({
-    data: {
-      ...defaultUser
-    }
-  })
+  const defaultVisitorUser: Prisma.UserCreateInput = {
+    ...commonUserInfo,
+    username: SEED_VISITOR_USERNAME,
+    password: await hash(SEED_VISITOR_PASSWORD, 10)
+  }
+
+  const adminUser = await prisma.user.findUnique({ where: { username: SEED_ADMIN_USERNAME } })
+  const visitorUser = await prisma.user.findUnique({ where: { username: SEED_VISITOR_USERNAME } })
+
+  if (adminUser) {
+    console.log('超级管理员已存在，无需重复创建')
+  } else {
+    await prisma.user.create({
+      data: {
+        ...defaultAdminUser
+      }
+    })
+  }
+
+  if (visitorUser) {
+    console.log('访客用户已存在，无需请勿重复创建')
+  } else {
+    await prisma.user.create({
+      data: {
+        ...defaultVisitorUser
+      }
+    })
+  }
 }
 
 main()
