@@ -2,6 +2,7 @@ import path from 'node:path'
 
 import { HttpModule } from '@nestjs/axios'
 import { BullModule } from '@nestjs/bull'
+import type { MiddlewareConsumer, NestModule } from '@nestjs/common'
 import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core'
@@ -15,6 +16,7 @@ import { AcceptLanguageResolver, I18nModule, QueryResolver } from 'nestjs-i18n'
 import {
   AppConfig,
   CosConfig,
+  DevConfig,
   JwtConfig,
   MongoConfig,
   NodemailerConfig,
@@ -23,6 +25,7 @@ import {
 } from '@/configs'
 import { AuthGuard } from '@/guards'
 import { ErrorsInterceptor, LoggingInterceptor } from '@/interceptors'
+import { DelayMiddleware } from '@/middlewares'
 
 import { CosModule } from '../shared/cos/cos.module'
 import { EmailModule } from '../shared/email/email.module'
@@ -59,6 +62,7 @@ import { UsersModule } from './users/users.module'
       envFilePath: ['.env'], // 指定环境变量文件
       load: [
         AppConfig,
+        DevConfig,
         JwtConfig,
         PostgresConfig,
         MongoConfig,
@@ -178,4 +182,8 @@ import { UsersModule } from './users/users.module'
     }
   ]
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(DelayMiddleware).forRoutes('*') // 应用延迟中间件，用于开发模式下模拟网络延迟
+  }
+}
