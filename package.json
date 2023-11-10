@@ -88,7 +88,7 @@
     "@types/supertest": "^2.0.15",
     "@types/uuid": "^9.0.6",
     "commitizen": "^4.3.0",
-    "cspell": "^7.3.8",
+    "cspell": "^8.0.0",
     "cz-git": "^1.7.1",
     "eslint": "^8.53.0",
     "husky": "^8.0.3",
