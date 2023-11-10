@@ -91,10 +91,9 @@ import { UsersModule } from './users/users.module'
     }),
     // 限流模块
     ThrottlerModule.forRoot([
-      {
-        ttl: 60000,
-        limit: 20
-      }
+      { name: 'short', ttl: 1000, limit: 5 }, // 每秒调用不超过 5 次
+      { name: 'medium', ttl: 10000, limit: 50 }, // 每 10 秒调用不超过 20 次
+      { name: 'long', ttl: 60000, limit: 300 } // 每分钟调用不超过 100 次
     ]),
     // Mongoose 模块
     MongooseModule.forRootAsync({
@@ -123,7 +122,7 @@ import { UsersModule } from './users/users.module'
     // HTTP 模块
     HttpModule.registerAsync({
       useFactory: async () => ({
-        timeout: 5000,
+        timeout: 10000,
         maxRedirects: 5
       })
     }),

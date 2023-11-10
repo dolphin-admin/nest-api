@@ -10,6 +10,7 @@ import {
   Query
 } from '@nestjs/common'
 import { ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger'
+import { SkipThrottle } from '@nestjs/throttler'
 import type { User } from '@prisma/client'
 import { plainToClass } from 'class-transformer'
 import { I18n, I18nContext } from 'nestjs-i18n'
@@ -36,6 +37,7 @@ export class AuthController {
     HttpStatus.BAD_REQUEST,
     { status: HttpStatus.CONFLICT, description: '用户名已存在' }
   ])
+  @SkipThrottle()
   @Post('signup')
   signup() {
     const user = this.authService.signup()
@@ -83,6 +85,7 @@ export class AuthController {
       }
     }
   })
+  @SkipThrottle()
   @Post('login')
   async login(
     @Query(
