@@ -50,6 +50,7 @@ import { PositionsModule } from './positions/positions.module'
 import { RolesModule } from './roles/roles.module'
 import { SettingsModule } from './settings/settings.module'
 import { SseModule } from './sse/sse.module'
+import { UserSettingsModule } from './user-settings/user-settings.module'
 import { UserTrafficRecordsModule } from './user-traffic-records/user-traffic-records.module'
 import { UserTrafficsModule } from './user-traffics/user-traffics.module'
 import { UsersModule } from './users/users.module'
@@ -155,7 +156,8 @@ import { UsersModule } from './users/users.module'
     UserTrafficRecordsModule,
     OperationLogsModule,
     CronJobLogsModule,
-    LoginLogsModule
+    LoginLogsModule,
+    UserSettingsModule
   ],
   controllers: [AppController],
   providers: [

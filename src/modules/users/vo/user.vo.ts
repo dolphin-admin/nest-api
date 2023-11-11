@@ -1,5 +1,5 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger'
-import { Exclude } from 'class-transformer'
+import { Exclude, Expose } from 'class-transformer'
 
 import { BaseResourceVo } from '@/class'
 
@@ -35,6 +35,12 @@ export class UserVo extends BaseResourceVo {
 
   @ApiProperty({ description: '姓' })
   lastName: string
+
+  @ApiProperty({ description: '全名' })
+  @Expose({ name: 'fullName' })
+  getFullName(): string {
+    return [this.firstName, this.middleName ?? '', this.lastName].filter((item) => item).join(' ')
+  }
 
   @ApiProperty({ description: '头像' })
   avatar: string

@@ -79,9 +79,9 @@ export class UsersController {
   @ApiOkResponse({ description: '请求成功' })
   @ApiUnauthorizedResponse({ description: '认证失败' })
   @ApiNotFoundResponse({ description: '用户不存在' })
-  @ApiParam({ name: 'id', description: '用户 ID', required: true, example: 1 })
+  @ApiParam({ name: 'id', description: 'ID', required: true, example: 1 })
   @Get(':id(\\d+)')
-  async findOne(@Param('id') id: number) {
+  async findOneById(@Param('id') id: number) {
     const user = await this.usersService.findOneById(id)
     if (!user) {
       throw new NotFoundException('用户不存在')
@@ -96,7 +96,7 @@ export class UsersController {
   @ApiUnauthorizedResponse({ description: '认证失败' })
   @ApiBadRequestResponse({ description: '参数错误' })
   @ApiNotFoundResponse({ description: '用户不存在' })
-  @ApiParam({ name: 'id', description: '用户 ID', required: true })
+  @ApiParam({ name: 'id', description: 'ID', required: true })
   @ApiBody({ description: '用户信息', type: UpdateUserDto })
   @Patch(':id(\\d+)')
   update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
@@ -108,7 +108,7 @@ export class UsersController {
   @ApiUnauthorizedResponse({ description: '认证失败' })
   @ApiBadRequestResponse({ description: '参数错误' })
   @ApiNotFoundResponse({ description: '用户不存在' })
-  @ApiParam({ name: 'id', description: '用户 ID', required: true })
+  @ApiParam({ name: 'id', description: 'ID', required: true })
   @Delete(':id(\\d+)')
   remove(@Param('id') id: number) {
     return this.usersService.remove(id)

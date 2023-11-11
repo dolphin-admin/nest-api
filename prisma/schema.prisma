@@ -60,7 +60,7 @@ model User {
   /// 用户 - 部门
   userPositions UserPosition[]
   /// 设置
-  settings      Setting[]
+  userSettings  UserSetting[]
   /// 系统通知
   notifications Notification[]
   /// 用户流量记录
@@ -162,13 +162,13 @@ model Role {
 /// 角色 - 翻译
 model RoleTrans {
   /// 唯一标识
-  id     Int     @id @default(autoincrement())
+  id     Int    @id @default(autoincrement())
   /// 语言
-  lang   Lang
+  lang   String @db.VarChar(10)
   /// 展示名称
-  label  String  @db.VarChar(50)
+  label  String @db.VarChar(50)
   /// 备注
-  remark String? @db.VarChar(500)
+  remark String @db.VarChar(500)
 
   /// 角色
   role   Role @relation(fields: [roleId], references: [id])
@@ -485,7 +485,7 @@ model PositionTrans {
   /// 唯一标识
   id     Int     @id @default(autoincrement())
   /// 语言
-  lang   Lang
+  lang   String  @db.VarChar(10)
   /// 展示名称
   label  String  @db.VarChar(50)
   /// 备注
@@ -543,14 +543,14 @@ model UserPosition {
   @@map("system_user_position")
 }
 
-// 设置
-model Setting {
+// 用户设置
+model UserSetting {
   /// 唯一标识
   id        Int     @id @default(autoincrement())
   /// 键
   key       String  @unique @db.VarChar(100)
   /// 值
-  value     String? @db.VarChar(255)
+  value     String  @db.VarChar(255)
   /// 是否启用
   enabled   Boolean @default(true)
   /// 是否内置
@@ -559,11 +559,78 @@ model Setting {
   sortOrder Int?    @default(0) @map("sort_order")
 
   /// 用户
-  user         User           @relation(fields: [userId], references: [id])
+  user             User               @relation(fields: [userId], references: [id])
   /// 用户 ID
-  userId       Int            @unique @map("user_id")
+  userId           Int                @unique @map("user_id")
+  /// 用户设置 - 翻译
+  userSettingTrans UserSettingTrans[]
+
+  /// 创建时间
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
+  /// 创建人
+  createdBy Int?      @map("created_by")
+  /// 更新时间
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  /// 更新人
+  updatedBy Int?      @map("updated_by")
+  /// 删除时间
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+  /// 删除人
+  deletedBy Int?      @map("deleted_by")
+
+  @@map("system_user_setting")
+}
+
+/// 用户设置 - 翻译
+model UserSettingTrans {
+  /// 唯一标识
+  id     Int     @id @default(autoincrement())
+  /// 语言
+  lang   String  @db.VarChar(10)
+  /// 展示名称
+  label  String  @db.VarChar(50)
+  /// 备注
+  remark String? @db.VarChar(500)
+
+  /// 参数
+  userSetting   UserSetting @relation(fields: [userSettingId], references: [id])
+  /// 参数 ID
+  userSettingId Int         @map("user_setting_id")
+
+  /// 创建时间
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
+  /// 创建人
+  createdBy Int?      @map("created_by")
+  /// 更新时间
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+  /// 更新人
+  updatedBy Int?      @map("updated_by")
+  /// 删除时间
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+  /// 删除人
+  deletedBy Int?      @map("deleted_by")
+
+  @@unique([userSettingId, lang])
+  @@map("system_user_setting_trans")
+}
+
+/// 系统设置
+model Setting {
+  /// 唯一标识
+  id        Int     @id @default(autoincrement())
+  /// 键
+  key       String  @unique @db.VarChar(100)
+  /// 值
+  value     String  @db.VarChar(255)
+  /// 是否启用
+  enabled   Boolean @default(true)
+  /// 是否内置
+  builtIn   Boolean @default(false) @map("built_in")
+  /// 排序
+  sortOrder Int?    @default(0) @map("sort_order")
+
   /// 设置 - 翻译
-  settingTrans SettingTrans[]
+  SettingTrans SettingTrans[]
 
   /// 创建时间
   createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
@@ -581,16 +648,16 @@ model Setting {
   @@map("system_setting")
 }
 
-/// 设置 - 翻译
+/// 系统设置 - 翻译
 model SettingTrans {
   /// 唯一标识
-  id     Int     @id @default(autoincrement())
+  id     Int    @id @default(autoincrement())
   /// 语言
-  lang   Lang
+  lang   String @db.VarChar(10)
   /// 展示名称
-  label  String  @db.VarChar(50)
+  label  String @db.VarChar(50)
   /// 备注
-  remark String? @db.VarChar(500)
+  remark String @db.VarChar(500)
 
   /// 参数
   setting   Setting @relation(fields: [settingId], references: [id])
@@ -651,13 +718,13 @@ model Dictionary {
 // 字典 - 翻译
 model DictionaryTrans {
   /// 唯一标识
-  id     Int     @id @default(autoincrement())
+  id     Int    @id @default(autoincrement())
   /// 语言
-  lang   Lang
+  lang   String @db.VarChar(10)
   /// 展示名称
-  label  String  @db.VarChar(50)
+  label  String @db.VarChar(50)
   /// 备注
-  remark String? @db.VarChar(500)
+  remark String @db.VarChar(500)
 
   /// 字典
   dictionary   Dictionary @relation(fields: [dictionaryId], references: [id])
@@ -722,13 +789,13 @@ model DictionaryItem {
 // 字典数据 - 翻译
 model DictionaryItemTrans {
   /// 唯一标识
-  id     Int     @id @default(autoincrement())
+  id     Int    @id @default(autoincrement())
   /// 语言
-  lang   Lang
+  lang   String @db.VarChar(10)
   /// 展示名称
-  label  String  @db.VarChar(50)
+  label  String @db.VarChar(50)
   /// 备注
-  remark String? @db.VarChar(500)
+  remark String @db.VarChar(500)
 
   /// 字典
   dictionaryItem   DictionaryItem @relation(fields: [dictionaryItemId], references: [id])
@@ -787,15 +854,15 @@ model Notification {
 // 系统通知 - 翻译
 model NotificationTrans {
   /// 唯一标识
-  id      Int     @id @default(autoincrement())
+  id      Int    @id @default(autoincrement())
   /// 语言
-  lang    Lang
+  lang    String @db.VarChar(10)
   /// 标题
-  title   String  @db.VarChar(50)
+  title   String @db.VarChar(50)
   /// 内容
-  content String? @db.VarChar(500)
+  content String @db.VarChar(500)
   /// 备注
-  remark  String? @db.VarChar(500)
+  remark  String @db.VarChar(500)
 
   /// 系统通知
   notification   Notification @relation(fields: [notificationId], references: [id])
@@ -1032,10 +1099,4 @@ enum MenuItemType {
   MENU
   LINK
   BUTTON
-}
-
-/// 语言
-enum Lang {
-  zh_CN
-  en_US
 }

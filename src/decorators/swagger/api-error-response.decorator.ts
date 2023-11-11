@@ -36,8 +36,8 @@ const getDecorator = (option: HttpStatus | Option) => {
 }
 
 // 错误响应装饰器，支持传递多个 HttpStatus 或自定义对象
-export const ApiBadResponse = (options: (HttpStatus | Option)[]) => {
-  const decorators: Parameters<typeof applyDecorators> = options.map((option) =>
+export const ApiErrorResponse = (...options: (HttpStatus | Option)[]) => {
+  const decorators: Parameters<typeof applyDecorators> = (options ?? []).map((option) =>
     getDecorator(option)
   )
   // 默认添加 401 和 403 的错误响应装饰器

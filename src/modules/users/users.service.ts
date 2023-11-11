@@ -23,16 +23,16 @@ export class UsersService {
       return new BaseResponseVo<UserVo>({
         data: userVo
       })
-    } catch (err) {
-      if (err instanceof Prisma.PrismaClientKnownRequestError) {
-        const { meta, code } = err
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        const { meta, code } = e
         if (code === 'P2002') {
           if ((meta?.target as string[]).includes('username')) {
             throw new ConflictException('用户名已存在')
           }
         }
       }
-      throw err
+      throw e
     }
   }
 

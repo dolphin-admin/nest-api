@@ -7,10 +7,11 @@ import { ConfigService } from '@nestjs/config'
 import { NestFactory, Reflector } from '@nestjs/core'
 import type { NestExpressApplication } from '@nestjs/platform-express'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
-import { I18nValidationPipe } from 'nestjs-i18n'
+import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n'
 
+import { ErrorResponseVo } from './class'
 import type { AppConfig } from './configs'
-import { I18nValidationExceptionFilter } from './filters'
+import { HttpExceptionFilter } from './filters'
 import metadata from './metadata'
 import { AppModule } from './modules/app.module'
 
@@ -48,13 +49,27 @@ async function bootstrap() {
       transformOptions: {
         enableImplicitConversion: true // 允许隐式转换
       },
-      stopAtFirstError: true // 遇到错误立即停止
-      // disableErrorMessages: true, // 禁用错误消息
+      stopAtFirstError: true, // 遇到错误立即停止
+      disableErrorMessages: false // 禁用错误消息
     })
   )
 
+  // 全局过滤器 - 异常处理
+  app.useGlobalFilters(new HttpExceptionFilter())
   // 全局过滤器 - 国际化
-  app.useGlobalFilters(new I18nValidationExceptionFilter())
+  app.useGlobalFilters(
+    new I18nValidationExceptionFilter({
+      detailedErrors: false,
+      errorHttpStatusCode: HttpStatus.BAD_REQUEST,
+      responseBodyFormatter: (_host, _exc, formattedErrors) => {
+        const errors = formattedErrors as string[]
+        return new ErrorResponseVo({
+          message: errors[0],
+          errors
+        }) as Record<string, unknown>
+      }
+    })
+  )
 
   // 全局拦截器 - 序列化
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)))
