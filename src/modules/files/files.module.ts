@@ -6,7 +6,7 @@ import { diskStorage } from 'multer'
 
 import { MAX_UPLOAD_FILE_SIZE } from '@/constants'
 import { fileExtensionMap } from '@/maps'
-import { uuid } from '@/utils'
+import { ValueUtils } from '@/utils'
 
 import { FilesController } from './files.controller'
 import { FilesService } from './files.service'
@@ -23,7 +23,8 @@ import { FilesService } from './files.service'
       useFactory: () => ({
         storage: diskStorage({
           destination: 'uploads',
-          filename: (_, file, callback) => callback(null, `${uuid() + extname(file.originalname)}`)
+          filename: (_, file, callback) =>
+            callback(null, `${ValueUtils.uuid() + extname(file.originalname)}`)
         }),
         limits: {
           fileSize: MAX_UPLOAD_FILE_SIZE

@@ -630,7 +630,7 @@ model Setting {
   sortOrder Int?    @default(0) @map("sort_order")
 
   /// 设置 - 翻译
-  SettingTrans SettingTrans[]
+  settingTrans SettingTrans[]
 
   /// 创建时间
   createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)

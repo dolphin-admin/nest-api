@@ -1,5 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger'
-import { Type } from 'class-transformer'
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger'
+import { Exclude, Type } from 'class-transformer'
 
 import { BaseResourceVo, MultilingualVo } from '@/class'
 
@@ -29,4 +29,8 @@ export class SettingVo extends BaseResourceVo {
 
   @ApiProperty({ description: '排序' })
   sortOrder: number
+
+  @ApiHideProperty()
+  @Exclude()
+  settingTrans: any
 }

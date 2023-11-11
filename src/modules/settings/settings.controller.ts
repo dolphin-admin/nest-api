@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   HttpStatus,
-  NotFoundException,
   Param,
   ParseIntPipe,
   Patch,
@@ -55,9 +54,6 @@ export class SettingsController {
   @Get(':id(\\d+)')
   async findOneById(@Param('id', new ParseIntPipe()) id: number) {
     const setting = await this.settingsService.findOneById(id)
-    if (!setting) {
-      throw new NotFoundException('设置不存在')
-    }
     return new BaseResponseVo({
       data: plainToClass(SettingVo, setting)
     })
@@ -66,24 +62,33 @@ export class SettingsController {
   @ApiOperation({ summary: '设置详情 [Key]' })
   @ApiBaseResponse({ type: SettingVo })
   @ApiErrorResponse(HttpStatus.NOT_FOUND)
+  @ApiParam({ name: 'key', description: '键', required: true, example: 'SITE.GITHUB.REPO' })
   @Get(':key')
-  findOneByKey(key: string) {
-    return this.settingsService.findOneByKey(key)
+  async findOneByKey(@Param('key') key: string) {
+    const setting = await this.settingsService.findOneByKey(key)
+    return new BaseResponseVo({
+      data: plainToClass(SettingVo, setting)
+    })
   }
 
-  @ApiOperation({ summary: '更新设置' })
-  @ApiBaseResponse({ type: SettingVo })
+  @ApiOperation({ summary: '修改设置' })
+  @ApiBaseResponse({ type: SettingVo, description: '修改成功' })
   @ApiErrorResponse(HttpStatus.BAD_REQUEST, HttpStatus.NOT_FOUND)
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSettingDto: UpdateSettingDto) {
-    return this.settingsService.update(+id, updateSettingDto)
+  @ApiParam({ name: 'id', description: 'ID', required: true, example: 1 })
+  @Patch(':id(\\d+)')
+  update(@Param('id', new ParseIntPipe()) id: number, @Body() updateSettingDto: UpdateSettingDto) {
+    return this.settingsService.update(id, updateSettingDto)
   }
 
   @ApiOperation({ summary: '删除设置' })
-  @ApiBaseResponse({ type: SettingVo })
+  @ApiBaseResponse({ type: SettingVo, description: '删除成功' })
   @ApiErrorResponse(HttpStatus.NOT_FOUND)
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.settingsService.remove(+id)
+  @ApiParam({ name: 'id', description: 'ID', required: true, example: 1 })
+  @Delete(':id(\\d+)')
+  async remove(@Param('id', new ParseIntPipe()) id: number) {
+    await this.settingsService.remove(id)
+    return new BaseResponseVo({
+      message: '删除成功'
+    })
   }
 }

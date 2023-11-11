@@ -92,7 +92,7 @@ export class UsersController {
   }
 
   @ApiOperation({ summary: '修改用户' })
-  @ApiOkResponse({ description: '请求成功' })
+  @ApiOkResponse({ description: '修改成功' })
   @ApiUnauthorizedResponse({ description: '认证失败' })
   @ApiBadRequestResponse({ description: '参数错误' })
   @ApiNotFoundResponse({ description: '用户不存在' })
