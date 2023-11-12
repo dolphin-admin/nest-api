@@ -37,7 +37,7 @@
     "prepare": "husky install"
   },
   "dependencies": {
-    "@dolphin-admin/bootstrap-animation": "^0.0.3",
+    "@dolphin-admin/bootstrap-animation": "^0.0.4",
     "@nestjs/axios": "^3.0.1",
     "@nestjs/bull": "^10.0.1",
     "@nestjs/common": "^10.2.8",
