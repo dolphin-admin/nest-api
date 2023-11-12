@@ -125,15 +125,15 @@ model Auth {
 /// 角色
 model Role {
   /// 唯一标识
-  id        Int     @id @default(autoincrement())
+  id      Int     @id @default(autoincrement())
   /// 角色编码
-  code      String  @unique @db.VarChar(50)
+  code    String  @unique @db.VarChar(50)
   /// 是否启用
-  enabled   Boolean @default(true)
+  enabled Boolean @default(true)
   /// 是否内置
-  builtIn   Boolean @default(false) @map("built_in")
+  builtIn Boolean @default(false) @map("built_in")
   /// 排序
-  sortOrder Int?    @default(0) @map("sort_order")
+  sort    Int?    @default(0)
 
   /// 用户 - 角色
   userRoles       UserRole[]
@@ -245,7 +245,7 @@ model MenuItem {
   /// 是否内置
   builtIn       Boolean      @default(false) @map("built_in")
   /// 排序
-  sortOrder     Int          @default(0) @map("sort_order")
+  sort          Int          @default(0)
 
   /// 父级菜单
   parent        MenuItem?       @relation("MenuItemToParent", fields: [parentId], references: [id])
@@ -353,7 +353,7 @@ model Department {
   /// 是否内置
   builtIn     Boolean @default(false) @map("built_in")
   /// 排序
-  sortOrder   Int     @default(0) @map("sort_order")
+  sort        Int     @default(0)
   /// 祖先部门
   parentIds   Int[]   @map("parent_Ids")
 
@@ -450,15 +450,15 @@ model RoleDepartment {
 /// 职位
 model Position {
   /// 唯一标识
-  id        Int     @id @default(autoincrement())
+  id      Int     @id @default(autoincrement())
   /// 职位编码
-  code      String  @unique @db.VarChar(50)
+  code    String  @unique @db.VarChar(50)
   /// 是否启用
-  enabled   Boolean @default(true)
+  enabled Boolean @default(true)
   /// 是否内置
-  builtIn   Boolean @default(false) @map("built_in")
+  builtIn Boolean @default(false) @map("built_in")
   /// 排序
-  sortOrder Int?    @default(0) @map("sort_order")
+  sort    Int?    @default(0)
 
   /// 用户 - 部门
   userPositions UserPosition[]
@@ -547,17 +547,17 @@ model UserPosition {
 // 用户设置
 model UserSetting {
   /// 唯一标识
-  id        Int     @id @default(autoincrement())
+  id      Int     @id @default(autoincrement())
   /// 键
-  key       String  @unique @db.VarChar(100)
+  key     String  @unique @db.VarChar(100)
   /// 值
-  value     String  @db.VarChar(255)
+  value   String  @db.VarChar(255)
   /// 是否启用
-  enabled   Boolean @default(true)
+  enabled Boolean @default(true)
   /// 是否内置
-  builtIn   Boolean @default(false) @map("built_in")
+  builtIn Boolean @default(false) @map("built_in")
   /// 排序
-  sortOrder Int?    @default(0) @map("sort_order")
+  sort    Int?    @default(0)
 
   /// 用户
   user             User               @relation(fields: [userId], references: [id])
@@ -618,17 +618,17 @@ model UserSettingTrans {
 /// 系统设置
 model Setting {
   /// 唯一标识
-  id        Int     @id @default(autoincrement())
+  id      Int     @id @default(autoincrement())
   /// 键
-  key       String  @unique @db.VarChar(100)
+  key     String  @unique @db.VarChar(100)
   /// 值
-  value     String  @db.VarChar(255)
+  value   String  @db.VarChar(255)
   /// 是否启用
-  enabled   Boolean @default(true)
+  enabled Boolean @default(true)
   /// 是否内置
-  builtIn   Boolean @default(false) @map("built_in")
+  builtIn Boolean @default(false) @map("built_in")
   /// 排序
-  sortOrder Int?    @default(0) @map("sort_order")
+  sort    Int?    @default(0)
 
   /// 设置 - 翻译
   settingTrans SettingTrans[]
@@ -685,15 +685,15 @@ model SettingTrans {
 /// 字典
 model Dictionary {
   /// ID
-  id        Int     @id @default(autoincrement())
+  id      Int     @id @default(autoincrement())
   // 字典编码
-  code      String  @unique @db.VarChar(50)
+  code    String  @unique @db.VarChar(50)
   /// 是否启用
-  enabled   Boolean @default(true)
+  enabled Boolean @default(true)
   /// 是否内置
-  builtIn   Boolean @default(false) @map("built_in")
+  builtIn Boolean @default(false) @map("built_in")
   /// 排序
-  sortOrder Int?    @default(0) @map("sort_order")
+  sort    Int?    @default(0)
 
   /// 字典 - 字典数据
   dictionaryItems DictionaryItem[]
@@ -752,17 +752,17 @@ model DictionaryTrans {
 /// 字典数据
 model DictionaryItem {
   /// 唯一标识
-  id        Int     @id @default(autoincrement())
+  id      Int     @id @default(autoincrement())
   /// 键
-  key       String  @unique @db.VarChar(100)
+  key     String  @unique @db.VarChar(100)
   /// 值
-  value     String? @db.VarChar(255)
+  value   String? @db.VarChar(255)
   /// 是否启用
-  enabled   Boolean @default(true)
+  enabled Boolean @default(true)
   /// 是否内置
-  builtIn   Boolean @default(false) @map("built_in")
+  builtIn Boolean @default(false) @map("built_in")
   /// 排序
-  sortOrder Int?    @default(0) @map("sort_order")
+  sort    Int?    @default(0)
 
   /// 字典
   dictionary          Dictionary            @relation(fields: [dictionaryId], references: [id])

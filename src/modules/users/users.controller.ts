@@ -57,7 +57,7 @@ export class UsersController {
   async findMany(@Query() pageDto: PageDto) {
     const { page, pageSize } = pageDto
     const [data, total] = await this.usersService.findMany(pageDto)
-    return new PageVo<UserVo[]>({ page, pageSize, total, data })
+    return new PageVo<UserVo>({ page, pageSize, total, data })
   }
 
   @ApiOperation({ summary: '个人信息' })

@@ -1,7 +1,9 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
 import type { SettingTrans } from '@prisma/client'
 import { Prisma } from '@prisma/client'
+import _ from 'lodash'
 
+import type { SortColumnKey } from '@/enums'
 import { LanguageCode } from '@/enums'
 import { PrismaService } from '@/shared/prisma/prisma.service'
 import { I18nUtils } from '@/utils'
@@ -67,21 +69,60 @@ export class SettingsService {
    * @returns 设置列表
    */
   async findMany(pageSettingDto: PageSettingDto) {
-    const { page, pageSize, searchText, startTime, endTime } = pageSettingDto
+    const {
+      page,
+      pageSize,
+      searchText,
+      startTime,
+      endTime,
+      sortColumnKeys,
+      sortOrders,
+      key,
+      value,
+      enabled,
+      builtIn,
+      id
+    } = pageSettingDto
+
+    const orderBy = sortColumnKeys.map((field: SortColumnKey, index) => ({
+      [field]: sortOrders[index]
+    }))
+
+    console.log(pageSettingDto)
+
     const where: Prisma.SettingWhereInput = {
       AND: [
         {
           createdAt: {
             ...(startTime && { gte: startTime }),
             ...(endTime && { lte: endTime })
+          },
+          id: {
+            ...(id && { equals: id })
+          },
+          key: {
+            ...(key && { contains: key })
+          },
+          value: {
+            ...(value && { contains: value })
+          },
+          enabled: {
+            ...(enabled && { equals: enabled })
+          },
+          builtIn: {
+            ...(builtIn && { equals: builtIn })
           }
         }
       ],
-      OR: [
-        ...(searchText ? [{ key: { contains: searchText }, value: { contains: searchText } }] : []),
-        ...(searchText ? [{ id: { equals: +searchText } }] : [])
-      ]
+      OR: searchText
+        ? [
+            { key: { contains: searchText } },
+            { value: { contains: searchText } },
+            { id: { equals: _.toSafeInteger(searchText) } }
+          ]
+        : undefined
     }
+
     const results = await this.prismaService.setting.findMany({
       where,
       include: {
@@ -96,6 +137,7 @@ export class SettingsService {
           }
         }
       },
+      orderBy,
       skip: (page - 1) * pageSize,
       take: pageSize
     })

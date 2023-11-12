@@ -14,7 +14,7 @@ export const AppConfig = registerAs('app', () =>
       githubUrl: 'https://github.com/bit-ocean-studio'
     },
     // App 配置
-    port: env.PORT ?? 3000,
+    port: env.PORT ? parseInt(env.PORT, 10) : 3000,
     env: env.ENV ?? 'DEV',
     isDEV: env.ENV === 'DEV',
     isPROD: env.ENV === 'PROD',

@@ -133,9 +133,9 @@ async function bootstrap() {
   SwaggerModule.setup('api/docs', app, document, {
     swaggerOptions: {
       displayOperationId: true, // 显示操作 ID
-      defaultModelsExpandDepth: 2, // 默认模型展开深度
-      defaultModelExpandDepth: 2, // 默认模型展开深度
-      docExpansion: 'none', // 折叠
+      defaultModelsExpandDepth: 3, // 默认模型展开深度
+      defaultModelExpandDepth: 3, // 默认模型展开深度
+      docExpansion: 'list', // 折叠 ["list"*, "full", "none"]
       filter: true, // 显示过滤
       syntaxHighlight: {
         activated: true,
@@ -148,9 +148,7 @@ async function bootstrap() {
     }
   })
 
-  const port = configService.get<string>('PORT') ?? 3000
-
-  await app.listen(+port)
+  await app.listen(appConfig.port)
 }
 
 bootstrap()

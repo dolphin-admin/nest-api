@@ -28,7 +28,7 @@ export class SettingVo extends BaseResourceVo {
   builtIn: boolean
 
   @ApiProperty({ description: '排序' })
-  sortOrder: number
+  sort: number
 
   @ApiHideProperty()
   @Exclude()

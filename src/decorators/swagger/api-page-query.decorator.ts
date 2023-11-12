@@ -43,14 +43,14 @@ export const ApiPageQuery = (...type: QueryType[]) => {
         example: new Date(
           new Date().setTime(new Date().getTime() - 24 * 60 * 60 * 1000 * 7)
         ).toISOString(),
-        type: Date
+        type: String
       }),
       ApiQuery({
         name: 'endTime',
         description: '结束时间',
         required: false,
         example: new Date().toISOString(),
-        type: Date
+        type: String
       })
     )
   }

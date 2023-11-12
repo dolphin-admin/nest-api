@@ -4,12 +4,15 @@ import process from 'node:process'
 import util from 'node:util'
 
 import type { OnModuleDestroy, OnModuleInit } from '@nestjs/common'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
+import { ConfigType } from '@nestjs/config'
 import { PrismaClient } from '@prisma/client'
+
+import { DevConfig } from '@/configs'
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
-  constructor() {
+  constructor(@Inject(DevConfig.KEY) private readonly devConfig: ConfigType<typeof DevConfig>) {
     super({
       log: [],
       errorFormat: 'pretty'
@@ -23,6 +26,8 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
   async onModuleInit() {
     await this.$connect()
 
+    const { enablePrismaLog } = this.devConfig
+
     // Prisma 扩展
     Object.assign(
       this,
@@ -31,6 +36,9 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
           // 日志
           async $allOperations({ operation, model, args, query }) {
             const result = await query(args)
+            if (!enablePrismaLog) {
+              return result
+            }
             const start = performance.now()
             const end = performance.now()
             const time = end - start
