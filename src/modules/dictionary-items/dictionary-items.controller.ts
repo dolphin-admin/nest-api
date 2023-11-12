@@ -1,9 +1,12 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common'
+import { ApiBasicAuth, ApiTags } from '@nestjs/swagger'
 
 import { DictionaryItemsService } from './dictionary-items.service'
 import { CreateDictionaryItemDto } from './dto/create-dictionary-item.dto'
 import { UpdateDictionaryItemDto } from './dto/update-dictionary-item.dto'
 
+@ApiTags('字典数据')
+@ApiBasicAuth('bearer')
 @Controller('dictionary-items')
 export class DictionaryItemsController {
   constructor(private readonly dictionaryItemsService: DictionaryItemsService) {}

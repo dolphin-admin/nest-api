@@ -1,9 +1,12 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common'
+import { ApiBasicAuth, ApiTags } from '@nestjs/swagger'
 
 import { CreatePositionDto } from './dto/create-position.dto'
 import { UpdatePositionDto } from './dto/update-position.dto'
 import { PositionsService } from './positions.service'
 
+@ApiTags('职位')
+@ApiBasicAuth('bearer')
 @Controller('positions')
 export class PositionsController {
   constructor(private readonly positionsService: PositionsService) {}

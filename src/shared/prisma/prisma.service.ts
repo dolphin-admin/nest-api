@@ -48,27 +48,45 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
           $allModels: {
             // 查询过滤软删除, deletedAt 是默认的软删除字段
             async findFirst({ args, query }) {
-              args.where = { deletedAt: null, ...args.where }
-              return query(args)
-            },
-            async findMany({ args, query }) {
-              args.where = { deletedAt: null, ...args.where }
+              args.where = {
+                deletedAt: null,
+                ...args.where
+              }
               return query(args)
             },
             async findFirstOrThrow({ args, query }) {
-              args.where = { deletedAt: null, ...args.where }
+              args.where = {
+                deletedAt: null,
+                ...args.where
+              }
               return query(args)
             },
             async findUnique({ args, query }) {
-              args.where = { deletedAt: null, ...args.where }
+              args.where = {
+                deletedAt: null,
+                ...args.where
+              }
               return query(args)
             },
             async findUniqueOrThrow({ args, query }) {
-              args.where = { deletedAt: null, ...args.where }
+              args.where = {
+                deletedAt: null,
+                ...args.where
+              }
+              return query(args)
+            },
+            async findMany({ args, query }) {
+              args.where = {
+                deletedAt: null,
+                ...args.where
+              }
               return query(args)
             },
             async count({ args, query }) {
-              args.where = { deletedAt: null, ...args.where }
+              args.where = {
+                deletedAt: null,
+                ...args.where
+              }
               return query(args)
             }
           }

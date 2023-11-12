@@ -2,7 +2,7 @@ import { ConflictException, Injectable } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
 import { plainToClass, plainToInstance } from 'class-transformer'
 
-import type { PageDateDto } from '@/class'
+import type { PageDto } from '@/class'
 import { BaseResponseVo } from '@/class'
 import { PrismaService } from '@/shared/prisma/prisma.service'
 
@@ -36,8 +36,8 @@ export class UsersService {
     }
   }
 
-  async findMany(pageDateDto: PageDateDto): Promise<[UserVo[], number]> {
-    const { page, pageSize, searchText, startTime, endTime } = pageDateDto
+  async findMany(pageDto: PageDto): Promise<[UserVo[], number]> {
+    const { page, pageSize, searchText, startTime, endTime } = pageDto
     console.log(page, pageSize, searchText, startTime, endTime)
     const users = await this.prismaService.user.findMany()
     const total = await this.prismaService.user.count()

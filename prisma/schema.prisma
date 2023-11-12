@@ -4,8 +4,9 @@ datasource db {
 }
 
 generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native"]
+  provider        = "prisma-client-js"
+  binaryTargets   = ["native"]
+  previewFeatures = ["metrics"]
 }
 
 /// 用户
@@ -694,7 +695,7 @@ model Dictionary {
   /// 排序
   sortOrder Int?    @default(0) @map("sort_order")
 
-  /// 字典 - 字典项
+  /// 字典 - 字典数据
   dictionaryItems DictionaryItem[]
   /// 字典 - 翻译
   dictionaryTrans DictionaryTrans[]

@@ -1,9 +1,12 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common'
+import { ApiBasicAuth, ApiTags } from '@nestjs/swagger'
 
 import { CreateUserTrafficRecordDto } from './dto/create-user-traffic-record.dto'
 import { UpdateUserTrafficRecordDto } from './dto/update-user-traffic-record.dto'
 import { UserTrafficRecordsService } from './user-traffic-records.service'
 
+@ApiTags('用户流量记录')
+@ApiBasicAuth('bearer')
 @Controller('user-traffic-records')
 export class UserTrafficRecordsController {
   constructor(private readonly userTrafficRecordsService: UserTrafficRecordsService) {}

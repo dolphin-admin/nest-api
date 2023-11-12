@@ -1,9 +1,12 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common'
+import { ApiBasicAuth, ApiTags } from '@nestjs/swagger'
 
 import { CreateNotificationDto } from './dto/create-notification.dto'
 import { UpdateNotificationDto } from './dto/update-notification.dto'
 import { NotificationsService } from './notifications.service'
 
+@ApiTags('系统通知')
+@ApiBasicAuth('bearer')
 @Controller('notifications')
 export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) {}

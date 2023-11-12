@@ -36,7 +36,7 @@ export class UserVo extends BaseResourceVo {
   @ApiProperty({ description: '姓' })
   lastName: string
 
-  @ApiProperty({ description: '全名' })
+  @ApiProperty({ description: '全名', type: () => String })
   @Expose({ name: 'fullName' })
   getFullName(): string {
     return [this.firstName, this.middleName ?? '', this.lastName].filter((item) => item).join(' ')
