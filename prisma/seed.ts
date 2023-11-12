@@ -51,7 +51,7 @@ async function main() {
   }
 
   if (visitorUser) {
-    console.log('访客用户已存在，无需请勿重复创建')
+    console.log('访客用户已存在，无需重复创建')
   } else {
     await prisma.user.create({
       data: {

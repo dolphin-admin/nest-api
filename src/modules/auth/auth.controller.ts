@@ -16,7 +16,7 @@ import { plainToClass } from 'class-transformer'
 import { I18n, I18nContext } from 'nestjs-i18n'
 
 import { BaseResponseVo } from '@/class'
-import { ApiBadResponse, ApiBaseResponse, Auth, SkipAuth } from '@/decorators'
+import { ApiBaseResponse, ApiErrorResponse, Auth, SkipAuth } from '@/decorators'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 import { UserVo } from '@/modules/users/vo'
 
@@ -33,10 +33,10 @@ export class AuthController {
 
   @ApiOperation({ summary: '注册' })
   @ApiBaseResponse({ description: '注册成功', status: HttpStatus.CREATED, type: AuthVo })
-  @ApiBadResponse([
-    HttpStatus.BAD_REQUEST,
-    { status: HttpStatus.CONFLICT, description: '用户名已存在' }
-  ])
+  @ApiErrorResponse(HttpStatus.BAD_REQUEST, {
+    status: HttpStatus.CONFLICT,
+    description: '用户名已存在'
+  })
   @SkipThrottle()
   @Post('signup')
   signup() {
@@ -53,10 +53,10 @@ export class AuthController {
 
   @ApiOperation({ summary: '登录' })
   @ApiBaseResponse({ description: '登录成功', type: AuthVo })
-  @ApiBadResponse([
+  @ApiErrorResponse(
     { status: HttpStatus.BAD_REQUEST, description: '用户名或密码不正确' },
     { status: HttpStatus.NOT_IMPLEMENTED, description: '不支持该登录方式' }
-  ])
+  )
   @ApiQuery({
     name: 'type',
     type: Number,
@@ -126,7 +126,7 @@ export class AuthController {
 
   @ApiOperation({ summary: '退出登录' })
   @ApiBaseResponse({ description: '退出成功' })
-  @ApiBadResponse([{ status: HttpStatus.NOT_FOUND, description: '该用户已退出' }])
+  @ApiErrorResponse({ status: HttpStatus.NOT_FOUND, description: '该用户已退出' })
   @Auth()
   @Get('logout')
   logout() {

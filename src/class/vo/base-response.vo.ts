@@ -7,7 +7,7 @@ export class BaseResponseVo<T = any> {
   @ApiPropertyOptional({ description: '提示信息' })
   message?: string
 
-  @ApiPropertyOptional({ description: '响应数据' })
+  @ApiPropertyOptional({ description: '响应数据', type: () => Object })
   data?: T
 
   constructor(baseResponseVo?: BaseResponseVo<T>) {

@@ -1,1 +1,1 @@
-export * from './i18n-validation-exception.filter'
+export * from './http-exception.filter'

@@ -1,9 +1,12 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common'
+import { ApiBasicAuth, ApiTags } from '@nestjs/swagger'
 
 import { CreateMenuItemDto } from './dto/create-menu-item.dto'
 import { UpdateMenuItemDto } from './dto/update-menu-item.dto'
 import { MenuItemsService } from './menu-items.service'
 
+@ApiTags('菜单')
+@ApiBasicAuth('bearer')
 @Controller('menu-items')
 export class MenuItemsController {
   constructor(private readonly menuItemsService: MenuItemsService) {}

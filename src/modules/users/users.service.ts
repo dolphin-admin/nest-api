@@ -2,7 +2,7 @@ import { ConflictException, Injectable } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
 import { plainToClass, plainToInstance } from 'class-transformer'
 
-import type { PageDateDto } from '@/class'
+import type { PageDto } from '@/class'
 import { BaseResponseVo } from '@/class'
 import { PrismaService } from '@/shared/prisma/prisma.service'
 
@@ -23,21 +23,21 @@ export class UsersService {
       return new BaseResponseVo<UserVo>({
         data: userVo
       })
-    } catch (err) {
-      if (err instanceof Prisma.PrismaClientKnownRequestError) {
-        const { meta, code } = err
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        const { meta, code } = e
         if (code === 'P2002') {
           if ((meta?.target as string[]).includes('username')) {
             throw new ConflictException('用户名已存在')
           }
         }
       }
-      throw err
+      throw e
     }
   }
 
-  async findMany(pageDateDto: PageDateDto): Promise<[UserVo[], number]> {
-    const { page, pageSize, searchText, startTime, endTime } = pageDateDto
+  async findMany(pageDto: PageDto): Promise<[UserVo[], number]> {
+    const { page, pageSize, searchText, startTime, endTime } = pageDto
     console.log(page, pageSize, searchText, startTime, endTime)
     const users = await this.prismaService.user.findMany()
     const total = await this.prismaService.user.count()

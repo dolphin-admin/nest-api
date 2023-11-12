@@ -3,23 +3,23 @@
 import { Path } from "nestjs-i18n";
 export type I18nTranslations = {
     "auth": {
-        "UNAUTHORIZED": string;
-        "USERNAME": {
-            "NOT_EMPTY": string;
-            "LENGTH": string;
-            "NO_WHITESPACE": string;
-            "NOT_EXIST": string;
+        "LOGIN": {
+            "SUCCESS": string;
+            "TYPE_NOT_SUPPORTED": string;
         };
         "PASSWORD": {
-            "NOT_EMPTY": string;
-            "LENGTH": string;
-            "NO_WHITESPACE": string;
             "CONTAIN_ONE_DIGITAL_CHARACTER": string;
             "CONTAIN_ONE_LETTER": string;
+            "LENGTH": string;
+            "NOT_EMPTY": string;
+            "NO_WHITESPACE": string;
         };
-        "LOGIN": {
-            "TYPE_NOT_SUPPORTED": string;
-            "SUCCESS": string;
+        "UNAUTHORIZED": string;
+        "USERNAME": {
+            "LENGTH": string;
+            "NOT_EMPTY": string;
+            "NOT_EXIST": string;
+            "NO_WHITESPACE": string;
         };
         "USERNAME_OR_PASSWORD_ERROR": string;
     };
@@ -30,14 +30,14 @@ export type I18nTranslations = {
     };
     "user": {
         "FIRST_NAME": {
-            "NO_WHITESPACE": string;
-            "NOT_EMPTY": string;
             "INVALID": string;
+            "NOT_EMPTY": string;
+            "NO_WHITESPACE": string;
         };
         "LAST_NAME": {
-            "NO_WHITESPACE": string;
-            "NOT_EMPTY": string;
             "INVALID": string;
+            "NOT_EMPTY": string;
+            "NO_WHITESPACE": string;
         };
     };
 };

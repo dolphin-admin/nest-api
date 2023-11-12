@@ -5,6 +5,7 @@ import { PageDto } from '@/class/dto'
 
 type QueryType = 'searchText' | 'date'
 
+// 分页参数
 export const ApiPageQuery = (...type: QueryType[]) => {
   const decorators = [
     ApiExtraModels(PageDto),
@@ -12,13 +13,15 @@ export const ApiPageQuery = (...type: QueryType[]) => {
       name: 'page',
       description: '页码',
       required: true,
-      example: 1
+      example: 1,
+      type: Number
     }),
     ApiQuery({
       name: 'pageSize',
       description: '每页条数',
       required: true,
-      example: 10
+      example: 10,
+      type: Number
     })
   ]
   if (type.includes('searchText')) {
@@ -26,7 +29,8 @@ export const ApiPageQuery = (...type: QueryType[]) => {
       ApiQuery({
         name: 'searchText',
         description: '搜索关键字',
-        required: false
+        required: false,
+        type: String
       })
     )
   }
@@ -38,13 +42,15 @@ export const ApiPageQuery = (...type: QueryType[]) => {
         required: false,
         example: new Date(
           new Date().setTime(new Date().getTime() - 24 * 60 * 60 * 1000 * 7)
-        ).toISOString()
+        ).toISOString(),
+        type: String
       }),
       ApiQuery({
         name: 'endTime',
         description: '结束时间',
         required: false,
-        example: new Date().toISOString()
+        example: new Date().toISOString(),
+        type: String
       })
     )
   }

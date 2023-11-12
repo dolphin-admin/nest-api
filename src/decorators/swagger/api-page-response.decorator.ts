@@ -2,43 +2,19 @@ import type { Type } from '@nestjs/common'
 import { applyDecorators } from '@nestjs/common'
 import { ApiExtraModels, ApiOkResponse, getSchemaPath } from '@nestjs/swagger'
 
-import { PageResponseVo } from '@/class'
+import { PageVo } from '@/class'
 
-export const ApiPageResponse = <T extends Type<unknown>>(type?: T) => {
-  if (!type) {
-    return applyDecorators(
-      ApiOkResponse({
-        schema: {
-          title: 'PageResponse',
-          description: '分页数据',
-          allOf: [
-            {
-              $ref: getSchemaPath(PageResponseVo)
-            },
-            {
-              properties: {
-                data: {
-                  type: 'array',
-                  items: {
-                    type: 'object'
-                  }
-                }
-              }
-            }
-          ]
-        }
-      })
-    )
-  }
-  return applyDecorators(
-    ApiExtraModels(PageResponseVo, type),
+// 分页响应
+export const ApiPageResponse = <T extends Type<unknown>>(type: T) =>
+  applyDecorators(
+    ApiExtraModels(PageVo, type),
     ApiOkResponse({
       schema: {
-        title: `${type.name}PageResponse`,
+        title: `${type.name.replace('Vo', '')}PageVo`,
         description: '分页数据',
         allOf: [
           {
-            $ref: getSchemaPath(PageResponseVo)
+            $ref: getSchemaPath(PageVo)
           },
           {
             properties: {
@@ -54,4 +30,3 @@ export const ApiPageResponse = <T extends Type<unknown>>(type?: T) => {
       }
     })
   )
-}

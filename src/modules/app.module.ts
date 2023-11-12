@@ -23,12 +23,14 @@ import {
   PostgresConfig,
   RedisConfig
 } from '@/configs'
+import { LanguageCode } from '@/enums'
 import { AuthGuard } from '@/guards'
 import { ErrorsInterceptor, LoggingInterceptor } from '@/interceptors'
 import { DelayMiddleware } from '@/middlewares'
 
 import { CosModule } from '../shared/cos/cos.module'
 import { EmailModule } from '../shared/email/email.module'
+import { LoggerModule } from '../shared/logger/logger.module'
 import { PrismaModule } from '../shared/prisma/prisma.module'
 import { RedisModule } from '../shared/redis/redis.module'
 import { AppController } from './app.controller'
@@ -40,7 +42,6 @@ import { DepartmentsModule } from './departments/departments.module'
 import { DictionariesModule } from './dictionaries/dictionaries.module'
 import { DictionaryItemsModule } from './dictionary-items/dictionary-items.module'
 import { FilesModule } from './files/files.module'
-import { LoggerModule } from './logger/logger.module'
 import { LoginLogsModule } from './login-logs/login-logs.module'
 import { MenuItemsModule } from './menu-items/menu-items.module'
 import { NotificationsModule } from './notifications/notifications.module'
@@ -50,6 +51,7 @@ import { PositionsModule } from './positions/positions.module'
 import { RolesModule } from './roles/roles.module'
 import { SettingsModule } from './settings/settings.module'
 import { SseModule } from './sse/sse.module'
+import { UserSettingsModule } from './user-settings/user-settings.module'
 import { UserTrafficRecordsModule } from './user-traffic-records/user-traffic-records.module'
 import { UserTrafficsModule } from './user-traffics/user-traffics.module'
 import { UsersModule } from './users/users.module'
@@ -75,7 +77,7 @@ import { UsersModule } from './users/users.module'
     }),
     // i18n 模块
     I18nModule.forRoot({
-      fallbackLanguage: 'en-US',
+      fallbackLanguage: LanguageCode['en-US'],
       loaderOptions: {
         path: path.join(__dirname, '../i18n/'),
         watch: true
@@ -155,7 +157,8 @@ import { UsersModule } from './users/users.module'
     UserTrafficRecordsModule,
     OperationLogsModule,
     CronJobLogsModule,
-    LoginLogsModule
+    LoginLogsModule,
+    UserSettingsModule
   ],
   controllers: [AppController],
   providers: [

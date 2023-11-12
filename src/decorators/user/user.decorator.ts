@@ -9,5 +9,5 @@ import type { CustomRequest, JWTPayload } from '../../interfaces'
  */
 export const User = createParamDecorator<keyof JWTPayload>((key, ctx: ExecutionContext) => {
   const { user } = ctx.switchToHttp().getRequest<CustomRequest>()
-  return key ? user?.[key] : user
+  return key ? user?.[key] ?? null : user
 })

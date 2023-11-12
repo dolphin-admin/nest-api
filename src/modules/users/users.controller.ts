@@ -24,7 +24,7 @@ import {
 } from '@nestjs/swagger'
 import { plainToClass } from 'class-transformer'
 
-import { BaseResponseVo, PageDateDto, PageResponseVo } from '@/class'
+import { BaseResponseVo, PageDto, PageVo } from '@/class'
 import { User } from '@/decorators'
 import { ApiPageResponse } from '@/decorators/swagger/api-page-response.decorator'
 
@@ -54,10 +54,10 @@ export class UsersController {
   @ApiPageResponse(UserVo)
   @ApiUnauthorizedResponse({ description: '认证失败' })
   @Get()
-  async findMany(@Query() pageDto: PageDateDto) {
+  async findMany(@Query() pageDto: PageDto) {
     const { page, pageSize } = pageDto
     const [data, total] = await this.usersService.findMany(pageDto)
-    return new PageResponseVo<UserVo[]>({ page, pageSize, total, data })
+    return new PageVo<UserVo>({ page, pageSize, total, data })
   }
 
   @ApiOperation({ summary: '个人信息' })
@@ -79,9 +79,9 @@ export class UsersController {
   @ApiOkResponse({ description: '请求成功' })
   @ApiUnauthorizedResponse({ description: '认证失败' })
   @ApiNotFoundResponse({ description: '用户不存在' })
-  @ApiParam({ name: 'id', description: '用户 ID', required: true, example: 1 })
+  @ApiParam({ name: 'id', description: 'ID', required: true, example: 1 })
   @Get(':id(\\d+)')
-  async findOne(@Param('id') id: number) {
+  async findOneById(@Param('id') id: number) {
     const user = await this.usersService.findOneById(id)
     if (!user) {
       throw new NotFoundException('用户不存在')
@@ -92,11 +92,11 @@ export class UsersController {
   }
 
   @ApiOperation({ summary: '修改用户' })
-  @ApiOkResponse({ description: '请求成功' })
+  @ApiOkResponse({ description: '修改成功' })
   @ApiUnauthorizedResponse({ description: '认证失败' })
   @ApiBadRequestResponse({ description: '参数错误' })
   @ApiNotFoundResponse({ description: '用户不存在' })
-  @ApiParam({ name: 'id', description: '用户 ID', required: true })
+  @ApiParam({ name: 'id', description: 'ID', required: true })
   @ApiBody({ description: '用户信息', type: UpdateUserDto })
   @Patch(':id(\\d+)')
   update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
@@ -108,7 +108,7 @@ export class UsersController {
   @ApiUnauthorizedResponse({ description: '认证失败' })
   @ApiBadRequestResponse({ description: '参数错误' })
   @ApiNotFoundResponse({ description: '用户不存在' })
-  @ApiParam({ name: 'id', description: '用户 ID', required: true })
+  @ApiParam({ name: 'id', description: 'ID', required: true })
   @Delete(':id(\\d+)')
   remove(@Param('id') id: number) {
     return this.usersService.remove(id)

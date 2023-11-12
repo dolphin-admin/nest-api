@@ -12,14 +12,14 @@ import {
   ApiUnauthorizedResponse
 } from '@nestjs/swagger'
 
-import { PageDateDto } from '@/class'
+import { PageDto } from '@/class'
 import { ApiPageQuery } from '@/decorators'
 
 import { DictionariesService } from './dictionaries.service'
 import { CreateDictionaryDto } from './dto/create-dictionary.dto'
 import { UpdateDictionaryDto } from './dto/update-dictionary.dto'
 
-@ApiTags('数据字典')
+@ApiTags('字典')
 @ApiBearerAuth('bearer')
 @Controller('dictionaries')
 export class DictionariesController {
@@ -40,7 +40,7 @@ export class DictionariesController {
   @ApiUnauthorizedResponse({ description: '认证失败' })
   @ApiPageQuery('searchText', 'date')
   @Get()
-  findMany(@Query() pageDto: PageDateDto) {
+  findMany(@Query() pageDto: PageDto) {
     return this.dictionariesService.findMany(pageDto)
   }
 

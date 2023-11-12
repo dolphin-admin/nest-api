@@ -1,9 +1,12 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common'
+import { ApiBasicAuth, ApiTags } from '@nestjs/swagger'
 
 import { CreatePermissionDto } from './dto/create-permission.dto'
 import { UpdatePermissionDto } from './dto/update-permission.dto'
 import { PermissionsService } from './permissions.service'
 
+@ApiTags('权限')
+@ApiBasicAuth('bearer')
 @Controller('permissions')
 export class PermissionsController {
   constructor(private readonly permissionsService: PermissionsService) {}

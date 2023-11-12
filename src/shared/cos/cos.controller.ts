@@ -2,10 +2,12 @@ import { Controller, Post, UploadedFiles, UseInterceptors } from '@nestjs/common
 import { AnyFilesInterceptor } from '@nestjs/platform-express'
 import {
   ApiBadRequestResponse,
+  ApiBasicAuth,
   ApiBody,
   ApiConsumes,
   ApiCreatedResponse,
   ApiOperation,
+  ApiTags,
   ApiUnprocessableEntityResponse
 } from '@nestjs/swagger'
 
@@ -13,6 +15,8 @@ import { FileVo } from '@/modules/files/vo'
 
 import { CosService } from './cos.service'
 
+@ApiTags('COS')
+@ApiBasicAuth('bearer')
 @Controller('cos')
 export class CosController {
   constructor(private readonly cosService: CosService) {}
