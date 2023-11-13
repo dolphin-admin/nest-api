@@ -88,8 +88,6 @@ export class SettingsService {
       [field]: sortOrders[index]
     }))
 
-    console.log(pageSettingDto)
-
     const where: Prisma.SettingWhereInput = {
       AND: [
         {

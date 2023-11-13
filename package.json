@@ -12,6 +12,7 @@
     "prod:pm2": "pnpm pm2 reload ecosystem.config.js --env production",
     "build": "nest build",
     "build:webpack": "nest build --webpack",
+    "clean": "rm -rf dist",
     "type:check": "tsc --pretty --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
