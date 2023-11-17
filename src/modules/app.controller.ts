@@ -3,7 +3,6 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { I18n, I18nContext } from 'nestjs-i18n'
 
 import { BaseResponseVo } from '@/class'
-import { ApiBaseResponse } from '@/decorators'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 
 import { AppService } from './app.service'
@@ -15,15 +14,13 @@ export class AppController {
   private readonly appService: AppService
 
   @ApiOperation({ summary: '应用首页' })
-  @ApiBaseResponse()
   @Render('index')
   @Get()
   getApp() {
-    return { title: 'Nest TypeScript Starter Template' }
+    return { title: 'Dolphin Admin Nest' }
   }
 
   @ApiOperation({ summary: '应用信息' })
-  @ApiBaseResponse()
   @Get('app-info')
   getVersion() {
     return new BaseResponseVo({
@@ -32,13 +29,11 @@ export class AppController {
   }
 
   @ApiOperation({ summary: '测试重定向' })
-  @ApiBaseResponse()
   @Redirect('/')
   @Get('redirect')
   getRedirect() {}
 
   @ApiOperation({ summary: '语言标识' })
-  @ApiBaseResponse()
   @Get('lang')
   getCurrentLang(@I18n() i18n: I18nContext<I18nTranslations>) {
     return new BaseResponseVo({

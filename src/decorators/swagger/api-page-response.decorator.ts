@@ -10,7 +10,6 @@ export const ApiPageResponse = <T extends Type<unknown>>(type: T) =>
     ApiExtraModels(PageVo, type),
     ApiOkResponse({
       schema: {
-        title: `${type.name.replace('Vo', '')}PageVo`,
         description: '分页数据',
         allOf: [
           {
