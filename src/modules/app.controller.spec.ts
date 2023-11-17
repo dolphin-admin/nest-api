@@ -19,7 +19,7 @@ describe('AppController', () => {
   describe('root', () => {
     it('should return "App welcome info"', () => {
       expect(appController.getApp()).toStrictEqual({
-        title: 'Nest TypeScript Starter Template'
+        title: 'Dolphin Admin Nest'
       })
     })
   })

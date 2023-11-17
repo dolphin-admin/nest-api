@@ -28,8 +28,8 @@ async function bootstrap() {
   // 跨域白名单
   const corsOriginWhiteList = ['https://bit-ocean.studio']
 
-  // 开发环境允许跨域
-  if (appConfig.isDEV) {
+  // 测试环境允许跨域
+  if (appConfig.isStaging) {
     corsOriginWhiteList.push('http://localhost:*')
   }
 

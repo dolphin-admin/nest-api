@@ -544,7 +544,7 @@ model UserPosition {
   @@map("system_user_position")
 }
 
-// 用户设置
+/// 用户设置
 model UserSetting {
   /// 唯一标识
   id      Int     @id @default(autoincrement())
@@ -716,7 +716,7 @@ model Dictionary {
   @@map("system_dictionary")
 }
 
-// 字典 - 翻译
+/// 字典 - 翻译
 model DictionaryTrans {
   /// 唯一标识
   id     Int    @id @default(autoincrement())
@@ -787,7 +787,7 @@ model DictionaryItem {
   @@map("system_dictionary_item")
 }
 
-// 字典数据 - 翻译
+/// 字典数据 - 翻译
 model DictionaryItemTrans {
   /// 唯一标识
   id     Int    @id @default(autoincrement())

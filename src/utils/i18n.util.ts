@@ -13,6 +13,7 @@ export class I18nUtils {
    */
   static generateTrans<T = any>(trans: any[], key: keyof T): Record<string, unknown> {
     return trans.reduce<Record<string, unknown>>((prev, curr) => {
+      // eslint-disable-next-line no-param-reassign
       prev[curr.lang] = curr[key]
       return prev
     }, {})

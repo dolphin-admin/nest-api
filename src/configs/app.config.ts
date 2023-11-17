@@ -15,9 +15,10 @@ export const AppConfig = registerAs('app', () =>
     },
     // App 配置
     port: env.PORT ? parseInt(env.PORT, 10) : 3000,
-    env: env.ENV ?? 'DEV',
-    isDEV: env.ENV === 'DEV',
-    isPROD: env.ENV === 'PROD',
+    env: env.NODE_ENV ?? 'development',
+    isDEV: env.NODE_ENV === 'development',
+    isStaging: env.NODE_ENV === 'staging',
+    isPROD: env.NODE_ENV === 'production',
     baseUrl: env.BASE_URL ?? 'http://localhost:3000'
   })
 )
