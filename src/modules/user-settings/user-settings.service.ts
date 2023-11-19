@@ -111,8 +111,8 @@ export class UserSettingsService {
         ? [
             { key: { contains: searchText } },
             { value: { contains: searchText } },
-            { id: { equals: _.toSafeInteger(searchText) } },
-            { userId: { equals: _.toSafeInteger(searchText) } }
+            { id: { equals: _.toNumber(searchText) < 100000 ? _.toNumber(searchText) : 0 } },
+            { userId: { equals: _.toNumber(searchText) < 100000 ? _.toNumber(searchText) : 0 } }
           ]
         : undefined
     }

@@ -107,7 +107,7 @@ export class SettingsService {
         ? [
             { key: { contains: searchText } },
             { value: { contains: searchText } },
-            { id: { equals: _.toSafeInteger(searchText) } }
+            { id: { equals: _.toNumber(searchText) < 100000 ? _.toNumber(searchText) : 0 } }
           ]
         : undefined
     }
