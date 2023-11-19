@@ -4,6 +4,7 @@ import { IsNotEmpty, Length, NotContains } from 'class-validator'
 import { I18nUtils } from '@/utils'
 
 const { t } = I18nUtils
+
 export class LoginDto {
   @ApiProperty({ description: '用户名' })
   @Length(4, 16, { message: t('auth.USERNAME.LENGTH') })
