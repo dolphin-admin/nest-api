@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Put,
   Query
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
@@ -58,14 +59,32 @@ export class UserSettingsController {
     return this.userSettingsService.findOneByKey(key)
   }
 
-  @ApiOperation({ summary: '更新用户设置' })
-  @Patch(':id(\\d+)')
+  @ApiOperation({ summary: '修改用户设置' })
+  @Put(':id(\\d+)')
   update(
     @Param('id', new ParseIntPipe()) id: number,
     @Body() updateUserSettingDto: UpdateUserSettingDto,
     @User('sub') userId: number
   ) {
     return this.userSettingsService.update(id, updateUserSettingDto, userId)
+  }
+
+  @ApiOperation({ summary: '启用用户设置' })
+  @Patch(':id(\\d+)/enable')
+  async enable(@Param('id', new ParseIntPipe()) id: number, @User('sub') userId: number) {
+    await this.userSettingsService.enable(id, userId)
+    return new BaseResponseVo({
+      message: '启用成功'
+    })
+  }
+
+  @ApiOperation({ summary: '禁用设置' })
+  @Patch(':id(\\d+)/disable')
+  async disable(@Param('id', new ParseIntPipe()) id: number, @User('sub') userId: number) {
+    await this.userSettingsService.disable(id, userId)
+    return new BaseResponseVo({
+      message: '禁用成功'
+    })
   }
 
   @ApiOperation({ summary: '删除用户设置' })

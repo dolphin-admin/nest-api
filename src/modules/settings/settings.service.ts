@@ -230,6 +230,54 @@ export class SettingsService {
     }
   }
 
+  // 启用设置
+  async enable(id: number, userId: number) {
+    try {
+      await this.prismaService.setting.update({
+        where: {
+          id,
+          deletedAt: null
+        },
+        data: {
+          enabled: true,
+          updatedBy: userId
+        }
+      })
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        const { code } = e
+        if (code === 'P2025') {
+          throw new NotFoundException('该设置不存在，启用失败')
+        }
+      }
+      throw e
+    }
+  }
+
+  // 禁用设置
+  async disable(id: number, userId: number) {
+    try {
+      await this.prismaService.setting.update({
+        where: {
+          id,
+          deletedAt: null
+        },
+        data: {
+          enabled: false,
+          updatedBy: userId
+        }
+      })
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        const { code } = e
+        if (code === 'P2025') {
+          throw new NotFoundException('该设置不存在，禁用失败')
+        }
+      }
+      throw e
+    }
+  }
+
   // 删除设置
   async remove(id: number, userId: number) {
     try {

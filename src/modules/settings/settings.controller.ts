@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Put,
   Query
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
@@ -64,7 +65,7 @@ export class SettingsController {
   }
 
   @ApiOperation({ summary: '修改设置' })
-  @Patch(':id(\\d+)')
+  @Put(':id(\\d+)')
   async update(
     @Param('id', new ParseIntPipe()) id: number,
     @Body() updateSettingDto: UpdateSettingDto,
@@ -74,6 +75,24 @@ export class SettingsController {
     return new BaseResponseVo({
       data: plainToClass(SettingVo, setting),
       message: '修改成功'
+    })
+  }
+
+  @ApiOperation({ summary: '启用设置' })
+  @Patch(':id(\\d+)/enable')
+  async enable(@Param('id', new ParseIntPipe()) id: number, @User('sub') userId: number) {
+    await this.settingsService.enable(id, userId)
+    return new BaseResponseVo({
+      message: '启用成功'
+    })
+  }
+
+  @ApiOperation({ summary: '禁用设置' })
+  @Patch(':id(\\d+)/disable')
+  async disable(@Param('id', new ParseIntPipe()) id: number, @User('sub') userId: number) {
+    await this.settingsService.disable(id, userId)
+    return new BaseResponseVo({
+      message: '禁用成功'
     })
   }
 
