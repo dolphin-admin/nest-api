@@ -6,6 +6,8 @@ import { BaseResponseVo } from '@/class'
 import { SkipAuth } from '@/decorators'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 
+import { AppService } from './app.service'
+
 @ApiTags('应用')
 @SkipAuth()
 @Controller()
