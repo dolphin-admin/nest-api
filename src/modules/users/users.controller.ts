@@ -7,7 +7,8 @@ import {
   Param,
   Patch,
   Post,
-  Query
+  Query,
+  UnauthorizedException
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { plainToClass } from 'class-transformer'
@@ -45,7 +46,7 @@ export class UsersController {
   async findCurrent(@User('sub') id: number) {
     const currentUser = await this.usersService.findOneById(id)
     if (!currentUser) {
-      throw new NotFoundException('用户不存在')
+      throw new UnauthorizedException('身份认证失败')
     }
     return new BaseResponseVo<UserVo>({
       data: plainToClass(UserVo, currentUser)
