@@ -28,7 +28,6 @@ import { AuthGuard } from '@/guards'
 import { ErrorsInterceptor, LoggingInterceptor } from '@/interceptors'
 import { DelayMiddleware } from '@/middlewares'
 
-import { CosModule } from '../shared/cos/cos.module'
 import { EmailModule } from '../shared/email/email.module'
 import { LoggerModule } from '../shared/logger/logger.module'
 import { PrismaModule } from '../shared/prisma/prisma.module'
