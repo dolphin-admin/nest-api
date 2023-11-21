@@ -3,11 +3,13 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { I18n, I18nContext } from 'nestjs-i18n'
 
 import { BaseResponseVo } from '@/class'
+import { SkipAuth } from '@/decorators'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 
 import { AppService } from './app.service'
 
 @ApiTags('应用')
+@SkipAuth()
 @Controller()
 export class AppController {
   @Inject(AppService)
