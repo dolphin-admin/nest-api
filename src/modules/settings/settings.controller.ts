@@ -96,6 +96,19 @@ export class SettingsController {
     })
   }
 
+  @ApiOperation({ summary: '排序设置' })
+  @Patch(':id(\\d+)/sort/:targetId(\\d+)')
+  async sort(
+    @Param('id', new ParseIntPipe()) id: number,
+    @Param('targetId', new ParseIntPipe()) targetId: number,
+    @User('sub') userId: number
+  ) {
+    await this.settingsService.sort(id, targetId, userId)
+    return new BaseResponseVo({
+      message: '排序成功'
+    })
+  }
+
   @ApiOperation({ summary: '删除设置' })
   @Delete(':id(\\d+)')
   async remove(@Param('id', new ParseIntPipe()) id: number, @User('sub') userId: number) {

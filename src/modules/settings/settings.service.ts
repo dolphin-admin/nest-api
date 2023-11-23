@@ -4,7 +4,7 @@ import { Prisma } from '@prisma/client'
 import _ from 'lodash'
 
 import type { SortColumnKey } from '@/enums'
-import { LanguageCode } from '@/enums'
+import { LanguageCode, SortOrder } from '@/enums'
 import { PrismaService } from '@/shared/prisma/prisma.service'
 import { I18nUtils } from '@/utils'
 
@@ -272,6 +272,79 @@ export class SettingsService {
         const { code } = e
         if (code === 'P2025') {
           throw new NotFoundException('该设置不存在，禁用失败')
+        }
+      }
+      throw e
+    }
+  }
+
+  // 排序设置
+  async sort(id: number, targetId: number, userId: number) {
+    try {
+      const [currentItem, targetItem] = await Promise.all([
+        this.prismaService.setting.findUnique({
+          where: {
+            id
+          }
+        }),
+        this.prismaService.setting.findUnique({
+          where: {
+            id: targetId
+          }
+        })
+      ])
+
+      if (!currentItem || !targetItem) {
+        throw new NotFoundException('设置不存在，排序失败')
+      }
+
+      const currentSort = currentItem.sort ?? 0
+      const targetSort = targetItem.sort ?? 0
+
+      // 计算插入位置
+      const insertSort = targetSort <= currentSort ? targetSort : targetSort - 1
+
+      // 更新当前设置的排序
+      await this.prismaService.setting.update({
+        where: {
+          id,
+          deletedAt: null
+        },
+        data: {
+          sort: insertSort,
+          updatedBy: userId
+        }
+      })
+
+      // 查询排序范围内的设置记录
+      const settingsToUpdate = await this.prismaService.setting.findMany({
+        where: {
+          id: { not: id },
+          sort: {
+            ...(targetSort < currentSort
+              ? { gte: targetSort, lt: currentSort }
+              : { gt: currentSort, lte: targetSort })
+          }
+        },
+        orderBy: [{ sort: SortOrder.ASC }, { createdAt: SortOrder.DESC }]
+      })
+
+      // 更新其他设置的排序
+      await this.prismaService.setting.updateMany({
+        where: {
+          deletedAt: null,
+          id: { in: settingsToUpdate.map((setting) => setting.id) }
+        },
+        data: {
+          sort: { ...(targetSort < currentSort ? { increment: 1 } : { decrement: 1 }) },
+          updatedBy: userId
+        }
+      })
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        const { code } = e
+        if (code === 'P2025') {
+          throw new NotFoundException('设置不存在，排序失败')
         }
       }
       throw e

@@ -69,8 +69,9 @@ export class PageDto {
   @Transform(({ value }) => value.split(','))
   sortOrders: SortOrder[]
 
+  // 默认排序顺序为：排序字段升序（优先）、创建时间降序（次要）
   constructor() {
-    this.sortColumnKeys = [SortColumnKey.CREATED_AT]
-    this.sortOrders = [SortOrder.DESC]
+    this.sortColumnKeys = [SortColumnKey.SORT, SortColumnKey.CREATED_AT]
+    this.sortOrders = [SortOrder.ASC, SortOrder.DESC]
   }
 }
