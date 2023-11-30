@@ -5,23 +5,23 @@ export type I18nTranslations = {
     "auth": {
         "LOGIN": {
             "SUCCESS": string;
-            "TYPE_NOT_SUPPORTED": string;
+            "TYPE.NOT.SUPPORTED": string;
         };
         "PASSWORD": {
-            "CONTAIN_ONE_DIGITAL_CHARACTER": string;
-            "CONTAIN_ONE_LETTER": string;
+            "CONTAIN.ONE.DIGITAL.CHARACTER": string;
+            "CONTAIN.ONE.LETTER": string;
             "LENGTH": string;
-            "NOT_EMPTY": string;
-            "NO_WHITESPACE": string;
+            "NOT.EMPTY": string;
+            "NO.WHITESPACE": string;
         };
         "UNAUTHORIZED": string;
         "USERNAME": {
             "LENGTH": string;
-            "NOT_EMPTY": string;
-            "NOT_EXIST": string;
-            "NO_WHITESPACE": string;
+            "NOT.EMPTY": string;
+            "NOT.EXIST": string;
+            "NO.WHITESPACE": string;
         };
-        "USERNAME_OR_PASSWORD_ERROR": string;
+        "USERNAME.OR.PASSWORD.ERROR": string;
     };
     "common": {
         "APP": {
@@ -29,15 +29,15 @@ export type I18nTranslations = {
         };
     };
     "user": {
-        "FIRST_NAME": {
+        "FIRST.NAME": {
             "INVALID": string;
-            "NOT_EMPTY": string;
-            "NO_WHITESPACE": string;
+            "NOT.EMPTY": string;
+            "NO.WHITESPACE": string;
         };
-        "LAST_NAME": {
+        "LAST.NAME": {
             "INVALID": string;
-            "NOT_EMPTY": string;
-            "NO_WHITESPACE": string;
+            "NOT.EMPTY": string;
+            "NO.WHITESPACE": string;
         };
     };
 };

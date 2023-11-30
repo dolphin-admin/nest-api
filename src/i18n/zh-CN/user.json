@@ -1,12 +1,12 @@
 {
-  "FIRST_NAME": {
+  "FIRST.NAME": {
     "INVALID": "名输入值不合法",
-    "NOT_EMPTY": "名不能为空",
-    "NO_WHITESPACE": "名不能包含空格"
+    "NOT.EMPTY": "名不能为空",
+    "NO.WHITESPACE": "名不能包含空格"
   },
-  "LAST_NAME": {
+  "LAST.NAME": {
     "INVALID": "姓输入值不合法",
-    "NOT_EMPTY": "姓不能为空",
-    "NO_WHITESPACE": "姓不能包含空格"
+    "NOT.EMPTY": "姓不能为空",
+    "NO.WHITESPACE": "姓不能包含空格"
   }
 }

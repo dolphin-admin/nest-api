@@ -1,12 +1,12 @@
 {
-  "FIRST_NAME": {
+  "FIRST.NAME": {
     "INVALID": "First name invalid value",
-    "NOT_EMPTY": "First name must not be empty",
-    "NO_WHITESPACE": "First name must not contain whitespace"
+    "NOT.EMPTY": "First name must not be empty",
+    "NO.WHITESPACE": "First name must not contain whitespace"
   },
-  "LAST_NAME": {
+  "LAST.NAME": {
     "INVALID": "Last name invalid value",
-    "NOT_EMPTY": "Last name must not be empty",
-    "NO_WHITESPACE": "Last name must not contain whitespace"
+    "NOT.EMPTY": "Last name must not be empty",
+    "NO.WHITESPACE": "Last name must not contain whitespace"
   }
 }
