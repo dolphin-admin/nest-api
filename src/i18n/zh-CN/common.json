@@ -1,5 +1,51 @@
 {
-  "APP": {
-    "NAME": "Dolphin Admin Nest"
+  "BUILT.IN": {
+    "INVALID": "是否内置：输入值不合法",
+    "NOT.EMPTY": "是否内置：不能为空"
+  },
+  "CREATE.FAILED": "创建失败",
+  "CREATE.SUCCESS": "创建成功",
+  "DELETE.FAILED": "删除失败",
+  "DELETE.SUCCESS": "删除成功",
+  "DISABLE.FAILED": "禁用失败",
+  "DISABLE.SUCCESS": "禁用成功",
+  "ENABLE.FAILED": "启用失败",
+  "ENABLE.SUCCESS": "启用成功",
+  "ENABLED": {
+    "INVALID": "是否启用：输入值不合法",
+    "NOT.EMPTY": "是否启用：不能为空"
+  },
+  "ID": {
+    "INVALID": "ID：输入值不合法"
+  },
+  "KEY": {
+    "INVALID": "键输入值不合法",
+    "LENGTH": "Key: ",
+    "NO.WHITESPACE": "键不能包含空格",
+    "NOT.EMPTY": "键不能为空"
+  },
+  "LABEL": {
+    "LENGTH.EN.US": "展示名称 - 英文：长度不能超过 50 个字符",
+    "LENGTH.ZH.CN": "展示名称 - 中文：长度不能超过 50 个字符",
+    "TRANS.MISSING": "展示名称：缺少翻译内容"
+  },
+  "OPERATE.FAILED": "操作失败",
+  "OPERATE.SUCCESS": "操作成功",
+  "REMARK": {
+    "LENGTH.EN.US": "备注 - 英文：长度不能超过 500 个字符",
+    "LENGTH.ZH.CN": "备注 - 中文：长度不能超过 500 个字符",
+    "TRANS.MISSING": "备注：缺少翻译内容"
+  },
+  "RESOURCE.CONFLICT": "操作失败：资源冲突",
+  "RESOURCE.NOT.FOUND": "操作失败：资源不存在",
+  "SORT.FAILED": "排序失败",
+  "SORT.SUCCESS": "排序成功",
+  "UPDATE.FAILED": "修改失败",
+  "UPDATE.SUCCESS": "修改成功",
+  "VALUE": {
+    "INVALID": "值：输入值不合法",
+    "LENGTH": "值：长度不能超过 250 个字符",
+    "NO.WHITESPACE": "值：不能包含空格",
+    "NOT.EMPTY": "值：不能为空"
   }
 }

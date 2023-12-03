@@ -7,37 +7,89 @@ export type I18nTranslations = {
             "SUCCESS": string;
             "TYPE.NOT.SUPPORTED": string;
         };
-        "PASSWORD": {
-            "CONTAIN.ONE.DIGITAL.CHARACTER": string;
-            "CONTAIN.ONE.LETTER": string;
-            "LENGTH": string;
-            "NOT.EMPTY": string;
-            "NO.WHITESPACE": string;
+        "SIGN.UP": {
+            "SUCCESS": string;
         };
         "UNAUTHORIZED": string;
-        "USERNAME": {
-            "LENGTH": string;
-            "NOT.EMPTY": string;
-            "NOT.EXIST": string;
-            "NO.WHITESPACE": string;
-        };
         "USERNAME.OR.PASSWORD.ERROR": string;
     };
     "common": {
-        "APP": {
-            "NAME": string;
+        "BUILT.IN": {
+            "INVALID": string;
+            "NOT.EMPTY": string;
+        };
+        "CREATE.FAILED": string;
+        "CREATE.SUCCESS": string;
+        "DELETE.FAILED": string;
+        "DELETE.SUCCESS": string;
+        "DISABLE.FAILED": string;
+        "DISABLE.SUCCESS": string;
+        "ENABLE.FAILED": string;
+        "ENABLE.SUCCESS": string;
+        "ENABLED": {
+            "INVALID": string;
+            "NOT.EMPTY": string;
+        };
+        "ID": {
+            "INVALID": string;
+        };
+        "KEY": {
+            "INVALID": string;
+            "LENGTH": string;
+            "NO.WHITESPACE": string;
+            "NOT.EMPTY": string;
+        };
+        "LABEL": {
+            "LENGTH.EN.US": string;
+            "LENGTH.ZH.CN": string;
+            "TRANS.MISSING": string;
+        };
+        "OPERATE.FAILED": string;
+        "OPERATE.SUCCESS": string;
+        "REMARK": {
+            "LENGTH.EN.US": string;
+            "LENGTH.ZH.CN": string;
+            "TRANS.MISSING": string;
+        };
+        "RESOURCE.CONFLICT": string;
+        "RESOURCE.NOT.FOUND": string;
+        "SORT.FAILED": string;
+        "SORT.SUCCESS": string;
+        "UPDATE.FAILED": string;
+        "UPDATE.SUCCESS": string;
+        "VALUE": {
+            "INVALID": string;
+            "LENGTH": string;
+            "NO.WHITESPACE": string;
+            "NOT.EMPTY": string;
         };
     };
     "user": {
         "FIRST.NAME": {
             "INVALID": string;
-            "NOT.EMPTY": string;
             "NO.WHITESPACE": string;
+            "NOT.EMPTY": string;
+        };
+        "ID": {
+            "INVALID": string;
         };
         "LAST.NAME": {
             "INVALID": string;
-            "NOT.EMPTY": string;
             "NO.WHITESPACE": string;
+            "NOT.EMPTY": string;
+        };
+        "PASSWORD": {
+            "CONTAIN.ONE.DIGITAL.CHARACTER": string;
+            "CONTAIN.ONE.LETTER": string;
+            "LENGTH": string;
+            "NO.WHITESPACE": string;
+            "NOT.EMPTY": string;
+        };
+        "USERNAME": {
+            "LENGTH": string;
+            "NO.WHITESPACE": string;
+            "NOT.EMPTY": string;
+            "NOT.EXIST": string;
         };
     };
 };

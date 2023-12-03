@@ -12,9 +12,11 @@ import {
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { plainToClass } from 'class-transformer'
+import { I18n, I18nContext } from 'nestjs-i18n'
 
 import { BaseResponseVo } from '@/class'
 import { User } from '@/decorators'
+import type { I18nTranslations } from '@/generated/i18n.generated'
 
 import { PageUserSettingDto, UpdateUserSettingDto } from './dto'
 import { CreateUserSettingDto } from './dto/create-user-setting.dto'
@@ -29,11 +31,15 @@ export class UserSettingsController {
 
   @ApiOperation({ summary: '创建用户设置' })
   @Post()
-  async create(@Body() createUserSettingDto: CreateUserSettingDto, @User('sub') userId: number) {
+  async create(
+    @Body() createUserSettingDto: CreateUserSettingDto,
+    @User('sub') userId: number,
+    @I18n() i18n: I18nContext<I18nTranslations>
+  ) {
     const userSetting = await this.userSettingsService.create(createUserSettingDto, userId)
     return new BaseResponseVo({
       data: plainToClass(UserSettingVo, userSetting),
-      message: '创建成功'
+      message: i18n.t('common.CREATE.SUCCESS')
     })
   }
 
@@ -71,28 +77,40 @@ export class UserSettingsController {
 
   @ApiOperation({ summary: '启用用户设置' })
   @Patch(':id(\\d+)/enable')
-  async enable(@Param('id', new ParseIntPipe()) id: number, @User('sub') userId: number) {
+  async enable(
+    @Param('id', new ParseIntPipe()) id: number,
+    @User('sub') userId: number,
+    @I18n() i18n: I18nContext<I18nTranslations>
+  ) {
     await this.userSettingsService.enable(id, userId)
     return new BaseResponseVo({
-      message: '启用成功'
+      message: i18n.t('common.ENABLE.SUCCESS')
     })
   }
 
   @ApiOperation({ summary: '禁用设置' })
   @Patch(':id(\\d+)/disable')
-  async disable(@Param('id', new ParseIntPipe()) id: number, @User('sub') userId: number) {
+  async disable(
+    @Param('id', new ParseIntPipe()) id: number,
+    @User('sub') userId: number,
+    @I18n() i18n: I18nContext<I18nTranslations>
+  ) {
     await this.userSettingsService.disable(id, userId)
     return new BaseResponseVo({
-      message: '禁用成功'
+      message: i18n.t('common.DISABLE.SUCCESS')
     })
   }
 
   @ApiOperation({ summary: '删除用户设置' })
   @Delete(':id(\\d+)')
-  async remove(@Param('id', new ParseIntPipe()) id: number, @User('sub') userId: number) {
+  async remove(
+    @Param('id', new ParseIntPipe()) id: number,
+    @User('sub') userId: number,
+    @I18n() i18n: I18nContext<I18nTranslations>
+  ) {
     await this.userSettingsService.remove(id, userId)
     return new BaseResponseVo({
-      message: '删除成功'
+      message: i18n.t('common.DELETE.SUCCESS')
     })
   }
 }

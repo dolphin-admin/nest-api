@@ -1,12 +1,28 @@
 {
   "FIRST.NAME": {
-    "INVALID": "名输入值不合法",
-    "NOT.EMPTY": "名不能为空",
-    "NO.WHITESPACE": "名不能包含空格"
+    "INVALID": "名：输入值不合法",
+    "NO.WHITESPACE": "名：不能包含空格",
+    "NOT.EMPTY": "名：不能为空"
+  },
+  "ID": {
+    "INVALID": "用户 ID: 输入值不合法"
   },
   "LAST.NAME": {
-    "INVALID": "姓输入值不合法",
-    "NOT.EMPTY": "姓不能为空",
-    "NO.WHITESPACE": "姓不能包含空格"
+    "INVALID": "姓：输入值不合法",
+    "NO.WHITESPACE": "姓：不能包含空格",
+    "NOT.EMPTY": "姓：不能为空"
+  },
+  "PASSWORD": {
+    "CONTAIN.ONE.DIGITAL.CHARACTER": "密码：必须至少包含一个数字",
+    "CONTAIN.ONE.LETTER": "密码：必须至少包含一个英文字母",
+    "LENGTH": "密码：长度范围为 4 ~ 16 位",
+    "NO.WHITESPACE": "密码：不能包含空格",
+    "NOT.EMPTY": "密码：不能为空"
+  },
+  "USERNAME": {
+    "LENGTH": "用户名：长度范围为 4 ~ 16 位",
+    "NO.WHITESPACE": "用户名：不能包含空格",
+    "NOT.EMPTY": "用户名：不能为空",
+    "NOT.EXIST": "用户名：不存在"
   }
 }

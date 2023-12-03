@@ -3,33 +3,36 @@ import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator'
 
 import { PageDto } from '@/class'
 import { ToId, Trim } from '@/decorators'
+import { I18nUtils } from '@/utils'
+
+const { t } = I18nUtils
 
 export class PageSettingDto extends PageDto {
   @ApiPropertyOptional({ description: 'ID' })
-  @IsNumber({}, { message: 'ID 必须是一个数字' })
+  @IsNumber({}, { message: t('common.ID.INVALID') })
   @IsOptional()
   @ToId()
   id?: number
 
   @ApiPropertyOptional({ description: '键' })
-  @IsString({ message: '键必须是一个字符串' })
+  @IsString({ message: t('common.KEY.INVALID') })
   @IsOptional()
   @Trim()
   key?: string
 
   @ApiPropertyOptional({ description: '值' })
-  @IsString({ message: '值必须是一个字符串' })
+  @IsString({ message: t('common.VALUE.INVALID') })
   @IsOptional()
   @Trim()
   value?: string
 
   @ApiPropertyOptional({ description: '是否启用' })
-  @IsBoolean()
+  @IsBoolean({ message: t('common.ENABLED.INVALID') })
   @IsOptional()
   enabled?: boolean
 
   @ApiPropertyOptional({ description: '是否内置' })
-  @IsBoolean()
+  @IsBoolean({ message: t('common.BUILT.IN.INVALID') })
   @IsOptional()
   builtIn?: boolean
 }

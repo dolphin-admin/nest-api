@@ -2,9 +2,11 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import type { SettingTrans } from '@prisma/client'
 import { Prisma } from '@prisma/client'
 import _ from 'lodash'
+import { I18nService } from 'nestjs-i18n'
 
 import type { SortColumnKey } from '@/enums'
 import { LanguageCode, SortOrder } from '@/enums'
+import type { I18nTranslations } from '@/generated/i18n.generated'
 import { PrismaService } from '@/shared/prisma/prisma.service'
 import { I18nUtils } from '@/utils'
 
@@ -14,7 +16,10 @@ import type { UpdateSettingDto } from './dto/update-setting.dto'
 
 @Injectable()
 export class SettingsService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly i18nService: I18nService<I18nTranslations>
+  ) {}
 
   // 创建设置
   async create(createSettingDto: CreateSettingDto, userId: number) {
@@ -50,7 +55,7 @@ export class SettingsService {
         const { code, meta } = e
         if (code === 'P2002') {
           if ((meta?.target as string[]).includes('key')) {
-            throw new BadRequestException('键已存在')
+            throw new BadRequestException(this.i18nService.t('common.RESOURCE.CONFLICT'))
           }
         }
       }
@@ -167,7 +172,7 @@ export class SettingsService {
       include: { settingTrans: true }
     })
     if (!setting) {
-      throw new NotFoundException('设置不存在')
+      throw new NotFoundException(this.i18nService.t('common.RESOURCE.NOT.FOUND'))
     }
     return {
       ...setting,
@@ -223,7 +228,7 @@ export class SettingsService {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         const { code } = e
         if (code === 'P2025') {
-          throw new NotFoundException('该设置不存在，更新失败')
+          throw new NotFoundException(this.i18nService.t('common.RESOURCE.NOT.FOUND'))
         }
       }
       throw e
@@ -247,7 +252,7 @@ export class SettingsService {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         const { code } = e
         if (code === 'P2025') {
-          throw new NotFoundException('该设置不存在，启用失败')
+          throw new NotFoundException(this.i18nService.t('common.RESOURCE.NOT.FOUND'))
         }
       }
       throw e
@@ -271,7 +276,47 @@ export class SettingsService {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         const { code } = e
         if (code === 'P2025') {
-          throw new NotFoundException('该设置不存在，禁用失败')
+          throw new NotFoundException(this.i18nService.t('common.RESOURCE.NOT.FOUND'))
+        }
+      }
+      throw e
+    }
+  }
+
+  // 删除设置
+  async remove(id: number, userId: number) {
+    try {
+      // 删除多语言翻译
+      const deleteSettingTrans = this.prismaService.settingTrans.updateMany({
+        where: {
+          settingId: id,
+          deletedAt: null
+        },
+        data: {
+          deletedAt: new Date().toISOString(),
+          deletedBy: userId
+        }
+      })
+      // 删除设置
+      const deleteSetting = this.prismaService.setting.update({
+        where: {
+          id,
+          deletedAt: null
+        },
+        data: {
+          deletedAt: new Date().toISOString(),
+          deletedBy: userId
+        }
+      })
+      await this.prismaService.$transaction([deleteSettingTrans, deleteSetting])
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        const { code } = e
+        if (code === 'P2003') {
+          throw new BadRequestException(this.i18nService.t('common.DELETE.FAILED'))
+        }
+        if (code === 'P2025') {
+          throw new NotFoundException(this.i18nService.t('common.RESOURCE.NOT.FOUND'))
         }
       }
       throw e
@@ -295,7 +340,7 @@ export class SettingsService {
       ])
 
       if (!currentItem || !targetItem) {
-        throw new NotFoundException('设置不存在，排序失败')
+        throw new NotFoundException(this.i18nService.t('common.RESOURCE.NOT.FOUND'))
       }
 
       const currentSort = currentItem.sort ?? 0
@@ -344,47 +389,7 @@ export class SettingsService {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         const { code } = e
         if (code === 'P2025') {
-          throw new NotFoundException('设置不存在，排序失败')
-        }
-      }
-      throw e
-    }
-  }
-
-  // 删除设置
-  async remove(id: number, userId: number) {
-    try {
-      // 删除多语言翻译
-      const deleteSettingTrans = this.prismaService.settingTrans.updateMany({
-        where: {
-          settingId: id,
-          deletedAt: null
-        },
-        data: {
-          deletedAt: new Date().toISOString(),
-          deletedBy: userId
-        }
-      })
-      // 删除设置
-      const deleteSetting = this.prismaService.setting.update({
-        where: {
-          id,
-          deletedAt: null
-        },
-        data: {
-          deletedAt: new Date().toISOString(),
-          deletedBy: userId
-        }
-      })
-      await this.prismaService.$transaction([deleteSettingTrans, deleteSetting])
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        const { code } = e
-        if (code === 'P2003') {
-          throw new BadRequestException('删除翻译文件失败')
-        }
-        if (code === 'P2025') {
-          throw new NotFoundException('该设置不存在，删除失败')
+          throw new NotFoundException(this.i18nService.t('common.RESOURCE.NOT.FOUND'))
         }
       }
       throw e

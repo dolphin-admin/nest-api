@@ -12,9 +12,11 @@ import {
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { plainToClass } from 'class-transformer'
+import { I18n, I18nContext } from 'nestjs-i18n'
 
 import { BaseResponseVo, PageDto, PageVo } from '@/class'
 import { User } from '@/decorators'
+import type { I18nTranslations } from '@/generated/i18n.generated'
 
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
@@ -43,10 +45,10 @@ export class UsersController {
 
   @ApiOperation({ summary: '个人信息' })
   @Get('me')
-  async findCurrent(@User('sub') id: number) {
+  async findCurrent(@User('sub') id: number, @I18n() i18n: I18nContext<I18nTranslations>) {
     const currentUser = await this.usersService.findOneById(id)
     if (!currentUser) {
-      throw new UnauthorizedException('身份认证失败')
+      throw new UnauthorizedException(i18n.t('auth.UNAUTHORIZED'))
     }
     return new BaseResponseVo<UserVo>({
       data: plainToClass(UserVo, currentUser)

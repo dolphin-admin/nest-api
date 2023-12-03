@@ -52,7 +52,7 @@ export class AuthService {
   async loginByUsername(loginDto: LoginDto): Promise<User> {
     const user = await this.usersService.findOneByUsername(loginDto.username)
     if (!user) {
-      throw new BadRequestException(this.i18nService.t('auth.USERNAME.NOT.EXIST'))
+      throw new BadRequestException(this.i18nService.t('auth.USERNAME.OR.PASSWORD.ERROR'))
     }
 
     if (!(await compare(loginDto.password, user.password ?? ''))) {

@@ -2,7 +2,6 @@ import {
   BadRequestException,
   Body,
   Controller,
-  Get,
   NotImplementedException,
   ParseEnumPipe,
   Post,
@@ -17,7 +16,7 @@ import { plainToClass } from 'class-transformer'
 import { I18n, I18nContext } from 'nestjs-i18n'
 
 import { BaseResponseVo } from '@/class'
-import { Auth, SkipAuth } from '@/decorators'
+import { SkipAuth } from '@/decorators'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 import type { JWTPayload } from '@/interfaces'
 import { UserVo } from '@/modules/users/vo'
@@ -117,15 +116,6 @@ export class AuthController {
         accessToken: this.authService.generateToken(sub, user.username),
         refreshToken: this.authService.generateRefreshToken(sub, user.username)
       })
-    })
-  }
-
-  @ApiOperation({ summary: '退出登录' })
-  @Auth()
-  @Get('logout')
-  logout() {
-    return new BaseResponseVo({
-      message: '退出成功'
     })
   }
 }

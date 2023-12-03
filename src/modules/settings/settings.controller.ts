@@ -12,9 +12,11 @@ import {
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { plainToClass } from 'class-transformer'
+import { I18n, I18nContext } from 'nestjs-i18n'
 
 import { BaseResponseVo } from '@/class'
 import { User } from '@/decorators'
+import type { I18nTranslations } from '@/generated/i18n.generated'
 
 import { PageSettingDto } from './dto'
 import { CreateSettingDto } from './dto/create-setting.dto'
@@ -31,11 +33,15 @@ export class SettingsController {
 
   @ApiOperation({ summary: '创建设置' })
   @Post()
-  async create(@Body() createSettingDto: CreateSettingDto, @User('sub') userId: number) {
+  async create(
+    @Body() createSettingDto: CreateSettingDto,
+    @User('sub') userId: number,
+    @I18n() i18n: I18nContext<I18nTranslations>
+  ) {
     const setting = await this.settingsService.create(createSettingDto, userId)
     return new BaseResponseVo({
       data: plainToClass(SettingVo, setting),
-      message: '创建成功'
+      message: i18n.t('common.CREATE.SUCCESS')
     })
   }
 
@@ -69,30 +75,52 @@ export class SettingsController {
   async update(
     @Param('id', new ParseIntPipe()) id: number,
     @Body() updateSettingDto: UpdateSettingDto,
-    @User('sub') userId: number
+    @User('sub') userId: number,
+    @I18n() i18n: I18nContext<I18nTranslations>
   ) {
     const setting = await this.settingsService.update(id, updateSettingDto, userId)
     return new BaseResponseVo({
       data: plainToClass(SettingVo, setting),
-      message: '修改成功'
+      message: i18n.t('common.UPDATE.SUCCESS')
     })
   }
 
   @ApiOperation({ summary: '启用设置' })
   @Patch(':id(\\d+)/enable')
-  async enable(@Param('id', new ParseIntPipe()) id: number, @User('sub') userId: number) {
+  async enable(
+    @Param('id', new ParseIntPipe()) id: number,
+    @User('sub') userId: number,
+    @I18n() i18n: I18nContext<I18nTranslations>
+  ) {
     await this.settingsService.enable(id, userId)
     return new BaseResponseVo({
-      message: '启用成功'
+      message: i18n.t('common.ENABLE.SUCCESS')
     })
   }
 
   @ApiOperation({ summary: '禁用设置' })
   @Patch(':id(\\d+)/disable')
-  async disable(@Param('id', new ParseIntPipe()) id: number, @User('sub') userId: number) {
+  async disable(
+    @Param('id', new ParseIntPipe()) id: number,
+    @User('sub') userId: number,
+    @I18n() i18n: I18nContext<I18nTranslations>
+  ) {
     await this.settingsService.disable(id, userId)
     return new BaseResponseVo({
-      message: '禁用成功'
+      message: i18n.t('common.DISABLE.SUCCESS')
+    })
+  }
+
+  @ApiOperation({ summary: '删除设置' })
+  @Delete(':id(\\d+)')
+  async remove(
+    @Param('id', new ParseIntPipe()) id: number,
+    @User('sub') userId: number,
+    @I18n() i18n: I18nContext<I18nTranslations>
+  ) {
+    await this.settingsService.remove(id, userId)
+    return new BaseResponseVo({
+      message: i18n.t('common.DELETE.SUCCESS')
     })
   }
 
@@ -101,20 +129,12 @@ export class SettingsController {
   async sort(
     @Param('id', new ParseIntPipe()) id: number,
     @Param('targetId', new ParseIntPipe()) targetId: number,
-    @User('sub') userId: number
+    @User('sub') userId: number,
+    @I18n() i18n: I18nContext<I18nTranslations>
   ) {
     await this.settingsService.sort(id, targetId, userId)
     return new BaseResponseVo({
-      message: '排序成功'
-    })
-  }
-
-  @ApiOperation({ summary: '删除设置' })
-  @Delete(':id(\\d+)')
-  async remove(@Param('id', new ParseIntPipe()) id: number, @User('sub') userId: number) {
-    await this.settingsService.remove(id, userId)
-    return new BaseResponseVo({
-      message: '删除成功'
+      message: i18n.t('common.SORT.SUCCESS')
     })
   }
 }

@@ -1,12 +1,28 @@
 {
   "FIRST.NAME": {
-    "INVALID": "First name invalid value",
-    "NOT.EMPTY": "First name must not be empty",
-    "NO.WHITESPACE": "First name must not contain whitespace"
+    "INVALID": "First name: Invalid value",
+    "NO.WHITESPACE": "First name: Must not contain whitespace",
+    "NOT.EMPTY": "First name: Must not be empty"
+  },
+  "ID": {
+    "INVALID": "User ID: Invalid value"
   },
   "LAST.NAME": {
-    "INVALID": "Last name invalid value",
-    "NOT.EMPTY": "Last name must not be empty",
-    "NO.WHITESPACE": "Last name must not contain whitespace"
+    "INVALID": "Last name: Invalid value",
+    "NO.WHITESPACE": "Last name: Must not contain whitespace",
+    "NOT.EMPTY": "Last name: Must not be empty"
+  },
+  "PASSWORD": {
+    "CONTAIN.ONE.DIGITAL.CHARACTER": "Password: Must contain at least one digital character",
+    "CONTAIN.ONE.LETTER": "Password: Must contain at least one letter",
+    "LENGTH": "Password: Length must be between 6 and 16",
+    "NO.WHITESPACE": "Password: Must not contain whitespace",
+    "NOT.EMPTY": "Password: Must not be empty"
+  },
+  "USERNAME": {
+    "LENGTH": "Username: Length must be between 4 and 16",
+    "NO.WHITESPACE": "Username: Must not contain whitespace",
+    "NOT.EMPTY": "Username: Must not be empty",
+    "NOT.EXIST": "Username: Does not exist"
   }
 }

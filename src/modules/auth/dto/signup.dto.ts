@@ -7,17 +7,17 @@ const { t } = I18nUtils
 
 export class SignupDto {
   @ApiProperty({ description: '用户名' })
-  @Length(6, 16, { message: t('auth.USERNAME.LENGTH') })
-  @IsNotEmpty({ message: t('auth.USERNAME.NOT.EMPTY') })
-  @NotContains(' ', { message: t('auth.USERNAME.NO.WHITESPACE') })
+  @Length(6, 16, { message: t('user.USERNAME.LENGTH') })
+  @IsNotEmpty({ message: t('user.USERNAME.NOT.EMPTY') })
+  @NotContains(' ', { message: t('user.USERNAME.NO.WHITESPACE') })
   readonly username: string
 
   @ApiProperty({ description: '密码' })
-  @Length(6, 16, { message: t('auth.PASSWORD.LENGTH') })
-  @IsNotEmpty({ message: t('auth.PASSWORD.NOT.EMPTY') })
-  @Matches(/[0-9]/, { message: t('auth.PASSWORD.CONTAIN.ONE.DIGITAL.CHARACTER') })
-  @Matches(/[a-zA-Z]/, { message: t('auth.PASSWORD.CONTAIN.ONE.LETTER') })
-  @NotContains(' ', { message: t('auth.PASSWORD.NO.WHITESPACE') })
+  @Length(6, 16, { message: t('user.PASSWORD.LENGTH') })
+  @IsNotEmpty({ message: t('user.PASSWORD.NOT.EMPTY') })
+  @Matches(/[0-9]/, { message: t('user.PASSWORD.CONTAIN.ONE.DIGITAL.CHARACTER') })
+  @Matches(/[a-zA-Z]/, { message: t('user.PASSWORD.CONTAIN.ONE.LETTER') })
+  @NotContains(' ', { message: t('user.PASSWORD.NO.WHITESPACE') })
   readonly password: string
 
   @ApiPropertyOptional({ description: '名' })

@@ -1,12 +1,18 @@
+import { InjectQueue } from '@nestjs/bull'
 import { Injectable } from '@nestjs/common'
+import { Queue } from 'bull'
 
 import type { CreateNotificationDto } from './dto/create-notification.dto'
 import type { UpdateNotificationDto } from './dto/update-notification.dto'
 
 @Injectable()
 export class NotificationsService {
-  create(createNotificationDto: CreateNotificationDto) {
-    return createNotificationDto
+  constructor(@InjectQueue('notification') private notificationQueue: Queue) {}
+
+  async create(createNotificationDto: CreateNotificationDto) {
+    const { message, userId } = createNotificationDto
+    await this.notificationQueue.add('notification', { message, userId, type: 'notification' })
+    return '发送成功'
   }
 
   findAll() {

@@ -1,5 +1,51 @@
 {
-  "APP": {
-    "NAME": "Dolphin Admin Nest"
+  "BUILT.IN": {
+    "INVALID": "Built-in：Invalid value",
+    "NOT.EMPTY": "Built-in: Must not be empty"
+  },
+  "CREATE.FAILED": "Create failed",
+  "CREATE.SUCCESS": "Create success",
+  "DELETE.FAILED": "Delete failed",
+  "DELETE.SUCCESS": "Delete success",
+  "DISABLE.FAILED": "Disable failed",
+  "DISABLE.SUCCESS": "Disable success",
+  "ENABLE.FAILED": "Enable failed",
+  "ENABLE.SUCCESS": "Enable success",
+  "ENABLED": {
+    "INVALID": "Enabled：Invalid value",
+    "NOT.EMPTY": "Enabled: Must not be empty"
+  },
+  "ID": {
+    "INVALID": "ID：Invalid value"
+  },
+  "KEY": {
+    "INVALID": "Key: Invalid value",
+    "LENGTH": "Key: Length cannot exceed 50 characters",
+    "NO.WHITESPACE": "Key: Must not contain whitespace",
+    "NOT.EMPTY": "Key: Must not be empty"
+  },
+  "LABEL": {
+    "LENGTH.EN.US": "Label - English：Length must not exceed 50 characters",
+    "LENGTH.ZH.CN": "Label - Chinese: Length must not exceed 50 characters",
+    "TRANS.MISSING": "Label：Translation missing"
+  },
+  "OPERATE.FAILED": "Operate failed",
+  "OPERATE.SUCCESS": "Operate success",
+  "REMARK": {
+    "LENGTH.EN.US": "Remark - English: Length must not exceed 500 characters",
+    "LENGTH.ZH.CN": "Remark - Chinese: Length must not exceed 500 characters",
+    "TRANS.MISSING": "Remark：Translation missing"
+  },
+  "RESOURCE.CONFLICT": "Operate failed: Resource conflict",
+  "RESOURCE.NOT.FOUND": "Operate failed: Resource not found",
+  "SORT.FAILED": "Sort failed",
+  "SORT.SUCCESS": "Sort success",
+  "UPDATE.FAILED": "Update failed",
+  "UPDATE.SUCCESS": "Update success",
+  "VALUE": {
+    "INVALID": "Value: Invalid value",
+    "LENGTH": "Value: Length cannot exceed 250 characters",
+    "NO.WHITESPACE": "Value: Must not contain whitespace",
+    "NOT.EMPTY": "Value: Must not be empty"
   }
 }
