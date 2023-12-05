@@ -3,7 +3,6 @@ import { Prisma } from '@prisma/client'
 import { plainToClass, plainToInstance } from 'class-transformer'
 
 import type { PageDto } from '@/class'
-import { BaseResponseVo } from '@/class'
 import { PrismaService } from '@/shared/prisma/prisma.service'
 
 import type { CreateUserDto } from './dto/create-user.dto'
@@ -14,15 +13,14 @@ import { UserVo } from './vo'
 export class UsersService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto): Promise<UserVo> {
     try {
-      const user = await this.prismaService.user.create({
-        data: createUserDto
-      })
-      const userVo = plainToClass(UserVo, user)
-      return new BaseResponseVo<UserVo>({
-        data: userVo
-      })
+      return plainToClass(
+        UserVo,
+        await this.prismaService.user.create({
+          data: createUserDto
+        })
+      )
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         const { meta, code } = e
@@ -45,20 +43,26 @@ export class UsersService {
     return [userVoList, total]
   }
 
-  findOneById(id: number) {
-    return this.prismaService.user.findUnique({
-      where: {
-        id
-      }
-    })
+  async findOneById(id: number): Promise<UserVo | null> {
+    return plainToClass(
+      UserVo,
+      await this.prismaService.user.findUnique({
+        where: {
+          id
+        }
+      })
+    )
   }
 
-  findOneByUsername(username: string) {
-    return this.prismaService.user.findUnique({
-      where: {
-        username
-      }
-    })
+  async findOneByUsername(username: string): Promise<UserVo | null> {
+    return plainToClass(
+      UserVo,
+      await this.prismaService.user.findUnique({
+        where: {
+          username
+        }
+      })
+    )
   }
 
   update(_id: number, updateUserDto: UpdateUserDto) {

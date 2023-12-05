@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
 import type { UserSettingTrans } from '@prisma/client'
 import { Prisma } from '@prisma/client'
+import { plainToClass } from 'class-transformer'
 import _ from 'lodash'
 import { I18nService } from 'nestjs-i18n'
 
@@ -12,6 +13,7 @@ import { I18nUtils } from '@/utils'
 import type { PageUserSettingDto } from './dto'
 import type { CreateUserSettingDto } from './dto/create-user-setting.dto'
 import type { UpdateUserSettingDto } from './dto/update-user-setting.dto'
+import { PageUserSettingVo, UserSettingVo } from './vo'
 
 @Injectable()
 export class UserSettingsService {
@@ -21,7 +23,7 @@ export class UserSettingsService {
   ) {}
 
   // 创建用户设置
-  async create(createUserSettingDto: CreateUserSettingDto, userId: number) {
+  async create(createUserSettingDto: CreateUserSettingDto, userId: number): Promise<UserSettingVo> {
     try {
       const { label, remark, ...rest } = createUserSettingDto
       const userSetting = await this.prismaService.userSetting.create({
@@ -49,7 +51,7 @@ export class UserSettingsService {
           }
         }
       })
-      return { ...userSetting, label, remark }
+      return plainToClass(UserSettingVo, { ...userSetting, label, remark })
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         const { code, meta } = e
@@ -64,7 +66,7 @@ export class UserSettingsService {
   }
 
   // 设置列表
-  async findMany(pageUserSettingDto: PageUserSettingDto) {
+  async findMany(pageUserSettingDto: PageUserSettingDto): Promise<PageUserSettingVo> {
     const {
       page,
       pageSize,
@@ -142,8 +144,8 @@ export class UserSettingsService {
     })
 
     const total = await this.prismaService.userSetting.count({ where })
-    return {
-      data: results.map((userSetting) => ({
+    return plainToClass(PageUserSettingVo, {
+      records: results.map((userSetting) => ({
         ...userSetting,
         label: I18nUtils.generateTrans<UserSettingTrans>(userSetting.userSettingTrans, 'label'),
         remark: I18nUtils.generateTrans<UserSettingTrans>(userSetting.userSettingTrans, 'remark')
@@ -151,11 +153,11 @@ export class UserSettingsService {
       total,
       page,
       pageSize
-    }
+    })
   }
 
   // 根据 ID 查询用户设置
-  async findOneById(id: number) {
+  async findOneById(id: number): Promise<UserSettingVo> {
     const userSetting = await this.prismaService.userSetting.findUnique({
       where: { id },
       include: { userSettingTrans: true }
@@ -163,15 +165,15 @@ export class UserSettingsService {
     if (!userSetting) {
       throw new NotFoundException(this.i18nService.t('common.RESOURCE.NOT.FOUND'))
     }
-    return {
+    return plainToClass(UserSettingVo, {
       ...userSetting,
       label: I18nUtils.generateTrans<UserSettingTrans>(userSetting.userSettingTrans, 'label'),
       remark: I18nUtils.generateTrans<UserSettingTrans>(userSetting.userSettingTrans, 'remark')
-    }
+    })
   }
 
   // 根据 Key 查询用户设置
-  async findOneByKey(key: string) {
+  async findOneByKey(key: string): Promise<UserSettingVo> {
     const userSetting = await this.prismaService.userSetting.findUnique({
       where: { key },
       include: { userSettingTrans: true }
@@ -179,15 +181,19 @@ export class UserSettingsService {
     if (!userSetting) {
       throw new NotFoundException(this.i18nService.t('common.RESOURCE.NOT.FOUND'))
     }
-    return {
+    return plainToClass(UserSettingVo, {
       ...userSetting,
       label: I18nUtils.generateTrans<UserSettingTrans>(userSetting.userSettingTrans, 'label'),
       remark: I18nUtils.generateTrans<UserSettingTrans>(userSetting.userSettingTrans, 'remark')
-    }
+    })
   }
 
   // 修改用户设置
-  async update(id: number, updateUserSettingDto: UpdateUserSettingDto, userId: number) {
+  async update(
+    id: number,
+    updateUserSettingDto: UpdateUserSettingDto,
+    userId: number
+  ): Promise<UserSettingVo> {
     const { label, remark, ...rest } = updateUserSettingDto
     try {
       const userSetting = await this.prismaService.userSetting.update({
@@ -224,7 +230,7 @@ export class UserSettingsService {
           }
         }
       })
-      return { ...userSetting, label, remark }
+      return plainToClass(UserSettingVo, { ...userSetting, label, remark })
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         const { code } = e
@@ -237,7 +243,7 @@ export class UserSettingsService {
   }
 
   // 启用设置
-  async enable(id: number, userId: number) {
+  async enable(id: number, userId: number): Promise<void> {
     try {
       await this.prismaService.userSetting.update({
         where: {
@@ -261,7 +267,7 @@ export class UserSettingsService {
   }
 
   // 禁用设置
-  async disable(id: number, userId: number) {
+  async disable(id: number, userId: number): Promise<void> {
     try {
       await this.prismaService.userSetting.update({
         where: {
@@ -285,7 +291,7 @@ export class UserSettingsService {
   }
 
   // 删除用户设置
-  async remove(id: number, userId: number) {
+  async remove(id: number, userId: number): Promise<void> {
     try {
       // 删除多语言翻译
       const deleteUserSettingTrans = this.prismaService.userSettingTrans.updateMany({

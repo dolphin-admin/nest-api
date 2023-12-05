@@ -9,8 +9,9 @@ import type { NestExpressApplication } from '@nestjs/platform-express'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n'
 
-import { ErrorResponseVo } from './class'
+import { R } from './class'
 import type { AppConfig } from './configs'
+import { BusinessCode } from './enums'
 import { HttpExceptionFilter } from './filters'
 import metadata from './metadata'
 import { AppModule } from './modules/app.module'
@@ -63,8 +64,10 @@ async function bootstrap() {
       errorHttpStatusCode: HttpStatus.BAD_REQUEST,
       responseBodyFormatter: (_host, _exc, formattedErrors) => {
         const errors = formattedErrors as string[]
-        return new ErrorResponseVo({
+        return new R({
+          code: BusinessCode['PARAMS.ERROR'],
           message: errors[0],
+          success: false,
           errors
         }) as Record<string, unknown>
       }

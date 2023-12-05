@@ -2,7 +2,7 @@ import { BadRequestException, Inject, Injectable, NotImplementedException } from
 import { ConfigType } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 import { compare } from '@node-rs/bcrypt'
-import type { User } from '@prisma/client'
+import { plainToClass } from 'class-transformer'
 import { I18nService } from 'nestjs-i18n'
 
 import { JwtConfig } from '@/configs'
@@ -10,6 +10,7 @@ import type { I18nTranslations } from '@/generated/i18n.generated'
 import type { JWTPayload } from '@/interfaces'
 import { UsersService } from '@/modules/users/users.service'
 
+import { UserVo } from '../users/vo'
 import type { LoginDto } from './dto'
 
 @Injectable()
@@ -40,16 +41,16 @@ export class AuthService {
   }
 
   // 注册
-  async signup() {
+  async signup(): Promise<UserVo> {
     const user = await this.usersService.create({
       username: 'admin',
       password: '123456'
     })
-    return user
+    return plainToClass(UserVo, user)
   }
 
   // 用户名登录
-  async loginByUsername(loginDto: LoginDto): Promise<User> {
+  async loginByUsername(loginDto: LoginDto): Promise<UserVo> {
     const user = await this.usersService.findOneByUsername(loginDto.username)
     if (!user) {
       throw new BadRequestException(this.i18nService.t('auth.USERNAME.OR.PASSWORD.ERROR'))
@@ -59,7 +60,7 @@ export class AuthService {
       throw new BadRequestException(this.i18nService.t('auth.USERNAME.OR.PASSWORD.ERROR'))
     }
 
-    return user
+    return plainToClass(UserVo, user)
   }
 
   // 邮箱登录

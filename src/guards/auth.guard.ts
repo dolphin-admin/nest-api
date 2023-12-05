@@ -8,6 +8,7 @@ import { I18nContext } from 'nestjs-i18n'
 
 import { JwtConfig } from '@/configs'
 import { SKIP_AUTH } from '@/constants'
+import { BusinessCode } from '@/enums'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 import type { CustomRequest, JWTPayload } from '@/interfaces'
 
@@ -33,7 +34,10 @@ export class AuthGuard implements CanActivate {
 
     const i18n = I18nContext.current<I18nTranslations>()!
     if (!token) {
-      throw new UnauthorizedException(i18n.t('auth.UNAUTHORIZED'))
+      throw new UnauthorizedException({
+        code: BusinessCode['AUTH.ERROR'],
+        message: i18n.t('auth.UNAUTHORIZED')
+      })
     }
     try {
       const payload = await this.jwtService.verifyAsync<JWTPayload>(token, {
@@ -41,7 +45,10 @@ export class AuthGuard implements CanActivate {
       })
       request.user = payload
     } catch {
-      throw new UnauthorizedException(i18n.t('auth.UNAUTHORIZED'))
+      throw new UnauthorizedException({
+        code: BusinessCode['AUTH.ERROR'],
+        message: i18n.t('auth.UNAUTHORIZED')
+      })
     }
     return true
   }

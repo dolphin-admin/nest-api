@@ -11,10 +11,9 @@ import {
   Query
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
-import { plainToClass } from 'class-transformer'
 import { I18n, I18nContext } from 'nestjs-i18n'
 
-import { BaseResponseVo } from '@/class'
+import { R } from '@/class'
 import { User } from '@/decorators'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 
@@ -22,8 +21,8 @@ import { PageSettingDto } from './dto'
 import { CreateSettingDto } from './dto/create-setting.dto'
 import { UpdateSettingDto } from './dto/update-setting.dto'
 import { SettingsService } from './settings.service'
-import { SettingVo } from './vo'
-import { PageSettingVo } from './vo/page-setting.vo'
+import type { SettingVo } from './vo'
+import type { PageSettingVo } from './vo/page-setting.vo'
 
 @ApiTags('系统设置')
 @ApiBearerAuth('bearer')
@@ -37,36 +36,34 @@ export class SettingsController {
     @Body() createSettingDto: CreateSettingDto,
     @User('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
-  ) {
-    const setting = await this.settingsService.create(createSettingDto, userId)
-    return new BaseResponseVo({
-      data: plainToClass(SettingVo, setting),
+  ): Promise<R<SettingVo>> {
+    return new R({
+      data: await this.settingsService.create(createSettingDto, userId),
       message: i18n.t('common.CREATE.SUCCESS')
     })
   }
 
   @ApiOperation({ summary: '设置列表' })
   @Get()
-  async findMany(@Query() pageSettingDto: PageSettingDto) {
-    const result = await this.settingsService.findMany(pageSettingDto)
-    return plainToClass(PageSettingVo, result)
+  async findMany(@Query() pageSettingDto: PageSettingDto): Promise<R<PageSettingVo>> {
+    return new R({
+      data: await this.settingsService.findMany(pageSettingDto)
+    })
   }
 
   @ApiOperation({ summary: '设置详情 [ID]' })
   @Get(':id(\\d+)')
-  async findOneById(@Param('id', new ParseIntPipe()) id: number) {
-    const setting = await this.settingsService.findOneById(id)
-    return new BaseResponseVo({
-      data: plainToClass(SettingVo, setting)
+  async findOneById(@Param('id', new ParseIntPipe()) id: number): Promise<R<SettingVo>> {
+    return new R({
+      data: await this.settingsService.findOneById(id)
     })
   }
 
   @ApiOperation({ summary: '设置详情 [Key]' })
   @Get(':key')
-  async findOneByKey(@Param('key') key: string) {
-    const setting = await this.settingsService.findOneByKey(key)
-    return new BaseResponseVo({
-      data: plainToClass(SettingVo, setting)
+  async findOneByKey(@Param('key') key: string): Promise<R<SettingVo>> {
+    return new R({
+      data: await this.settingsService.findOneByKey(key)
     })
   }
 
@@ -77,10 +74,9 @@ export class SettingsController {
     @Body() updateSettingDto: UpdateSettingDto,
     @User('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
-  ) {
-    const setting = await this.settingsService.update(id, updateSettingDto, userId)
-    return new BaseResponseVo({
-      data: plainToClass(SettingVo, setting),
+  ): Promise<R<SettingVo>> {
+    return new R({
+      data: await this.settingsService.update(id, updateSettingDto, userId),
       message: i18n.t('common.UPDATE.SUCCESS')
     })
   }
@@ -91,9 +87,9 @@ export class SettingsController {
     @Param('id', new ParseIntPipe()) id: number,
     @User('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
-  ) {
+  ): Promise<R> {
     await this.settingsService.enable(id, userId)
-    return new BaseResponseVo({
+    return new R({
       message: i18n.t('common.ENABLE.SUCCESS')
     })
   }
@@ -104,9 +100,9 @@ export class SettingsController {
     @Param('id', new ParseIntPipe()) id: number,
     @User('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
-  ) {
+  ): Promise<R> {
     await this.settingsService.disable(id, userId)
-    return new BaseResponseVo({
+    return new R({
       message: i18n.t('common.DISABLE.SUCCESS')
     })
   }
@@ -117,9 +113,9 @@ export class SettingsController {
     @Param('id', new ParseIntPipe()) id: number,
     @User('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
-  ) {
+  ): Promise<R> {
     await this.settingsService.remove(id, userId)
-    return new BaseResponseVo({
+    return new R({
       message: i18n.t('common.DELETE.SUCCESS')
     })
   }
@@ -131,9 +127,9 @@ export class SettingsController {
     @Param('targetId', new ParseIntPipe()) targetId: number,
     @User('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
-  ) {
+  ): Promise<R> {
     await this.settingsService.sort(id, targetId, userId)
-    return new BaseResponseVo({
+    return new R({
       message: i18n.t('common.SORT.SUCCESS')
     })
   }

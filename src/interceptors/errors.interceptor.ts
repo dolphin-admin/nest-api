@@ -12,7 +12,6 @@ export class ErrorsInterceptor implements NestInterceptor {
         const { message, error, statusCode } = err?.response ?? {}
         console.log(`调用失败：${statusCode} ${error}`)
         console.log(`错误信息：${message}`)
-
         return throwError(() => err)
       })
     )

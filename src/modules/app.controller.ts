@@ -2,7 +2,7 @@ import { Controller, Get, Inject, Redirect, Render } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { I18n, I18nContext } from 'nestjs-i18n'
 
-import { BaseResponseVo } from '@/class'
+import { R } from '@/class'
 import { SkipAuth } from '@/decorators'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 
@@ -25,7 +25,7 @@ export class AppController {
   @ApiOperation({ summary: '应用信息' })
   @Get('app-info')
   getVersion() {
-    return new BaseResponseVo({
+    return new R({
       data: this.appService.getAppInfo()
     })
   }
@@ -38,7 +38,7 @@ export class AppController {
   @ApiOperation({ summary: '语言标识' })
   @Get('lang')
   getCurrentLang(@I18n() i18n: I18nContext<I18nTranslations>) {
-    return new BaseResponseVo({
+    return new R({
       data: i18n.lang
     })
   }

@@ -1,8 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-import { BaseResponseVo } from './base-response.vo'
-
-export class PageVo<T = any> extends BaseResponseVo {
+export class Page<T = any> {
   @ApiProperty({ description: '页码', example: 1 })
   page: number
 
@@ -13,11 +11,9 @@ export class PageVo<T = any> extends BaseResponseVo {
   total: number
 
   @ApiProperty({ description: '分页数据', type: () => [Object] })
-  data?: T[]
+  records?: T[]
 
-  constructor(pageVo?: PageVo<T>) {
-    const { code, message, data, ...pageRelateVo } = pageVo ?? {}
-    super({ code, message, data })
-    Object.assign(this, pageRelateVo)
+  constructor(page?: Page<T>) {
+    Object.assign(this, page)
   }
 }
