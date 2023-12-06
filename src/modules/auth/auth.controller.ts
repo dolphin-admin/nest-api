@@ -78,7 +78,7 @@ export class AuthController {
       // 邮箱登录
       case LoginType.EMAIL:
       default:
-        return new BadRequestException(i18n.t('auth.LOGIN.TYPE.NOT.SUPPORTED'))
+        throw new BadRequestException(i18n.t('auth.LOGIN.TYPE.NOT.SUPPORTED'))
     }
 
     const { id, username } = user
