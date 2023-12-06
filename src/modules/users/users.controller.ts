@@ -62,7 +62,7 @@ export class UsersController {
     if (!currentUser) {
       throw new UnauthorizedException({
         code: BusinessCode['AUTH.ERROR'],
-        message: i18n.t('auth.UNAUTHORIZED')
+        msg: i18n.t('auth.UNAUTHORIZED')
       })
     }
     return new R({

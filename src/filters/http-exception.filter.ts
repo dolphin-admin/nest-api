@@ -15,20 +15,20 @@ export class HttpExceptionFilter implements ExceptionFilter {
     if (typeof exceptionResponse === 'string') {
       response.status(status).json(
         new R({
-          message: exceptionResponse,
+          msg: exceptionResponse,
           code: BusinessCode.ERROR,
           success: false
         })
       )
     } else {
       const {
-        message,
+        msg,
         code = BusinessCode.ERROR,
         success = false
       } = exceptionResponse as Record<string, any>
       response.status(status).json(
         new R({
-          message,
+          msg,
           code,
           success
         })

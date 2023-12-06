@@ -6,7 +6,7 @@ import { tap } from 'rxjs/operators'
 
 import { DevConfig } from '@/configs'
 
-import type { CustomRequest } from '../interfaces'
+// import type { CustomRequest } from '../interfaces'
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
@@ -17,11 +17,11 @@ export class LoggingInterceptor implements NestInterceptor {
     if (!enableRequestLog) {
       return next.handle()
     }
-    const request = context.switchToHttp().getRequest<CustomRequest>()
-    console.log(`开始调用：${request.method}:${request.url}`)
-    console.log('Request Queries:', request.query)
-    console.log('Request Parameters:', request.params)
-    console.log('Request Body:', request.body)
+    // const request = context.switchToHttp().getRequest<CustomRequest>()
+    // console.log(`开始调用：${request.method}:${request.url}`)
+    // console.log('Request Queries:', request.query)
+    // console.log('Request Parameters:', request.params)
+    // console.log('Request Body:', request.body)
 
     const now = Date.now()
     return next

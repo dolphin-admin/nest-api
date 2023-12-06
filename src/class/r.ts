@@ -7,7 +7,7 @@ export class R<T = any> {
   code?: string
 
   @ApiPropertyOptional({ description: '提示信息', example: '请求成功' })
-  message?: string
+  msg?: string
 
   @ApiPropertyOptional({ description: '响应数据', type: () => Object })
   data?: T
@@ -23,8 +23,7 @@ export class R<T = any> {
   errors?: string[]
 
   constructor(r?: R<T>) {
-    const { code = BusinessCode.SUCCESS, message = '', data, errors, success = true } = r ?? {}
-
-    Object.assign(this, { code, message, data, errors, success })
+    const { code = BusinessCode.SUCCESS, msg = '', data, errors, success = true } = r ?? {}
+    Object.assign(this, { code, msg, data, errors, success })
   }
 }

@@ -37,7 +37,7 @@ export class UserSettingsController {
   ): Promise<R<UserSettingVo>> {
     return new R({
       data: await this.userSettingsService.create(createUserSettingDto, userId),
-      message: i18n.t('common.CREATE.SUCCESS')
+      msg: i18n.t('common.CREATE.SUCCESS')
     })
   }
 
@@ -86,7 +86,7 @@ export class UserSettingsController {
   ): Promise<R> {
     await this.userSettingsService.enable(id, userId)
     return new R({
-      message: i18n.t('common.ENABLE.SUCCESS')
+      msg: i18n.t('common.ENABLE.SUCCESS')
     })
   }
 
@@ -99,7 +99,7 @@ export class UserSettingsController {
   ): Promise<R> {
     await this.userSettingsService.disable(id, userId)
     return new R({
-      message: i18n.t('common.DISABLE.SUCCESS')
+      msg: i18n.t('common.DISABLE.SUCCESS')
     })
   }
 
@@ -112,7 +112,7 @@ export class UserSettingsController {
   ): Promise<R> {
     await this.userSettingsService.remove(id, userId)
     return new R({
-      message: i18n.t('common.DELETE.SUCCESS')
+      msg: i18n.t('common.DELETE.SUCCESS')
     })
   }
 }

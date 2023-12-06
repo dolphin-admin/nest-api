@@ -20,7 +20,7 @@ export function ApiBaseCreatedResponse<T extends Type<unknown>>(
             type: 'string',
             description: '业务代码'
           },
-          message: {
+          msg: {
             type: 'string',
             description: '提示信息'
           },

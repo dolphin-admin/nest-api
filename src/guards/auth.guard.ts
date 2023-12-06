@@ -36,7 +36,7 @@ export class AuthGuard implements CanActivate {
     if (!token) {
       throw new UnauthorizedException({
         code: BusinessCode['AUTH.ERROR'],
-        message: i18n.t('auth.UNAUTHORIZED')
+        msg: i18n.t('auth.UNAUTHORIZED')
       })
     }
     try {
@@ -47,7 +47,7 @@ export class AuthGuard implements CanActivate {
     } catch {
       throw new UnauthorizedException({
         code: BusinessCode['AUTH.ERROR'],
-        message: i18n.t('auth.UNAUTHORIZED')
+        msg: i18n.t('auth.UNAUTHORIZED')
       })
     }
     return true

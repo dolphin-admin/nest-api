@@ -47,7 +47,7 @@ export class AuthController {
         accessToken: '',
         refreshToken: ''
       }),
-      message: '注册成功'
+      msg: '注册成功'
     })
   }
 
@@ -89,7 +89,7 @@ export class AuthController {
         accessToken: this.authService.generateToken(id, username),
         refreshToken: this.authService.generateRefreshToken(id, username)
       }),
-      message: i18n.t('auth.LOGIN.SUCCESS')
+      msg: i18n.t('auth.LOGIN.SUCCESS')
     })
   }
 
@@ -107,14 +107,14 @@ export class AuthController {
     } catch {
       throw new UnauthorizedException({
         code: BusinessCode['AUTH.ERROR'],
-        message: i18n.t('auth.UNAUTHORIZED')
+        msg: i18n.t('auth.UNAUTHORIZED')
       })
     }
     const user = await this.usersService.findOneById(sub)
     if (!user) {
       throw new UnauthorizedException({
         code: BusinessCode['AUTH.ERROR'],
-        message: i18n.t('auth.UNAUTHORIZED')
+        msg: i18n.t('auth.UNAUTHORIZED')
       })
     }
     return new R({

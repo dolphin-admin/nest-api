@@ -9,6 +9,7 @@ import { JwtConfig } from '@/configs'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 import type { JWTPayload } from '@/interfaces'
 import { UsersService } from '@/modules/users/users.service'
+import { PrismaService } from '@/shared/prisma/prisma.service'
 
 import { UserVo } from '../users/vo'
 import type { LoginDto } from './dto'
@@ -16,6 +17,7 @@ import type { LoginDto } from './dto'
 @Injectable()
 export class AuthService {
   constructor(
+    private readonly prismaService: PrismaService,
     private readonly jwtService: JwtService,
     private readonly usersService: UsersService,
     private readonly i18nService: I18nService<I18nTranslations>,
@@ -51,15 +53,17 @@ export class AuthService {
 
   // 用户名登录
   async loginByUsername(loginDto: LoginDto): Promise<UserVo> {
-    const user = await this.usersService.findOneByUsername(loginDto.username)
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        username: loginDto.username
+      }
+    })
     if (!user) {
       throw new BadRequestException(this.i18nService.t('auth.USERNAME.OR.PASSWORD.ERROR'))
     }
-
     if (!(await compare(loginDto.password, user.password ?? ''))) {
       throw new BadRequestException(this.i18nService.t('auth.USERNAME.OR.PASSWORD.ERROR'))
     }
-
     return plainToClass(UserVo, user)
   }
 

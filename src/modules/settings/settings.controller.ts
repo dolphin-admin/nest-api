@@ -39,7 +39,7 @@ export class SettingsController {
   ): Promise<R<SettingVo>> {
     return new R({
       data: await this.settingsService.create(createSettingDto, userId),
-      message: i18n.t('common.CREATE.SUCCESS')
+      msg: i18n.t('common.CREATE.SUCCESS')
     })
   }
 
@@ -77,7 +77,7 @@ export class SettingsController {
   ): Promise<R<SettingVo>> {
     return new R({
       data: await this.settingsService.update(id, updateSettingDto, userId),
-      message: i18n.t('common.UPDATE.SUCCESS')
+      msg: i18n.t('common.UPDATE.SUCCESS')
     })
   }
 
@@ -90,7 +90,7 @@ export class SettingsController {
   ): Promise<R> {
     await this.settingsService.enable(id, userId)
     return new R({
-      message: i18n.t('common.ENABLE.SUCCESS')
+      msg: i18n.t('common.ENABLE.SUCCESS')
     })
   }
 
@@ -103,7 +103,7 @@ export class SettingsController {
   ): Promise<R> {
     await this.settingsService.disable(id, userId)
     return new R({
-      message: i18n.t('common.DISABLE.SUCCESS')
+      msg: i18n.t('common.DISABLE.SUCCESS')
     })
   }
 
@@ -116,7 +116,7 @@ export class SettingsController {
   ): Promise<R> {
     await this.settingsService.remove(id, userId)
     return new R({
-      message: i18n.t('common.DELETE.SUCCESS')
+      msg: i18n.t('common.DELETE.SUCCESS')
     })
   }
 
@@ -130,7 +130,7 @@ export class SettingsController {
   ): Promise<R> {
     await this.settingsService.sort(id, targetId, userId)
     return new R({
-      message: i18n.t('common.SORT.SUCCESS')
+      msg: i18n.t('common.SORT.SUCCESS')
     })
   }
 }

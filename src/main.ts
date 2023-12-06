@@ -66,7 +66,7 @@ async function bootstrap() {
         const errors = formattedErrors as string[]
         return new R({
           code: BusinessCode['PARAMS.ERROR'],
-          message: errors[0],
+          msg: errors[0],
           success: false,
           errors
         }) as Record<string, unknown>
