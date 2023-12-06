@@ -13,6 +13,7 @@ import { I18nUtils } from '@/utils'
 
 import type { PageSettingDto } from './dto'
 import type { CreateSettingDto } from './dto/create-setting.dto'
+import type { PatchSettingDto } from './dto/patch-setting.dto'
 import type { UpdateSettingDto } from './dto/update-setting.dto'
 import { SettingVo } from './vo'
 import { PageSettingVo } from './vo/page-setting.vo'
@@ -35,18 +36,12 @@ export class SettingsService {
           settingTrans: {
             createMany: {
               data: [
-                {
-                  label: label['zh-CN'],
-                  remark: remark['zh-CN'],
-                  lang: LanguageCode['zh-CN'],
+                ...Object.values(LanguageCode).map((lang) => ({
+                  label: label[lang],
+                  remark: remark[lang],
+                  lang,
                   createdBy: userId
-                },
-                {
-                  label: label['en-US'],
-                  remark: remark['en-US'],
-                  lang: LanguageCode['en-US'],
-                  createdBy: userId
-                }
+                }))
               ]
             }
           }
@@ -184,7 +179,7 @@ export class SettingsService {
     })
   }
 
-  // 修改设置
+  // 更新设置
   async update(id: number, updateSettingDto: UpdateSettingDto, userId: number): Promise<SettingVo> {
     const { label, remark, ...rest } = updateSettingDto
     try {
@@ -198,30 +193,18 @@ export class SettingsService {
           updatedBy: userId,
           settingTrans: {
             updateMany: [
-              {
+              ...Object.values(LanguageCode).map((lang) => ({
                 where: {
                   settingId: id,
-                  lang: LanguageCode['zh-CN'],
+                  lang,
                   deletedAt: null
                 },
                 data: {
-                  label: label['zh-CN'],
-                  remark: remark['zh-CN'],
+                  ...(label[lang] && { label: label[lang] }),
+                  ...(remark[lang] && { remark: remark[lang] }),
                   updatedBy: userId
                 }
-              },
-              {
-                where: {
-                  settingId: id,
-                  lang: LanguageCode['en-US'],
-                  deletedAt: null
-                },
-                data: {
-                  label: label['en-US'],
-                  remark: remark['en-US'],
-                  updatedBy: userId
-                }
-              }
+              }))
             ]
           }
         }
@@ -238,8 +221,9 @@ export class SettingsService {
     }
   }
 
-  // 启用设置
-  async enable(id: number, userId: number): Promise<void> {
+  // 修改设置
+  async patch(id: number, patchSettingDto: PatchSettingDto, userId: number): Promise<void> {
+    const { label, remark, ...rest } = patchSettingDto
     try {
       await this.prismaService.setting.update({
         where: {
@@ -247,32 +231,26 @@ export class SettingsService {
           deletedAt: null
         },
         data: {
-          enabled: true,
-          updatedBy: userId
-        }
-      })
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        const { code } = e
-        if (code === 'P2025') {
-          throw new NotFoundException(this.i18nService.t('common.RESOURCE.NOT.FOUND'))
-        }
-      }
-      throw e
-    }
-  }
-
-  // 禁用设置
-  async disable(id: number, userId: number): Promise<void> {
-    try {
-      await this.prismaService.setting.update({
-        where: {
-          id,
-          deletedAt: null
-        },
-        data: {
-          enabled: false,
-          updatedBy: userId
+          ...rest,
+          updatedBy: userId,
+          settingTrans: {
+            updateMany: [
+              ...Object.values(LanguageCode)
+                .filter((lang) => label?.[lang] || remark?.[lang])
+                .map((lang) => ({
+                  where: {
+                    settingId: id,
+                    lang,
+                    deletedAt: null
+                  },
+                  data: {
+                    ...(label?.[lang] && { label: label[lang] }),
+                    ...(remark?.[lang] && { remark: remark[lang] }),
+                    updatedBy: userId
+                  }
+                }))
+            ]
+          }
         }
       })
     } catch (e) {

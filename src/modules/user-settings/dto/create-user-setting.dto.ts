@@ -9,10 +9,8 @@ import {
   ValidateNested
 } from 'class-validator'
 
+import { LabelTransDto, RemarkTransDto } from '@/class'
 import { I18nUtils } from '@/utils'
-
-import { LabelTransDto } from './label-trans.dto'
-import { RemarkTransDto } from './remark-trans.dto'
 
 const { t } = I18nUtils
 

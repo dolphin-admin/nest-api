@@ -2,50 +2,52 @@ import { ApiProperty } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import {
   IsBoolean,
-  IsNotEmpty,
+  IsOptional,
   IsString,
   MaxLength,
   NotContains,
   ValidateNested
 } from 'class-validator'
 
-import { LabelTransDto, RemarkTransDto } from '@/class'
+import { LabelOptionalTransDto, RemarkOptionalTransDto } from '@/class'
 import { I18nUtils } from '@/utils'
 
 const { t } = I18nUtils
 
-export class CreateSettingDto {
+export class PatchSettingDto {
   @ApiProperty({ description: '键' })
   @MaxLength(50, { message: t('common.KEY.LENGTH') })
   @IsString({ message: t('common.KEY.INVALID') })
-  @IsNotEmpty({ message: t('common.KEY.NOT.EMPTY') })
   @NotContains(' ', { message: t('common.KEY.NO.WHITESPACE') })
-  key: string
+  @IsOptional()
+  key?: string
 
   @ApiProperty({ description: '值' })
   @MaxLength(250, { message: t('common.VALUE.LENGTH') })
   @IsString({ message: t('common.VALUE.INVALID') })
-  @IsNotEmpty({ message: t('common.VALUE.NOT.EMPTY') })
   @NotContains(' ', { message: t('common.VALUE.NO.WHITESPACE') })
-  value: string
+  @IsOptional()
+  value?: string
 
-  @ApiProperty({ description: '展示名称', type: LabelTransDto })
+  @ApiProperty({ description: '展示名称', type: LabelOptionalTransDto })
   @ValidateNested({ message: t('common.LABEL.TRANS.MISSING') })
-  @Type(() => LabelTransDto)
-  label: LabelTransDto
+  @Type(() => LabelOptionalTransDto)
+  @IsOptional()
+  label?: LabelOptionalTransDto
 
-  @ApiProperty({ description: '备注', type: RemarkTransDto })
+  @ApiProperty({ description: '备注', type: RemarkOptionalTransDto })
   @ValidateNested({ message: t('common.REMARK.TRANS.MISSING') })
-  @Type(() => RemarkTransDto)
-  remark: RemarkTransDto
+  @Type(() => RemarkOptionalTransDto)
+  @IsOptional()
+  remark?: RemarkOptionalTransDto
 
   @ApiProperty({ description: '是否启用' })
   @IsBoolean({ message: t('common.ENABLED.INVALID') })
-  @IsNotEmpty({ message: t('common.ENABLED.NOT.EMPTY') })
-  enabled: boolean
+  @IsOptional()
+  enabled?: boolean
 
   @ApiProperty({ description: '是否内置' })
   @IsBoolean({ message: t('common.BUILT.IN.INVALID') })
-  @IsNotEmpty({ message: t('common.BUILT.IN.NOT.EMPTY') })
-  builtIn: boolean
+  @IsOptional()
+  builtIn?: boolean
 }

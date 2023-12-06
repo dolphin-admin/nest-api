@@ -1,5 +1,3 @@
 export * from './create-user-setting.dto'
-export * from './label-trans.dto'
 export * from './page-user-setting.dto'
-export * from './remark-trans.dto'
 export * from './update-user-setting.dto'

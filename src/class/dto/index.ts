@@ -1,2 +1,6 @@
+export * from './label-optional-trans.dto'
+export * from './label-trans.dto'
 export * from './multilingual.dto'
 export * from './page.dto'
+export * from './remark-optional-trans.dto'
+export * from './remark-trans.dto'
