@@ -23,9 +23,12 @@ export class LoggingInterceptor implements NestInterceptor {
     // console.log('Request Parameters:', request.params)
     // console.log('Request Body:', request.body)
 
-    const now = Date.now()
-    return next
-      .handle()
-      .pipe(tap(() => console.log(`执行了 ${(Number(Date.now() - now) / 1000).toFixed(1)}s`)))
+    // const now = Date.now()
+    return next.handle().pipe(
+      tap(() =>
+        // console.log(`执行了 ${(Number(Date.now() - now) / 1000).toFixed(1)}s`)
+        {}
+      )
+    )
   }
 }
