@@ -703,7 +703,11 @@ packages:
       '@commitlint/types': 18.4.3
     dev: true
 
+<<<<<<< Updated upstream
   /@commitlint/load@18.4.3(typescript@5.3.3):
+=======
+  /@commitlint/load@18.4.3(typescript@5.3.2):
+>>>>>>> Stashed changes
     resolution: {integrity: sha512-v6j2WhvRQJrcJaj5D+EyES2WKTxPpxENmNpNG3Ww8MZGik3jWRXtph0QTzia5ZJyPh2ib5aC/6BIDymkUUM58Q==}
     engines: {node: '>=v18'}
     dependencies:
@@ -4626,7 +4630,11 @@ packages:
       longest: 2.0.1
       word-wrap: 1.2.5
     optionalDependencies:
+<<<<<<< Updated upstream
       '@commitlint/load': 18.4.3(typescript@5.3.3)
+=======
+      '@commitlint/load': 18.4.3(typescript@5.3.2)
+>>>>>>> Stashed changes
     transitivePeerDependencies:
       - typescript
     dev: true
