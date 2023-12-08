@@ -29,7 +29,7 @@ import { ApiPageQuery, User } from '@/decorators'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 
 import { DictionariesService } from './dictionaries.service'
-import { PatchSettingDto, UpdateDictionaryDto } from './dto'
+import { CreateDictionaryDto, PageDictionaryDto, PatchSettingDto, UpdateDictionaryDto } from './dto'
 import type { DictionaryVo, PageDictionaryVo } from './vo'
 
 @ApiTags('字典')
@@ -45,21 +45,12 @@ export class DictionariesController {
   @ApiConflictResponse({ description: '字典代码已存在' })
   @Post()
   async create(
-    @Body() DictionaryDto: DictionaryDto,
+    @Body() createDictionaryDto: CreateDictionaryDto,
     @User('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
-  ): Promise<R<DictionaryVo | string>> {
-    const checkCodeExists = await this.dictionariesService.findOneByCode(DictionaryDto.code)
-
-    if (checkCodeExists) {
-      return new R({
-        data: 'code已经存在',
-        msg: i18n.t('common.CREATE.FAILED')
-      })
-    }
-
+  ): Promise<R<DictionaryVo>> {
     return new R({
-      data: await this.dictionariesService.create(DictionaryDto, userId),
+      data: await this.dictionariesService.create(createDictionaryDto, userId),
       msg: i18n.t('common.CREATE.SUCCESS')
     })
   }
@@ -96,9 +87,9 @@ export class DictionariesController {
   @ApiUnauthorizedResponse({ description: '认证失败' })
   @ApiPageQuery('searchText', 'date')
   @Get()
-  async findMany(@Query() PageDictionaryDto: PageDictionaryDto): Promise<R<PageDictionaryVo>> {
+  async findMany(@Query() pageDictionaryDto: PageDictionaryDto): Promise<R<PageDictionaryVo>> {
     return new R({
-      data: await this.dictionariesService.findMany(PageDictionaryDto)
+      data: await this.dictionariesService.findMany(pageDictionaryDto)
     })
   }
 
@@ -109,12 +100,14 @@ export class DictionariesController {
   @ApiNotFoundResponse({ description: '字典不存在' })
   @ApiParam({ name: 'id', description: '字典 ID', required: true, example: 1 })
   @Put(':id(\\d+)')
-  update(
+  async update(
     @Param('id') id: number,
     @Body() updateDictionaryDto: UpdateDictionaryDto,
     @User('sub') userId: number
-  ) {
-    return this.dictionariesService.update(id, updateDictionaryDto, userId)
+  ): Promise<R<DictionaryVo>> {
+    return new R({
+      data: await this.dictionariesService.update(id, updateDictionaryDto, userId)
+    })
   }
 
   @ApiOperation({ summary: '修改字典' })

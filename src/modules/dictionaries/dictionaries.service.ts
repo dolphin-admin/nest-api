@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException
+} from '@nestjs/common'
 import type { DictionaryTrans } from '@prisma/client'
 import { Prisma } from '@prisma/client'
 import { plainToClass } from 'class-transformer'
@@ -11,8 +16,12 @@ import type { I18nTranslations } from '@/generated/i18n.generated'
 import { PrismaService } from '@/shared/prisma/prisma.service'
 import { I18nUtils } from '@/utils'
 
-import type { PageDictionaryDto, PatchSettingDto, UpdateDictionaryDto } from './dto'
-import type { DictionaryDto } from './dto/dictionary.dto'
+import type {
+  CreateDictionaryDto,
+  PageDictionaryDto,
+  PatchSettingDto,
+  UpdateDictionaryDto
+} from './dto'
 import { DictionaryVo, PageDictionaryVo } from './vo'
 
 @Injectable()
@@ -22,30 +31,22 @@ export class DictionariesService {
     private readonly i18nService: I18nService<I18nTranslations>
   ) {}
 
-  async create(DictionaryDto: DictionaryDto, userId: number): Promise<DictionaryVo> {
+  async create(dictionaryDto: CreateDictionaryDto, userId: number): Promise<DictionaryVo> {
     try {
-      const { label, remark, ...rest } = DictionaryDto
-
+      const { label, remark, ...rest } = dictionaryDto
       const dictionary = await this.prismaService.dictionary.create({
         data: {
           ...rest,
           createdBy: userId,
-          // dictionaryItems: DictionaryItem[]
           dictionaryTrans: {
             createMany: {
               data: [
-                {
-                  label: label['zh-CN'],
-                  remark: remark['zh-CN'],
-                  lang: 'zh-CN',
+                ...Object.values(LanguageCode).map((lang) => ({
+                  label: label[lang],
+                  remark: remark[lang],
+                  lang,
                   createdBy: userId
-                },
-                {
-                  label: label['en-US'],
-                  remark: remark['en-US'],
-                  lang: 'en-US',
-                  createdBy: userId
-                }
+                }))
               ]
             }
           }
@@ -56,8 +57,8 @@ export class DictionariesService {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         const { code, meta } = e
         if (code === 'P2002') {
-          if ((meta?.target as string[]).includes('key')) {
-            throw new BadRequestException(this.i18nService.t('common.RESOURCE.CONFLICT'))
+          if ((meta?.target as string[]).includes('code')) {
+            throw new ConflictException(this.i18nService.t('common.RESOURCE.CONFLICT'))
           }
         }
       }
@@ -65,7 +66,7 @@ export class DictionariesService {
     }
   }
 
-  async findMany(PageDictionaryDto: PageDictionaryDto): Promise<PageDictionaryVo> {
+  async findMany(pageDictionaryDto: PageDictionaryDto): Promise<PageDictionaryVo> {
     const {
       page,
       pageSize,
@@ -78,7 +79,7 @@ export class DictionariesService {
       enabled,
       builtIn,
       id
-    } = PageDictionaryDto
+    } = pageDictionaryDto
 
     const orderBy = sortColumnKeys.map((field: SortColumnKey, index) => ({
       [field]: sortOrders[index]
@@ -134,8 +135,6 @@ export class DictionariesService {
 
     const total = await this.prismaService.dictionary.count({ where })
 
-    // 删除 dictionaryTrans 字段
-
     return plainToClass(PageDictionaryVo, {
       records: results.map((dictionary) => {
         const { dictionaryTrans, ...rest } = dictionary
@@ -157,7 +156,6 @@ export class DictionariesService {
       where: { id },
       include: { dictionaryTrans: true }
     })
-    console.log(dictionary, 'dictionary')
     if (!dictionary) {
       throw new NotFoundException(this.i18nService.t('common.RESOURCE.NOT.FOUND'))
     }
@@ -263,7 +261,7 @@ export class DictionariesService {
             updateMany: [
               ...Object.values(LanguageCode).map((lang) => {
                 const where = {
-                  userSettingId: id,
+                  dictionaryId: id,
                   lang: LanguageCode[lang],
                   deletedAt: null
                 }
@@ -314,7 +312,7 @@ export class DictionariesService {
                 .filter((lang) => label?.[lang] || remark?.[lang])
                 .map((lang) => ({
                   where: {
-                    settingId: id,
+                    dictionaryId: id,
                     lang,
                     deletedAt: null
                   },

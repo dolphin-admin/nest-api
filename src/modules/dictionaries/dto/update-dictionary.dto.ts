@@ -1,3 +1,3 @@
-import { DictionaryDto } from './dictionary.dto'
+import { CreateDictionaryDto } from './create-dictionary.dto'
 
-export class UpdateDictionaryDto extends DictionaryDto {}
+export class UpdateDictionaryDto extends CreateDictionaryDto {}

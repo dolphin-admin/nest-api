@@ -11,9 +11,7 @@ export class DictionaryVo {
   @ApiProperty({ description: 'ID' })
   id: number
 
-  @ApiProperty({
-    description: '字典编码'
-  })
+  @ApiProperty({ description: '字典编码' })
   @IsString({ message: t('common.KEY.INVALID') })
   @IsNotEmpty({ message: t('common.KEY.NOT.EMPTY') })
   code: string
@@ -26,19 +24,13 @@ export class DictionaryVo {
   @Type(() => MultilingualVo)
   remark: MultilingualVo
 
-  @ApiProperty({
-    description: '是否启用'
-  })
+  @ApiProperty({ description: '是否启用' })
   enabled: boolean
 
-  @ApiProperty({
-    description: '是否内置'
-  })
+  @ApiProperty({ description: '是否内置' })
   builtIn: boolean
 
-  @ApiProperty({
-    description: '排序'
-  })
+  @ApiProperty({ description: '排序' })
   sort: number
 
   @ApiProperty({ description: '用户 ID' })
