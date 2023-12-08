@@ -259,22 +259,18 @@ export class DictionariesService {
           updatedBy: userId,
           dictionaryTrans: {
             updateMany: [
-              ...Object.values(LanguageCode).map((lang) => {
-                const where = {
+              ...Object.values(LanguageCode).map((lang) => ({
+                where: {
                   dictionaryId: id,
                   lang: LanguageCode[lang],
                   deletedAt: null
-                }
-                const data = {
+                },
+                data: {
                   label: label[lang],
                   remark: remark[lang],
                   updatedBy: userId
                 }
-                return {
-                  where,
-                  data
-                }
-              })
+              }))
             ]
           }
         }

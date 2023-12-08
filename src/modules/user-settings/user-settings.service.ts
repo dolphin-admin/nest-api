@@ -200,43 +200,18 @@ export class UserSettingsService {
           updatedBy: userId,
           userSettingTrans: {
             updateMany: [
-              ...Object.values(LanguageCode).map((lang) => {
-                const where = {
+              ...Object.values(LanguageCode).map((lang) => ({
+                where: {
                   userSettingId: id,
                   lang: LanguageCode[lang],
                   deletedAt: null
-                }
-                const data = {
+                },
+                data: {
                   label: label[lang],
                   remark: remark[lang],
                   updatedBy: userId
                 }
-                return {
-                  where,
-                  data
-                }
-              })
-
-              // {
-              //   where: {
-              //     userSettingId: id,
-              //     lang: LanguageCode['zh-CN'],
-              //     deletedAt: null
-              //   },
-              //   data: {
-              //     label: label['zh-CN'],
-              //     remark: remark['zh-CN'],
-              //     updatedBy: userId
-              //   }
-              // },
-              // {
-              //   where: {
-              //     userSettingId: id,
-              //     lang: LanguageCode['en-US'],
-              //     deletedAt: null
-              //   },
-              //   data: { label: label['en-US'], remark: remark['en-US'], updatedBy: userId }
-              // }
+              }))
             ]
           }
         }
