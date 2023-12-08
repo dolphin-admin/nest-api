@@ -61,11 +61,9 @@ export class AuthService {
     if (!user) {
       throw new BadRequestException(this.i18nService.t('auth.USERNAME.OR.PASSWORD.ERROR'))
     }
-
     if (!(await compare(loginDto.password, user.password ?? ''))) {
       throw new BadRequestException(this.i18nService.t('auth.USERNAME.OR.PASSWORD.ERROR'))
     }
-
     return plainToClass(UserVo, user)
   }
 
