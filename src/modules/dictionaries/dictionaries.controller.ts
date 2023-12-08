@@ -28,7 +28,12 @@ import { ApiPageQuery, User } from '@/decorators'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 
 import { DictionariesService } from './dictionaries.service'
-import { CreateDictionaryDto, PageDictionaryDto, PatchSettingDto, UpdateDictionaryDto } from './dto'
+import {
+  CreateDictionaryDto,
+  PageDictionaryDto,
+  PatchDictionaryDto,
+  UpdateDictionaryDto
+} from './dto'
 import type { DictionaryVo, PageDictionaryVo } from './vo'
 
 @ApiTags('字典')
@@ -55,23 +60,13 @@ export class DictionariesController {
 
   @ApiOperation({ summary: '字典详情' })
   @ApiOkResponse({ description: '请求成功' })
-  @ApiNotFoundResponse({ description: '字典不存在' })
   @Get(':id(\\d+)')
   async findOneById(@Param('id') id: number): Promise<R<DictionaryVo>> {
-    console.log(
-      await this.dictionariesService.findOneById(id),
-      'await this.dictionariesService.findOneById(id)'
-    )
-
     return new R({
       data: await this.dictionariesService.findOneById(id)
     })
   }
 
-  @ApiOperation({ summary: '字典详情' })
-  @ApiOkResponse({ description: '请求成功' })
-  @ApiUnauthorizedResponse({ description: '认证失败' })
-  @ApiNotFoundResponse({ description: '字典不存在' })
   @Get(':code')
   async findOneByCode(@Param('code') code: string): Promise<R<DictionaryVo>> {
     return new R({
@@ -80,8 +75,6 @@ export class DictionariesController {
   }
 
   @ApiOperation({ summary: '字典列表' })
-  @ApiOkResponse({ description: '请求成功' })
-  @ApiUnauthorizedResponse({ description: '认证失败' })
   @ApiPageQuery('searchText', 'date')
   @Get()
   async findMany(@Query() pageDictionaryDto: PageDictionaryDto): Promise<R<PageDictionaryVo>> {
@@ -115,11 +108,11 @@ export class DictionariesController {
   @Patch(':id(\\d+)')
   async patch(
     @Param('id', new ParseIntPipe()) id: number,
-    @Body() patchSettingDto: PatchSettingDto,
+    @Body() patchDictionaryDto: PatchDictionaryDto,
     @User('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
   ): Promise<R> {
-    await this.dictionariesService.patch(id, patchSettingDto, userId)
+    await this.dictionariesService.patch(id, patchDictionaryDto, userId)
     return new R({
       msg: i18n.t('common.OPERATE.SUCCESS')
     })
@@ -129,7 +122,6 @@ export class DictionariesController {
   @ApiOkResponse({ description: '请求成功' })
   @ApiUnauthorizedResponse({ description: '认证失败' })
   @ApiBadRequestResponse({ description: '参数错误' })
-  @ApiNotFoundResponse({ description: '字典不存在' })
   @ApiParam({ name: 'id', description: '字典 ID', required: true, example: 1 })
   @Delete(':id(\\d+)')
   async remove(

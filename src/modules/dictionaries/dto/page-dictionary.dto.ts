@@ -14,7 +14,7 @@ export class PageDictionaryDto extends PageDto {
   @ToId()
   id?: number
 
-  @ApiPropertyOptional({ description: 'code码' })
+  @ApiPropertyOptional({ description: '字典编码' })
   @IsString({ message: t('common.KEY.INVALID') })
   @IsOptional()
   @Trim()

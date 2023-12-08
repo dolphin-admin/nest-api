@@ -19,7 +19,7 @@ import { I18nUtils } from '@/utils'
 import type {
   CreateDictionaryDto,
   PageDictionaryDto,
-  PatchSettingDto,
+  PatchDictionaryDto,
   UpdateDictionaryDto
 } from './dto'
 import { DictionaryVo, PageDictionaryVo } from './vo'
@@ -291,8 +291,8 @@ export class DictionariesService {
     }
   }
 
-  async patch(id: number, patchSettingDto: PatchSettingDto, userId: number): Promise<void> {
-    const { label, remark, ...rest } = patchSettingDto
+  async patch(id: number, patchDictionaryDto: PatchDictionaryDto, userId: number): Promise<void> {
+    const { label, remark, ...rest } = patchDictionaryDto
     try {
       await this.prismaService.dictionary.update({
         where: {

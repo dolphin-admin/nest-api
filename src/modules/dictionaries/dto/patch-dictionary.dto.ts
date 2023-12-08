@@ -15,7 +15,7 @@ import { I18nUtils } from '@/utils'
 
 const { t } = I18nUtils
 
-export class PatchSettingDto {
+export class PatchDictionaryDto {
   @ApiProperty({ description: '字典编码' })
   @MaxLength(50, { message: t('common.KEY.LENGTH') })
   @NotContains(' ', { message: t('common.KEY.NO.WHITESPACE') })
