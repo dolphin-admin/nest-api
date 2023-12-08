@@ -34,18 +34,12 @@ export class UserSettingsService {
           userSettingTrans: {
             createMany: {
               data: [
-                {
-                  label: label['zh-CN'],
-                  remark: remark['zh-CN'],
-                  lang: 'zh-CN',
+                ...Object.values(LanguageCode).map((lang) => ({
+                  label: label[lang],
+                  remark: remark[lang],
+                  lang,
                   createdBy: userId
-                },
-                {
-                  label: label['en-US'],
-                  remark: remark['en-US'],
-                  lang: 'en-US',
-                  createdBy: userId
-                }
+                }))
               ]
             }
           }
@@ -206,26 +200,18 @@ export class UserSettingsService {
           updatedBy: userId,
           userSettingTrans: {
             updateMany: [
-              {
+              ...Object.values(LanguageCode).map((lang) => ({
                 where: {
                   userSettingId: id,
-                  lang: LanguageCode['zh-CN'],
+                  lang: LanguageCode[lang],
                   deletedAt: null
                 },
                 data: {
-                  label: label['zh-CN'],
-                  remark: remark['zh-CN'],
+                  label: label[lang],
+                  remark: remark[lang],
                   updatedBy: userId
                 }
-              },
-              {
-                where: {
-                  userSettingId: id,
-                  lang: LanguageCode['en-US'],
-                  deletedAt: null
-                },
-                data: { label: label['en-US'], remark: remark['en-US'], updatedBy: userId }
-              }
+              }))
             ]
           }
         }
