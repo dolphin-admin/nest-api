@@ -13,7 +13,6 @@ import {
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
-  ApiConflictResponse,
   ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -42,7 +41,6 @@ export class DictionariesController {
   @ApiCreatedResponse({ description: '创建成功' })
   @ApiBadRequestResponse({ description: '输入有误' })
   @ApiUnauthorizedResponse({ description: '认证失败' })
-  @ApiConflictResponse({ description: '字典代码已存在' })
   @Post()
   async create(
     @Body() createDictionaryDto: CreateDictionaryDto,
@@ -57,7 +55,6 @@ export class DictionariesController {
 
   @ApiOperation({ summary: '字典详情' })
   @ApiOkResponse({ description: '请求成功' })
-  @ApiUnauthorizedResponse({ description: '认证失败' })
   @ApiNotFoundResponse({ description: '字典不存在' })
   @Get(':id(\\d+)')
   async findOneById(@Param('id') id: number): Promise<R<DictionaryVo>> {
@@ -97,7 +94,6 @@ export class DictionariesController {
   @ApiOkResponse({ description: '请求成功' })
   @ApiUnauthorizedResponse({ description: '认证失败' })
   @ApiBadRequestResponse({ description: '参数错误' })
-  @ApiNotFoundResponse({ description: '字典不存在' })
   @ApiParam({ name: 'id', description: '字典 ID', required: true, example: 1 })
   @Put(':id(\\d+)')
   async update(
