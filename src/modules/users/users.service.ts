@@ -1,8 +1,10 @@
 import { ConflictException, Injectable } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
 import { plainToClass, plainToInstance } from 'class-transformer'
+import { I18nService } from 'nestjs-i18n'
 
 import type { PageDto } from '@/class'
+import type { I18nTranslations } from '@/generated/i18n.generated'
 import { PrismaService } from '@/shared/prisma/prisma.service'
 
 import type { CreateUserDto } from './dto/create-user.dto'
@@ -11,14 +13,20 @@ import { UserVo } from './vo'
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly i18nService: I18nService<I18nTranslations>
+  ) {}
 
+  // 创建用户
   async create(createUserDto: CreateUserDto): Promise<UserVo> {
     try {
       return plainToClass(
         UserVo,
         await this.prismaService.user.create({
-          data: createUserDto
+          data: {
+            ...createUserDto
+          }
         })
       )
     } catch (e) {
@@ -26,7 +34,7 @@ export class UsersService {
         const { meta, code } = e
         if (code === 'P2002') {
           if ((meta?.target as string[]).includes('username')) {
-            throw new ConflictException('用户名已存在')
+            throw new ConflictException(this.i18nService.t('user.USERNAME.ALREADY.EXIST'))
           }
         }
       }
@@ -48,7 +56,8 @@ export class UsersService {
       UserVo,
       await this.prismaService.user.findUnique({
         where: {
-          id
+          id,
+          deletedAt: null
         }
       })
     )
@@ -59,7 +68,8 @@ export class UsersService {
       UserVo,
       await this.prismaService.user.findUnique({
         where: {
-          username
+          username,
+          deletedAt: null
         }
       })
     )

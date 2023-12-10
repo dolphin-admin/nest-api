@@ -17,7 +17,7 @@ export const AppConfig = registerAs('app', () =>
     port: env.PORT ? parseInt(env.PORT, 10) : 3000,
     env: env.NODE_ENV ?? 'development',
     isDEV: env.NODE_ENV === 'development',
-    isStaging: env.NODE_ENV === 'staging',
+    isSTAGING: env.NODE_ENV === 'staging',
     isPROD: env.NODE_ENV === 'production',
     baseUrl: env.BASE_URL ?? 'http://localhost:3000'
   })

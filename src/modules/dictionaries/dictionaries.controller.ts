@@ -10,21 +10,17 @@ import {
   Put,
   Query
 } from '@nestjs/common'
-import {
-  ApiBadRequestResponse,
-  ApiBearerAuth,
-  ApiCreatedResponse,
-  ApiNotFoundResponse,
-  ApiOkResponse,
-  ApiOperation,
-  ApiParam,
-  ApiTags,
-  ApiUnauthorizedResponse
-} from '@nestjs/swagger'
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { I18n, I18nContext } from 'nestjs-i18n'
 
 import { R } from '@/class'
-import { ApiPageQuery, User } from '@/decorators'
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiPageOKResponse,
+  ApiPageQuery,
+  User
+} from '@/decorators'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 
 import { DictionariesService } from './dictionaries.service'
@@ -34,7 +30,8 @@ import {
   PatchDictionaryDto,
   UpdateDictionaryDto
 } from './dto'
-import type { DictionaryVo, PageDictionaryVo } from './vo'
+import type { PageDictionaryVo } from './vo'
+import { DictionaryVo } from './vo'
 
 @ApiTags('字典')
 @ApiBearerAuth('bearer')
@@ -43,9 +40,7 @@ export class DictionariesController {
   constructor(private readonly dictionariesService: DictionariesService) {}
 
   @ApiOperation({ summary: '创建字典' })
-  @ApiCreatedResponse({ description: '创建成功' })
-  @ApiBadRequestResponse({ description: '输入有误' })
-  @ApiUnauthorizedResponse({ description: '认证失败' })
+  @ApiCreatedResponse(DictionaryVo)
   @Post()
   async create(
     @Body() createDictionaryDto: CreateDictionaryDto,
@@ -58,53 +53,41 @@ export class DictionariesController {
     })
   }
 
-  @ApiOperation({ summary: '字典详情' })
-  @ApiOkResponse({ description: '请求成功' })
-  @Get(':id(\\d+)')
-  async findOneById(@Param('id') id: number): Promise<R<DictionaryVo>> {
-    return new R({
-      data: await this.dictionariesService.findOneById(id)
-    })
-  }
-
-  @Get(':code')
-  async findOneByCode(@Param('code') code: string): Promise<R<DictionaryVo>> {
-    return new R({
-      data: await this.dictionariesService.findOneByCode(code)
-    })
-  }
-
   @ApiOperation({ summary: '字典列表' })
+  @ApiPageOKResponse(DictionaryVo)
   @ApiPageQuery('searchText', 'date')
   @Get()
   async findMany(@Query() pageDictionaryDto: PageDictionaryDto): Promise<R<PageDictionaryVo>> {
-    return new R({
-      data: await this.dictionariesService.findMany(pageDictionaryDto)
-    })
+    return new R({ data: await this.dictionariesService.findMany(pageDictionaryDto) })
+  }
+
+  @ApiOperation({ summary: '字典详情 [ID]' })
+  @ApiOkResponse(DictionaryVo)
+  @Get(':id(\\d+)')
+  async findOneById(@Param('id') id: number): Promise<R<DictionaryVo>> {
+    return new R({ data: await this.dictionariesService.findOneById(id) })
+  }
+
+  @ApiOperation({ summary: '字典详情 [Code]' })
+  @ApiOkResponse(DictionaryVo)
+  @Get(':code')
+  async findOneByCode(@Param('code') code: string): Promise<R<DictionaryVo>> {
+    return new R({ data: await this.dictionariesService.findOneByCode(code) })
   }
 
   @ApiOperation({ summary: '更新字典' })
-  @ApiOkResponse({ description: '请求成功' })
-  @ApiUnauthorizedResponse({ description: '认证失败' })
-  @ApiBadRequestResponse({ description: '参数错误' })
-  @ApiParam({ name: 'id', description: '字典 ID', required: true, example: 1 })
+  @ApiOkResponse(DictionaryVo)
   @Put(':id(\\d+)')
   async update(
-    @Param('id') id: number,
+    @Param('id', new ParseIntPipe()) id: number,
     @Body() updateDictionaryDto: UpdateDictionaryDto,
     @User('sub') userId: number
   ): Promise<R<DictionaryVo>> {
-    return new R({
-      data: await this.dictionariesService.update(id, updateDictionaryDto, userId)
-    })
+    return new R({ data: await this.dictionariesService.update(id, updateDictionaryDto, userId) })
   }
 
   @ApiOperation({ summary: '修改字典' })
-  @ApiOkResponse({ description: '请求成功' })
-  @ApiUnauthorizedResponse({ description: '认证失败' })
-  @ApiBadRequestResponse({ description: '参数错误' })
-  @ApiNotFoundResponse({ description: '字典不存在' })
-  @ApiParam({ name: 'id', description: '字典 ID', required: true, example: 1 })
+  @ApiOkResponse()
   @Patch(':id(\\d+)')
   async patch(
     @Param('id', new ParseIntPipe()) id: number,
@@ -113,25 +96,18 @@ export class DictionariesController {
     @I18n() i18n: I18nContext<I18nTranslations>
   ): Promise<R> {
     await this.dictionariesService.patch(id, patchDictionaryDto, userId)
-    return new R({
-      msg: i18n.t('common.OPERATE.SUCCESS')
-    })
+    return new R({ msg: i18n.t('common.OPERATE.SUCCESS') })
   }
 
   @ApiOperation({ summary: '删除字典' })
-  @ApiOkResponse({ description: '请求成功' })
-  @ApiUnauthorizedResponse({ description: '认证失败' })
-  @ApiBadRequestResponse({ description: '参数错误' })
-  @ApiParam({ name: 'id', description: '字典 ID', required: true, example: 1 })
+  @ApiOkResponse()
   @Delete(':id(\\d+)')
   async remove(
-    @Param('id') id: number,
+    @Param('id', new ParseIntPipe()) id: number,
     @User('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
   ): Promise<R> {
     await this.dictionariesService.remove(id, userId)
-    return new R({
-      msg: i18n.t('common.DELETE.SUCCESS')
-    })
+    return new R({ msg: i18n.t('common.DELETE.SUCCESS') })
   }
 }

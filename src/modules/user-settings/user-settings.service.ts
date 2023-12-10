@@ -1,5 +1,4 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
-import type { UserSettingTrans } from '@prisma/client'
 import { Prisma } from '@prisma/client'
 import { plainToClass } from 'class-transformer'
 import _ from 'lodash'
@@ -141,8 +140,7 @@ export class UserSettingsService {
     return plainToClass(PageUserSettingVo, {
       records: results.map((userSetting) => ({
         ...userSetting,
-        label: I18nUtils.generateTrans<UserSettingTrans>(userSetting.userSettingTrans, 'label'),
-        remark: I18nUtils.generateTrans<UserSettingTrans>(userSetting.userSettingTrans, 'remark')
+        ...I18nUtils.generateTransByKeys(userSetting.userSettingTrans, ['label', 'remark'])
       })),
       total,
       page,
@@ -161,8 +159,7 @@ export class UserSettingsService {
     }
     return plainToClass(UserSettingVo, {
       ...userSetting,
-      label: I18nUtils.generateTrans<UserSettingTrans>(userSetting.userSettingTrans, 'label'),
-      remark: I18nUtils.generateTrans<UserSettingTrans>(userSetting.userSettingTrans, 'remark')
+      ...I18nUtils.generateTransByKeys(userSetting.userSettingTrans, ['label', 'remark'])
     })
   }
 
@@ -177,8 +174,7 @@ export class UserSettingsService {
     }
     return plainToClass(UserSettingVo, {
       ...userSetting,
-      label: I18nUtils.generateTrans<UserSettingTrans>(userSetting.userSettingTrans, 'label'),
-      remark: I18nUtils.generateTrans<UserSettingTrans>(userSetting.userSettingTrans, 'remark')
+      ...I18nUtils.generateTransByKeys(userSetting.userSettingTrans, ['label', 'remark'])
     })
   }
 

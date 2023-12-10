@@ -14,7 +14,7 @@ export type I18nTranslations = {
         "USERNAME.OR.PASSWORD.ERROR": string;
     };
     "common": {
-        "BUILT.IN": {
+        "BUILTIN": {
             "INVALID": string;
             "NOT.EMPTY": string;
         };
@@ -64,9 +64,23 @@ export type I18nTranslations = {
             "NOT.EMPTY": string;
         };
     };
+    "dictionary": {
+        "CODE": {
+            "CONFLICT": string;
+            "INVALID": string;
+            "LENGTH": string;
+            "NO.WHITESPACE": string;
+            "NOT.EMPTY": string;
+        };
+    };
     "user": {
+        "CONFIRM.PASSWORD": {
+            "NOT.EMPTY": string;
+            "NOT.SAME": string;
+        };
         "FIRST.NAME": {
             "INVALID": string;
+            "LENGTH": string;
             "NO.WHITESPACE": string;
             "NOT.EMPTY": string;
         };
@@ -75,6 +89,7 @@ export type I18nTranslations = {
         };
         "LAST.NAME": {
             "INVALID": string;
+            "LENGTH": string;
             "NO.WHITESPACE": string;
             "NOT.EMPTY": string;
         };
@@ -86,6 +101,7 @@ export type I18nTranslations = {
             "NOT.EMPTY": string;
         };
         "USERNAME": {
+            "ALREADY.EXIST": string;
             "LENGTH": string;
             "NO.WHITESPACE": string;
             "NOT.EMPTY": string;

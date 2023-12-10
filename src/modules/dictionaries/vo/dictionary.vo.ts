@@ -1,19 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
-import { IsNotEmpty, IsString } from 'class-validator'
 
-import { MultilingualVo } from '@/class'
-import { I18nUtils } from '@/utils'
+import { BaseResourceVo, MultilingualVo } from '@/class'
 
-const { t } = I18nUtils
-
-export class DictionaryVo {
+export class DictionaryVo extends BaseResourceVo {
   @ApiProperty({ description: 'ID' })
   id: number
 
   @ApiProperty({ description: '字典编码' })
-  @IsString({ message: t('common.KEY.INVALID') })
-  @IsNotEmpty({ message: t('common.KEY.NOT.EMPTY') })
   code: string
 
   @ApiProperty({ description: '展示名称', type: MultilingualVo })
@@ -32,7 +26,4 @@ export class DictionaryVo {
 
   @ApiProperty({ description: '排序' })
   sort: number
-
-  @ApiProperty({ description: '用户 ID' })
-  userId: number
 }

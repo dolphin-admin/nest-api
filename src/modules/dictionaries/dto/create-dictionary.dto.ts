@@ -16,10 +16,10 @@ const { t } = I18nUtils
 
 export class CreateDictionaryDto {
   @ApiProperty({ description: '字典编码' })
-  @MaxLength(50, { message: t('common.KEY.LENGTH') })
-  @NotContains(' ', { message: t('common.KEY.NO.WHITESPACE') })
-  @IsString({ message: t('common.KEY.INVALID') })
-  @IsNotEmpty({ message: t('common.KEY.NOT.EMPTY') })
+  @MaxLength(50, { message: t('dictionary.CODE.LENGTH') })
+  @NotContains(' ', { message: t('dictionary.CODE.NO.WHITESPACE') })
+  @IsString({ message: t('dictionary.CODE.INVALID') })
+  @IsNotEmpty({ message: t('dictionary.CODE.NOT.EMPTY') })
   code: string
 
   @ApiProperty({ description: '展示名称', type: LabelTransDto })
@@ -34,18 +34,11 @@ export class CreateDictionaryDto {
 
   @IsBoolean({ message: t('common.ENABLED.INVALID') })
   @IsNotEmpty({ message: t('common.ENABLED.NOT.EMPTY') })
-  @ApiProperty({
-    description: '是否启用'
-  })
+  @ApiProperty({ description: '是否启用' })
   enabled: boolean
 
-  @IsBoolean({ message: t('common.BUILT.IN.INVALID') })
-  @IsNotEmpty({ message: t('common.BUILT.IN.NOT.EMPTY') })
-  @ApiProperty({
-    description: '是否内置'
-  })
+  @IsBoolean({ message: t('common.BUILTIN.INVALID') })
+  @IsNotEmpty({ message: t('common.BUILTIN.NOT.EMPTY') })
+  @ApiProperty({ description: '是否内置' })
   builtIn: boolean
-
-  @ApiProperty({ description: '排序' })
-  sort: number
 }

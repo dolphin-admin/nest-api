@@ -69,9 +69,15 @@ export class PageDto {
   @Transform(({ value }) => value.split(','))
   sortOrders: SortOrder[]
 
+  orderBy?: Record<SortColumnKey, SortOrder>[]
+
   // 默认排序顺序为：排序字段升序（优先）、创建时间降序（次要）
   constructor() {
     this.sortColumnKeys = [SortColumnKey.SORT, SortColumnKey.CREATED_AT]
     this.sortOrders = [SortOrder.ASC, SortOrder.DESC]
+    // 将排序字段和排序方式转化为 Prisma 的排序对象数组
+    this.orderBy = this.sortColumnKeys.map((field: SortColumnKey, index) => ({
+      [field]: this.sortOrders[index]
+    })) as Record<SortColumnKey, SortOrder>[]
   }
 }

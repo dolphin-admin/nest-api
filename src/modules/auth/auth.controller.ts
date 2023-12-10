@@ -15,14 +15,13 @@ import { I18n, I18nContext } from 'nestjs-i18n'
 
 import { R } from '@/class'
 import { SkipAuth } from '@/decorators'
-import { BusinessCode } from '@/enums'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 import type { JWTPayload } from '@/interfaces'
 
 import { UsersService } from '../users/users.service'
 import type { UserVo } from '../users/vo'
 import { AuthService } from './auth.service'
-import { LoginDto } from './dto'
+import { LoginDto, SignupDto } from './dto'
 import { LoginType } from './enum'
 import { AuthVo, TokenVo } from './vo'
 
@@ -39,15 +38,19 @@ export class AuthController {
   @ApiOperation({ summary: '注册' })
   @SkipThrottle()
   @Post('signup')
-  async signup(): Promise<R<AuthVo>> {
-    const user = await this.authService.signup()
+  async signup(
+    @Body() signupDto: SignupDto,
+    @I18n() i18n: I18nContext<I18nTranslations>
+  ): Promise<R<AuthVo>> {
+    const user = await this.authService.signup(signupDto)
+    const { id, username } = user
     return new R({
       data: new AuthVo({
         user,
-        accessToken: '',
-        refreshToken: ''
+        accessToken: this.authService.generateToken(id, username),
+        refreshToken: this.authService.generateRefreshToken(id, username)
       }),
-      msg: '注册成功'
+      msg: i18n.t('auth.SIGN.UP.SUCCESS')
     })
   }
 
@@ -105,17 +108,11 @@ export class AuthController {
       const jwtPayload = await this.jwtService.verifyAsync<JWTPayload>(refreshToken)
       sub = jwtPayload.sub
     } catch {
-      throw new UnauthorizedException({
-        code: BusinessCode['AUTH.ERROR'],
-        msg: i18n.t('auth.UNAUTHORIZED')
-      })
+      throw new UnauthorizedException(i18n.t('auth.UNAUTHORIZED'))
     }
     const user = await this.usersService.findOneById(sub)
     if (!user) {
-      throw new UnauthorizedException({
-        code: BusinessCode['AUTH.ERROR'],
-        msg: i18n.t('auth.UNAUTHORIZED')
-      })
+      throw new UnauthorizedException(i18n.t('auth.UNAUTHORIZED'))
     }
     return new R({
       data: new TokenVo({

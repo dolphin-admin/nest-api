@@ -18,15 +18,15 @@ export class CreateSettingDto {
   @ApiProperty({ description: '键' })
   @MaxLength(50, { message: t('common.KEY.LENGTH') })
   @IsString({ message: t('common.KEY.INVALID') })
-  @IsNotEmpty({ message: t('common.KEY.NOT.EMPTY') })
   @NotContains(' ', { message: t('common.KEY.NO.WHITESPACE') })
+  @IsNotEmpty({ message: t('common.KEY.NOT.EMPTY') })
   key: string
 
   @ApiProperty({ description: '值' })
   @MaxLength(250, { message: t('common.VALUE.LENGTH') })
   @IsString({ message: t('common.VALUE.INVALID') })
-  @IsNotEmpty({ message: t('common.VALUE.NOT.EMPTY') })
   @NotContains(' ', { message: t('common.VALUE.NO.WHITESPACE') })
+  @IsNotEmpty({ message: t('common.VALUE.NOT.EMPTY') })
   value: string
 
   @ApiProperty({ description: '展示名称', type: LabelTransDto })
@@ -45,7 +45,7 @@ export class CreateSettingDto {
   enabled: boolean
 
   @ApiProperty({ description: '是否内置' })
-  @IsBoolean({ message: t('common.BUILT.IN.INVALID') })
-  @IsNotEmpty({ message: t('common.BUILT.IN.NOT.EMPTY') })
+  @IsBoolean({ message: t('common.BUILTIN.INVALID') })
+  @IsNotEmpty({ message: t('common.BUILTIN.NOT.EMPTY') })
   builtIn: boolean
 }

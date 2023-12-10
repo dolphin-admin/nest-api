@@ -1,4 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger'
+import { Exclude } from 'class-transformer'
 
 export class BaseResourceVo {
   @ApiProperty({ description: '创建时间' })
@@ -13,9 +14,11 @@ export class BaseResourceVo {
   @ApiProperty({ description: '更新人', nullable: true })
   updatedBy?: number
 
-  @ApiProperty({ description: '删除时间', nullable: true })
+  @ApiHideProperty()
+  @Exclude()
   deletedAt?: Date
 
-  @ApiProperty({ description: '删除人', nullable: true })
+  @ApiHideProperty()
+  @Exclude()
   deletedBy?: number
 }

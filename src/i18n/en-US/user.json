@@ -1,6 +1,11 @@
 {
+  "CONFIRM.PASSWORD": {
+    "NOT.EMPTY": "Confirm password: Must not be empty",
+    "NOT.SAME": "Confirm password: Must be the same as password"
+  },
   "FIRST.NAME": {
     "INVALID": "First name: Invalid value",
+    "LENGTH": "First name: Length must no more than 10 characters",
     "NO.WHITESPACE": "First name: Must not contain whitespace",
     "NOT.EMPTY": "First name: Must not be empty"
   },
@@ -9,6 +14,7 @@
   },
   "LAST.NAME": {
     "INVALID": "Last name: Invalid value",
+    "LENGTH": "Last name: Length must no more than 10 characters",
     "NO.WHITESPACE": "Last name: Must not contain whitespace",
     "NOT.EMPTY": "Last name: Must not be empty"
   },
@@ -20,6 +26,7 @@
     "NOT.EMPTY": "Password: Must not be empty"
   },
   "USERNAME": {
+    "ALREADY.EXIST": "Username: Already exist",
     "LENGTH": "Username: Length must be between 4 and 16",
     "NO.WHITESPACE": "Username: Must not contain whitespace",
     "NOT.EMPTY": "Username: Must not be empty",

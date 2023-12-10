@@ -1,0 +1,9 @@
+{
+  "CODE": {
+    "CONFLICT": "Code: Already exists",
+    "INVALID": "Code：Invalid value",
+    "LENGTH": "Code: Length cannot exceed 50 characters",
+    "NO.WHITESPACE": "Code：Must not contain whitespace",
+    "NOT.EMPTY": "Code：Must not be empty"
+  }
+}

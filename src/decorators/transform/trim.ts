@@ -1,8 +1,14 @@
 import { Transform } from 'class-transformer'
+import { isNil, map, trim } from 'lodash'
 
-/**
- * 去除字符串两端的空格
- */
-export function Trim() {
-  return Transform(({ value }: { value: string | undefined | null }) => value?.trim())
+export function Trim(): PropertyDecorator {
+  return Transform(({ value }: { value: string | undefined | null | string[] }) => {
+    if (isNil(value)) {
+      return value
+    }
+    if (Array.isArray(value)) {
+      return map(value, (v) => trim(v).replaceAll(/\s\s+/g, ' '))
+    }
+    return trim(value).replaceAll(/\s\s+/g, ' ')
+  })
 }

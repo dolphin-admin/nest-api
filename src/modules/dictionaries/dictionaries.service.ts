@@ -1,20 +1,13 @@
-import {
-  BadRequestException,
-  ConflictException,
-  Injectable,
-  NotFoundException
-} from '@nestjs/common'
-import type { DictionaryTrans } from '@prisma/client'
-import { Prisma } from '@prisma/client'
+import { Injectable, NotFoundException } from '@nestjs/common'
+import type { DictionaryTrans, Prisma } from '@prisma/client'
 import { plainToClass } from 'class-transformer'
 import _ from 'lodash'
 import { I18nService } from 'nestjs-i18n'
 
-import type { SortColumnKey } from '@/enums'
 import { LanguageCode } from '@/enums'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 import { PrismaService } from '@/shared/prisma/prisma.service'
-import { I18nUtils } from '@/utils'
+import { I18nUtils, PrismaUtils } from '@/utils'
 
 import type {
   CreateDictionaryDto,
@@ -31,9 +24,13 @@ export class DictionariesService {
     private readonly i18nService: I18nService<I18nTranslations>
   ) {}
 
-  async create(dictionaryDto: CreateDictionaryDto, userId: number): Promise<DictionaryVo> {
+  // 唯一约束字段 - 字典编码
+  private readonly UNIQUE_FIELDS_CODE = 'code'
+
+  // 创建字典
+  async create(createDictionaryDto: CreateDictionaryDto, userId: number): Promise<DictionaryVo> {
     try {
-      const { label, remark, ...rest } = dictionaryDto
+      const { label, remark, ...rest } = createDictionaryDto
       const dictionary = await this.prismaService.dictionary.create({
         data: {
           ...rest,
@@ -41,12 +38,10 @@ export class DictionariesService {
           dictionaryTrans: {
             createMany: {
               data: [
-                ...Object.values(LanguageCode).map((lang) => ({
-                  label: label[lang],
-                  remark: remark[lang],
-                  lang,
-                  createdBy: userId
-                }))
+                ...I18nUtils.createTrans<Prisma.DictionaryTransCreateManyInput>(
+                  { label, remark },
+                  userId
+                )
               ]
             }
           }
@@ -54,38 +49,20 @@ export class DictionariesService {
       })
       return plainToClass(DictionaryVo, { ...dictionary, label, remark })
     } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        const { code, meta } = e
-        if (code === 'P2002') {
-          if ((meta?.target as string[]).includes('code')) {
-            throw new ConflictException(this.i18nService.t('common.RESOURCE.CONFLICT'))
-          }
-        }
-      }
+      PrismaUtils.handleConflictException(e, [
+        { key: this.UNIQUE_FIELDS_CODE, msg: this.i18nService.t('dictionary.CODE.CONFLICT') }
+      ])
       throw e
     }
   }
 
+  // 字典列表
   async findMany(pageDictionaryDto: PageDictionaryDto): Promise<PageDictionaryVo> {
-    const {
-      page,
-      pageSize,
-      searchText,
-      startTime,
-      endTime,
-      sortColumnKeys,
-      sortOrders,
-      code,
-      enabled,
-      builtIn,
-      id
-    } = pageDictionaryDto
-
-    const orderBy = sortColumnKeys.map((field: SortColumnKey, index) => ({
-      [field]: sortOrders[index]
-    }))
+    const { page, pageSize, searchText, startTime, endTime, orderBy, code, enabled, builtIn, id } =
+      pageDictionaryDto
 
     const where: Prisma.DictionaryWhereInput = {
+      deletedAt: null,
       AND: [
         {
           createdAt: {
@@ -140,8 +117,7 @@ export class DictionariesService {
         const { dictionaryTrans, ...rest } = dictionary
         return {
           ...rest,
-          label: I18nUtils.generateTrans<DictionaryTrans>(dictionaryTrans, 'label'),
-          remark: I18nUtils.generateTrans<DictionaryTrans>(dictionaryTrans, 'remark')
+          ...I18nUtils.generateTransByKeys<DictionaryTrans>(dictionaryTrans, ['label', 'remark'])
         }
       }),
       total,
@@ -153,95 +129,40 @@ export class DictionariesService {
   // 根据 ID 查询字典
   async findOneById(id: number): Promise<DictionaryVo> {
     const dictionary = await this.prismaService.dictionary.findUnique({
-      where: { id },
+      where: { id, deletedAt: null },
       include: { dictionaryTrans: true }
     })
     if (!dictionary) {
       throw new NotFoundException(this.i18nService.t('common.RESOURCE.NOT.FOUND'))
     }
-    // 删除 dictionaryTrans 字段
     const { dictionaryTrans, ...rest } = dictionary
-
     return plainToClass(DictionaryVo, {
       ...rest,
-      label: I18nUtils.generateTrans<DictionaryTrans>(dictionaryTrans, 'label'),
-      remark: I18nUtils.generateTrans<DictionaryTrans>(dictionaryTrans, 'remark')
+      ...I18nUtils.generateTransByKeys<DictionaryTrans>(dictionaryTrans, ['label', 'remark'])
     })
   }
 
   // 根据 Code 查询字典
   async findOneByCode(code: string): Promise<DictionaryVo> {
     const dictionary = await this.prismaService.dictionary.findUnique({
-      where: { code },
-      include: { dictionaryTrans: true }
+      where: { code, deletedAt: null },
+      include: {
+        dictionaryTrans: {
+          where: { deletedAt: null }
+        }
+      }
     })
     if (!dictionary) {
       throw new NotFoundException(this.i18nService.t('common.RESOURCE.NOT.FOUND'))
     }
-    // 删除 dictionaryTrans 字段
     const { dictionaryTrans, ...rest } = dictionary
-
     return plainToClass(DictionaryVo, {
       ...rest,
-      label: I18nUtils.generateTrans<DictionaryTrans>(dictionaryTrans, 'label'),
-      remark: I18nUtils.generateTrans<DictionaryTrans>(dictionaryTrans, 'remark')
+      ...I18nUtils.generateTransByKeys<DictionaryTrans>(dictionaryTrans, ['label', 'remark'])
     })
   }
 
-  async remove(id: number, userId: number): Promise<void> {
-    try {
-      // 删除多语言翻译
-      const deleteDictionaryTrans = this.prismaService.dictionaryTrans.updateMany({
-        where: {
-          dictionaryId: id,
-          deletedAt: null
-        },
-        data: {
-          deletedAt: new Date().toISOString(),
-          deletedBy: userId
-        }
-      })
-      const deleteDictionaryItem = this.prismaService.dictionaryItem.updateMany({
-        where: {
-          dictionaryId: id,
-          deletedAt: null
-        },
-        data: {
-          deletedAt: new Date().toISOString(),
-          deletedBy: userId
-        }
-      })
-
-      const deleteDictionary = this.prismaService.dictionary.update({
-        where: {
-          id,
-          deletedAt: null
-        },
-        data: {
-          deletedAt: new Date().toISOString(),
-          deletedBy: userId
-        }
-      })
-
-      await this.prismaService.$transaction([
-        deleteDictionaryTrans,
-        deleteDictionaryItem,
-        deleteDictionary
-      ])
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        const { code } = e
-        if (code === 'P2003') {
-          throw new BadRequestException(this.i18nService.t('common.DELETE.FAILED'))
-        }
-        if (code === 'P2025') {
-          throw new NotFoundException(this.i18nService.t('common.RESOURCE.NOT.FOUND'))
-        }
-      }
-      throw e
-    }
-  }
-
+  // 更新字典
   async update(
     id: number,
     updateDictionaryDto: UpdateDictionaryDto,
@@ -250,10 +171,7 @@ export class DictionariesService {
     const { label, remark, ...rest } = updateDictionaryDto
     try {
       const dictionary = await this.prismaService.dictionary.update({
-        where: {
-          id,
-          deletedAt: null
-        },
+        where: { id, deletedAt: null },
         data: {
           ...rest,
           updatedBy: userId,
@@ -275,18 +193,9 @@ export class DictionariesService {
           }
         }
       })
-      return plainToClass(DictionaryVo, {
-        ...dictionary,
-        label,
-        remark
-      })
+      return plainToClass(DictionaryVo, { ...dictionary, label, remark })
     } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        const { code } = e
-        if (code === 'P2025') {
-          throw new NotFoundException(this.i18nService.t('common.RESOURCE.NOT.FOUND'))
-        }
-      }
+      PrismaUtils.handleNotFoundException(e, this.i18nService.t('common.RESOURCE.NOT.FOUND'))
       throw e
     }
   }
@@ -323,12 +232,79 @@ export class DictionariesService {
         }
       })
     } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        const { code } = e
-        if (code === 'P2025') {
-          throw new NotFoundException(this.i18nService.t('common.RESOURCE.NOT.FOUND'))
+      PrismaUtils.handleNotFoundException(e, this.i18nService.t('common.RESOURCE.NOT.FOUND'))
+      throw e
+    }
+  }
+
+  // 删除字典
+  async remove(id: number, userId: number): Promise<void> {
+    try {
+      const deleteDictionary = this.prismaService.dictionary.update({
+        where: {
+          id,
+          deletedAt: null
+        },
+        data: {
+          deletedAt: new Date().toISOString(),
+          deletedBy: userId,
+          dictionaryTrans: {
+            updateMany: {
+              where: {
+                deletedAt: null
+              },
+              data: {
+                deletedAt: new Date().toISOString(),
+                deletedBy: userId
+              }
+            }
+          }
+        },
+        include: {
+          dictionaryTrans: true,
+          dictionaryItems: true
         }
-      }
+      })
+
+      const deleteDictionaryItem = this.prismaService.dictionaryItem.updateMany({
+        where: {
+          dictionaryId: id,
+          deletedAt: null
+        },
+        data: {
+          deletedAt: new Date().toISOString(),
+          deletedBy: userId
+        }
+      })
+
+      ;(await deleteDictionary.dictionaryItems()).forEach(async (item) => {
+        await this.prismaService.dictionaryItem.update({
+          where: {
+            id: item.id,
+            deletedAt: null
+          },
+          data: {
+            deletedAt: new Date().toISOString(),
+            deletedBy: userId,
+            dictionaryItemTrans: {
+              updateMany: {
+                where: {
+                  deletedAt: null
+                },
+                data: {
+                  deletedAt: new Date().toISOString(),
+                  deletedBy: userId
+                }
+              }
+            }
+          }
+        })
+      })
+
+      await this.prismaService.$transaction([deleteDictionaryItem, deleteDictionary])
+    } catch (e) {
+      PrismaUtils.handleBadRequestException(e, this.i18nService.t('common.DELETE.FAILED'))
+      PrismaUtils.handleNotFoundException(e, this.i18nService.t('common.RESOURCE.NOT.FOUND'))
       throw e
     }
   }

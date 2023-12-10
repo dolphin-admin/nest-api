@@ -1,6 +1,11 @@
 {
+  "CONFIRM.PASSWORD": {
+    "NOT.EMPTY": "确认密码：不能为空",
+    "NOT.SAME": "两次输入的密码不一致"
+  },
   "FIRST.NAME": {
     "INVALID": "名：输入值不合法",
+    "LENGTH": "名：不能超过 10 个字符",
     "NO.WHITESPACE": "名：不能包含空格",
     "NOT.EMPTY": "名：不能为空"
   },
@@ -9,6 +14,7 @@
   },
   "LAST.NAME": {
     "INVALID": "姓：输入值不合法",
+    "LENGTH": "姓：不能超过 10 个字符",
     "NO.WHITESPACE": "姓：不能包含空格",
     "NOT.EMPTY": "姓：不能为空"
   },
@@ -20,6 +26,7 @@
     "NOT.EMPTY": "密码：不能为空"
   },
   "USERNAME": {
+    "ALREADY.EXIST": "用户名：已存在",
     "LENGTH": "用户名：长度范围为 4 ~ 16 位",
     "NO.WHITESPACE": "用户名：不能包含空格",
     "NOT.EMPTY": "用户名：不能为空",
