@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@dolphin-admin/bootstrap-animation':
-    specifier: ^0.0.5
-    version: 0.0.5(vite@5.0.6)
+    specifier: ^0.0.6
+    version: 0.0.6(vite@5.0.6)
   '@nestjs/axios':
     specifier: ^3.0.1
     version: 3.0.1(@nestjs/common@10.2.10)(axios@1.6.2)(reflect-metadata@0.1.13)(rxjs@7.8.1)
@@ -703,7 +703,7 @@ packages:
       '@commitlint/types': 18.4.3
     dev: true
 
-  /@commitlint/load@18.4.3(typescript@5.3.2):
+  /@commitlint/load@18.4.3(typescript@5.3.3):
     resolution: {integrity: sha512-v6j2WhvRQJrcJaj5D+EyES2WKTxPpxENmNpNG3Ww8MZGik3jWRXtph0QTzia5ZJyPh2ib5aC/6BIDymkUUM58Q==}
     engines: {node: '>=v18'}
     dependencies:
@@ -1090,8 +1090,8 @@ packages:
       '@jridgewell/trace-mapping': 0.3.9
     dev: true
 
-  /@dolphin-admin/bootstrap-animation@0.0.5(vite@5.0.6):
-    resolution: {integrity: sha512-UzYPN5Pd5scg2GNMgyNsMD5cbGHZBPGbBf8GSD3x4IgtKQW0sUbfc4EHmdL3dKuYJka561Hb8pTIzdMbLhfG3Q==}
+  /@dolphin-admin/bootstrap-animation@0.0.6(vite@5.0.6):
+    resolution: {integrity: sha512-qljdiK0ZKP0vH9VrOjgH0R+qtdhykCb16ID6Q8M37fHu+iPYnIfKR9b3uP1zEwvTEbTWg14YTjqa08/BfRCRKQ==}
     peerDependencies:
       vite: ^5.0.0
     dependencies:
@@ -4626,7 +4626,7 @@ packages:
       longest: 2.0.1
       word-wrap: 1.2.5
     optionalDependencies:
-      '@commitlint/load': 18.4.3(typescript@5.3.2)
+      '@commitlint/load': 18.4.3(typescript@5.3.3)
     transitivePeerDependencies:
       - typescript
     dev: true
