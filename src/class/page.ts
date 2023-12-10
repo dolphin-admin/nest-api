@@ -11,7 +11,7 @@ export class Page<T = any> {
   total: number
 
   @ApiProperty({ description: '分页数据', type: () => [Object] })
-  records: T[]
+  records: T[] = []
 
   constructor(page?: Page<T>) {
     Object.assign(this, page)
