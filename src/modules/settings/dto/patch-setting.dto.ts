@@ -17,15 +17,15 @@ const { t } = I18nUtils
 export class PatchSettingDto {
   @ApiProperty({ description: '键' })
   @MaxLength(50, { message: t('common.KEY.LENGTH') })
-  @IsString({ message: t('common.KEY.INVALID') })
   @NotContains(' ', { message: t('common.KEY.NO.WHITESPACE') })
+  @IsString({ message: t('common.KEY.INVALID') })
   @IsOptional()
   key?: string
 
   @ApiProperty({ description: '值' })
   @MaxLength(250, { message: t('common.VALUE.LENGTH') })
-  @IsString({ message: t('common.VALUE.INVALID') })
   @NotContains(' ', { message: t('common.VALUE.NO.WHITESPACE') })
+  @IsString({ message: t('common.VALUE.INVALID') })
   @IsOptional()
   value?: string
 
@@ -47,7 +47,7 @@ export class PatchSettingDto {
   enabled?: boolean
 
   @ApiProperty({ description: '是否内置' })
-  @IsBoolean({ message: t('common.BUILT.IN.INVALID') })
+  @IsBoolean({ message: t('common.BUILTIN.INVALID') })
   @IsOptional()
   builtIn?: boolean
 }

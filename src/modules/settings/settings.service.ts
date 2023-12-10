@@ -1,5 +1,4 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
-import type { SettingTrans } from '@prisma/client'
 import { Prisma } from '@prisma/client'
 import { plainToClass } from 'class-transformer'
 import _ from 'lodash'
@@ -138,8 +137,7 @@ export class SettingsService {
     return plainToClass(PageSettingVo, {
       records: results.map((setting) => ({
         ...setting,
-        label: I18nUtils.generateTrans<SettingTrans>(setting.settingTrans, 'label'),
-        remark: I18nUtils.generateTrans<SettingTrans>(setting.settingTrans, 'remark')
+        ...I18nUtils.generateTransByKeys(setting.settingTrans, ['label', 'remark'])
       })),
       total,
       page,
@@ -158,8 +156,7 @@ export class SettingsService {
     }
     return plainToClass(SettingVo, {
       ...setting,
-      label: I18nUtils.generateTrans<SettingTrans>(setting.settingTrans, 'label'),
-      remark: I18nUtils.generateTrans<SettingTrans>(setting.settingTrans, 'remark')
+      ...I18nUtils.generateTransByKeys(setting.settingTrans, ['label', 'remark'])
     })
   }
 
@@ -174,8 +171,7 @@ export class SettingsService {
     }
     return plainToClass(SettingVo, {
       ...setting,
-      label: I18nUtils.generateTrans<SettingTrans>(setting.settingTrans, 'label'),
-      remark: I18nUtils.generateTrans<SettingTrans>(setting.settingTrans, 'remark')
+      ...I18nUtils.generateTransByKeys(setting.settingTrans, ['label', 'remark'])
     })
   }
 
@@ -267,7 +263,6 @@ export class SettingsService {
   // 删除设置
   async remove(id: number, userId: number): Promise<void> {
     try {
-      // 删除多语言翻译
       const deleteSettingTrans = this.prismaService.settingTrans.updateMany({
         where: {
           settingId: id,
@@ -278,7 +273,6 @@ export class SettingsService {
           deletedBy: userId
         }
       })
-      // 删除设置
       const deleteSetting = this.prismaService.setting.update({
         where: {
           id,

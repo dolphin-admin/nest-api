@@ -1,5 +1,5 @@
 {
-  "BUILT.IN": {
+  "BUILTIN": {
     "INVALID": "是否内置：输入值不合法",
     "NOT.EMPTY": "是否内置：不能为空"
   },
@@ -20,7 +20,7 @@
   },
   "KEY": {
     "INVALID": "键输入值不合法",
-    "LENGTH": "Key: ",
+    "LENGTH": "键: 长度不能超过 50 个字符",
     "NO.WHITESPACE": "键不能包含空格",
     "NOT.EMPTY": "键不能为空"
   },

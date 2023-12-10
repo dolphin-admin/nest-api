@@ -6,5 +6,5 @@ import { DictionaryVo } from './dictionary.vo'
 
 export class PageDictionaryVo extends Page {
   @Type(() => DictionaryVo)
-  records?: DictionaryVo[]
+  records: DictionaryVo[]
 }

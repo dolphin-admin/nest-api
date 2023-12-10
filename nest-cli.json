@@ -32,7 +32,8 @@
   },
   "entryFile": "main",
   "generateOptions": {
-    "flat": false
+    "flat": false,
+    "spec": false
   },
   "sourceRoot": "src"
 }

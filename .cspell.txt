@@ -13,6 +13,7 @@ nestjs
 nord
 officedocument
 openxmlformats
+picocolors
 preinstall
 Timestamptz
 WECHAT

@@ -15,7 +15,6 @@ import { I18n, I18nContext } from 'nestjs-i18n'
 
 import { PageDto, R } from '@/class'
 import { User } from '@/decorators'
-import { BusinessCode } from '@/enums'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 
 import { CreateUserDto } from './dto/create-user.dto'
@@ -32,9 +31,7 @@ export class UsersController {
   @ApiOperation({ summary: '创建用户' })
   @Post()
   async create(@Body() createUserDto: CreateUserDto): Promise<R<UserVo>> {
-    return new R({
-      data: await this.usersService.create(createUserDto)
-    })
+    return new R({ data: await this.usersService.create(createUserDto) })
   }
 
   @ApiOperation({ summary: '用户列表' })
@@ -42,14 +39,7 @@ export class UsersController {
   async findMany(@Query() pageDto: PageDto): Promise<R<any>> {
     const { page, pageSize } = pageDto
     const [records, total] = await this.usersService.findMany(pageDto)
-    return new R({
-      data: {
-        page,
-        pageSize,
-        total,
-        records
-      }
-    })
+    return new R({ data: { page, pageSize, total, records } })
   }
 
   @ApiOperation({ summary: '个人信息' })
@@ -60,14 +50,9 @@ export class UsersController {
   ): Promise<R<UserVo>> {
     const currentUser = await this.usersService.findOneById(id)
     if (!currentUser) {
-      throw new UnauthorizedException({
-        code: BusinessCode['AUTH.ERROR'],
-        msg: i18n.t('auth.UNAUTHORIZED')
-      })
+      throw new UnauthorizedException(i18n.t('auth.UNAUTHORIZED'))
     }
-    return new R({
-      data: currentUser
-    })
+    return new R({ data: currentUser })
   }
 
   @ApiOperation({ summary: '用户详情' })
@@ -77,9 +62,7 @@ export class UsersController {
     if (!user) {
       throw new NotFoundException('用户不存在')
     }
-    return new R({
-      data: user
-    })
+    return new R({ data: user })
   }
 
   @ApiOperation({ summary: '修改用户' })

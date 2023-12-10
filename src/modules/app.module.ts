@@ -163,25 +163,13 @@ import { UsersModule } from './users/users.module'
   providers: [
     AppService,
     // 注册全局限流守卫
-    {
-      provide: APP_GUARD,
-      useClass: ThrottlerGuard
-    },
+    { provide: APP_GUARD, useClass: ThrottlerGuard },
     // 注册全局认证守卫
-    {
-      provide: APP_GUARD,
-      useClass: AuthGuard
-    },
+    { provide: APP_GUARD, useClass: AuthGuard },
     // 注册全局日志拦截器
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: LoggingInterceptor
-    },
+    { provide: APP_INTERCEPTOR, useClass: LoggingInterceptor },
     // 注册全局错误拦截器
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: ErrorsInterceptor
-    }
+    { provide: APP_INTERCEPTOR, useClass: ErrorsInterceptor }
   ]
 })
 export class AppModule implements NestModule {

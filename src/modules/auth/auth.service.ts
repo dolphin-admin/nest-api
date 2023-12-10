@@ -12,7 +12,7 @@ import { UsersService } from '@/modules/users/users.service'
 import { PrismaService } from '@/shared/prisma/prisma.service'
 
 import { UserVo } from '../users/vo'
-import type { LoginDto } from './dto'
+import type { LoginDto, SignupDto } from './dto'
 
 @Injectable()
 export class AuthService {
@@ -43,19 +43,19 @@ export class AuthService {
   }
 
   // 注册
-  async signup(): Promise<UserVo> {
-    const user = await this.usersService.create({
-      username: 'admin',
-      password: '123456'
-    })
-    return plainToClass(UserVo, user)
+  async signup(signupDto: SignupDto): Promise<UserVo> {
+    // eslint-disable-next-line unused-imports/no-unused-vars
+    const { confirmPassword, ...createDto } = signupDto
+    const user = await this.usersService.create(createDto)
+    return user
   }
 
   // 用户名登录
   async loginByUsername(loginDto: LoginDto): Promise<UserVo> {
     const user = await this.prismaService.user.findUnique({
       where: {
-        username: loginDto.username
+        username: loginDto.username,
+        deletedAt: null
       }
     })
     if (!user) {

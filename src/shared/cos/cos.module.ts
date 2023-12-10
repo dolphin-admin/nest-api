@@ -6,7 +6,7 @@ import { diskStorage } from 'multer'
 
 import { MAX_UPLOAD_FILE_SIZE } from '@/constants'
 import { fileExtensionMap } from '@/maps'
-import { ValueUtils } from '@/utils'
+import { GeneratorUtils } from '@/utils'
 
 import { CosController } from './cos.controller'
 import { CosService } from './cos.service'
@@ -24,7 +24,7 @@ import { CosService } from './cos.service'
         storage: diskStorage({
           destination: 'uploads',
           filename: (_, file, callback) =>
-            callback(null, `${ValueUtils.uuid() + extname(file.originalname)}`)
+            callback(null, GeneratorUtils.generateFileName(extname(file.originalname)))
         }),
         limits: {
           fileSize: MAX_UPLOAD_FILE_SIZE

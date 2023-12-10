@@ -1,5 +1,5 @@
 {
-  "BUILT.IN": {
+  "BUILTIN": {
     "INVALID": "Built-in：Invalid value",
     "NOT.EMPTY": "Built-in: Must not be empty"
   },

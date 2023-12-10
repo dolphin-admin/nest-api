@@ -41,7 +41,7 @@ export class PatchDictionaryDto {
   enabled?: boolean
 
   @ApiProperty({ description: '是否内置' })
-  @IsBoolean({ message: t('common.BUILT.IN.INVALID') })
+  @IsBoolean({ message: t('common.BUILTIN.INVALID') })
   @IsOptional()
   builtIn?: boolean
 
