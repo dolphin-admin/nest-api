@@ -72,6 +72,9 @@ export type I18nTranslations = {
             "INVALID": string;
             "NOT.EMPTY": string;
         };
+        "LANGUAGE": {
+            "NOT.SUPPORT": string;
+        };
     };
     "dictionary": {
         "CODE": {

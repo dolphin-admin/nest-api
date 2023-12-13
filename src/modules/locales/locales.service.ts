@@ -7,20 +7,36 @@ import { I18nContext, I18nService } from 'nestjs-i18n'
 
 import { LanguageCode, type SortColumnKey } from '@/enums'
 import type { I18nTranslations } from '@/generated/i18n.generated'
+import { RedisService } from '@/shared/redis/redis.service'
 
 import type { CreateLocaleDto, PageLocaleDto, UpdateLocaleDto } from './dto'
 import { Locale } from './schemas'
+import type { LocaleResourceVO } from './vo'
 import { LocaleVo, PageLocaleVo } from './vo'
 
 @Injectable()
 export class LocalesService {
   constructor(
     @InjectModel(Locale.name) private readonly LocaleModel: Model<Locale>,
-    private readonly i18nService: I18nService<I18nTranslations>
+    private readonly i18nService: I18nService<I18nTranslations>,
+    private readonly redisService: RedisService
   ) {}
+
+  private readonly LOCALE_RESOURCES_CACHE_KEY = 'locales:resources'
+
+  private getLocaleResourcesCacheKey(lang: string) {
+    return `${this.LOCALE_RESOURCES_CACHE_KEY}:${lang}`
+  }
+
+  private clearAllResourcesCache() {
+    Object.values(LanguageCode).forEach((lang) => {
+      this.redisService.delete(this.getLocaleResourcesCacheKey(lang))
+    })
+  }
 
   async create(createLocaleDto: CreateLocaleDto): Promise<LocaleVo> {
     const locale = await new this.LocaleModel(createLocaleDto).save()
+    this.clearAllResourcesCache()
     return plainToClass(LocaleVo, locale)
   }
 
@@ -61,6 +77,39 @@ export class LocalesService {
     })
   }
 
+  async findManyByLang(lang: string): Promise<LocaleResourceVO[]> {
+    const CACHE_KEY = this.getLocaleResourcesCacheKey(lang)
+    const cache = await this.redisService.get(CACHE_KEY)
+    if (cache) {
+      return JSON.parse(cache)
+    }
+    const results = await this.LocaleModel.aggregate([
+      { $match: { [lang]: { $exists: true } } },
+      { $project: { _id: 0, ns: 1, key: 1, value: `$${lang}` } },
+      { $group: { _id: '$ns', items: { $push: { key: '$key', value: '$value' } } } },
+      {
+        $project: {
+          _id: 0,
+          ns: '$_id',
+          resources: {
+            $arrayToObject: {
+              $map: {
+                input: '$items',
+                as: 'item',
+                in: {
+                  k: '$$item.key',
+                  v: '$$item.value'
+                }
+              }
+            }
+          }
+        }
+      }
+    ]).exec()
+    await this.redisService.set(CACHE_KEY, JSON.stringify(results), 60 * 60 * 24)
+    return results
+  }
+
   async findOneById(id: string): Promise<LocaleVo> {
     const locale = await this.LocaleModel.findById(id).exec()
     if (!locale) {
@@ -74,6 +123,7 @@ export class LocalesService {
   async update(id: string, updateLocaleDto: UpdateLocaleDto): Promise<LocaleVo> {
     await this.findOneById(id)
     const locale = await this.LocaleModel.findByIdAndUpdate(id, updateLocaleDto).exec()
+    this.clearAllResourcesCache()
     return plainToClass(LocaleVo, locale)
   }
 
