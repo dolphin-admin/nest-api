@@ -18,7 +18,7 @@ export class PageDto {
   @IsString({ message: '搜索关键字必须是一个字符串' })
   @IsOptional()
   @Trim()
-  searchText?: string
+  keywords?: string
 
   @ApiPropertyOptional({
     description: '开始时间',

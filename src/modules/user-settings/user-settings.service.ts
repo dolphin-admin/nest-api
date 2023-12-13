@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { Prisma } from '@prisma/client'
 import { plainToClass } from 'class-transformer'
 import _ from 'lodash'
-import { I18nService } from 'nestjs-i18n'
+import { I18nContext, I18nService } from 'nestjs-i18n'
 
 import { LanguageCode, type SortColumnKey } from '@/enums'
 import type { I18nTranslations } from '@/generated/i18n.generated'
@@ -50,7 +50,9 @@ export class UserSettingsService {
         const { code, meta } = e
         if (code === 'P2002') {
           if ((meta?.target as string[]).includes('key')) {
-            throw new BadRequestException(this.i18nService.t('common.RESOURCE.CONFLICT'))
+            throw new BadRequestException(
+              this.i18nService.t('common.RESOURCE.CONFLICT', { lang: I18nContext.current()!.lang })
+            )
           }
         }
       }
@@ -63,7 +65,7 @@ export class UserSettingsService {
     const {
       page,
       pageSize,
-      searchText,
+      keywords,
       startTime,
       endTime,
       sortColumnKeys,
@@ -107,12 +109,12 @@ export class UserSettingsService {
           }
         }
       ],
-      OR: searchText
+      OR: keywords
         ? [
-            { key: { contains: searchText } },
-            { value: { contains: searchText } },
-            { id: { equals: _.toNumber(searchText) < 100000 ? _.toNumber(searchText) : 0 } },
-            { userId: { equals: _.toNumber(searchText) < 100000 ? _.toNumber(searchText) : 0 } }
+            { key: { contains: keywords } },
+            { value: { contains: keywords } },
+            { id: { equals: _.toNumber(keywords) < 100000 ? _.toNumber(keywords) : 0 } },
+            { userId: { equals: _.toNumber(keywords) < 100000 ? _.toNumber(keywords) : 0 } }
           ]
         : undefined
     }
@@ -155,7 +157,9 @@ export class UserSettingsService {
       include: { userSettingTrans: true }
     })
     if (!userSetting) {
-      throw new NotFoundException(this.i18nService.t('common.RESOURCE.NOT.FOUND'))
+      throw new NotFoundException(
+        this.i18nService.t('common.RESOURCE.NOT.FOUND', { lang: I18nContext.current()!.lang })
+      )
     }
     return plainToClass(UserSettingVo, {
       ...userSetting,
@@ -170,7 +174,9 @@ export class UserSettingsService {
       include: { userSettingTrans: true }
     })
     if (!userSetting) {
-      throw new NotFoundException(this.i18nService.t('common.RESOURCE.NOT.FOUND'))
+      throw new NotFoundException(
+        this.i18nService.t('common.RESOURCE.NOT.FOUND', { lang: I18nContext.current()!.lang })
+      )
     }
     return plainToClass(UserSettingVo, {
       ...userSetting,
@@ -217,7 +223,9 @@ export class UserSettingsService {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         const { code } = e
         if (code === 'P2025') {
-          throw new NotFoundException(this.i18nService.t('common.RESOURCE.NOT.FOUND'))
+          throw new NotFoundException(
+            this.i18nService.t('common.RESOURCE.NOT.FOUND', { lang: I18nContext.current()!.lang })
+          )
         }
       }
       throw e
@@ -241,7 +249,9 @@ export class UserSettingsService {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         const { code } = e
         if (code === 'P2025') {
-          throw new NotFoundException(this.i18nService.t('common.RESOURCE.NOT.FOUND'))
+          throw new NotFoundException(
+            this.i18nService.t('common.RESOURCE.NOT.FOUND', { lang: I18nContext.current()!.lang })
+          )
         }
       }
       throw e
@@ -265,7 +275,9 @@ export class UserSettingsService {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         const { code } = e
         if (code === 'P2025') {
-          throw new NotFoundException(this.i18nService.t('common.RESOURCE.NOT.FOUND'))
+          throw new NotFoundException(
+            this.i18nService.t('common.RESOURCE.NOT.FOUND', { lang: I18nContext.current()!.lang })
+          )
         }
       }
       throw e
@@ -302,10 +314,14 @@ export class UserSettingsService {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         const { code } = e
         if (code === 'P2003') {
-          throw new BadRequestException(this.i18nService.t('common.DELETE.FAILED'))
+          throw new BadRequestException(
+            this.i18nService.t('common.DELETE.FAILED', { lang: I18nContext.current()!.lang })
+          )
         }
         if (code === 'P2025') {
-          throw new NotFoundException(this.i18nService.t('common.RESOURCE.NOT.FOUND'))
+          throw new NotFoundException(
+            this.i18nService.t('common.RESOURCE.NOT.FOUND', { lang: I18nContext.current()!.lang })
+          )
         }
       }
       throw e

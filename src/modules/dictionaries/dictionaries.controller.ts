@@ -55,7 +55,7 @@ export class DictionariesController {
 
   @ApiOperation({ summary: '字典列表' })
   @ApiPageOKResponse(DictionaryVo)
-  @ApiPageQuery('searchText', 'date')
+  @ApiPageQuery('keywords', 'date')
   @Get()
   async findMany(@Query() pageDictionaryDto: PageDictionaryDto): Promise<R<PageDictionaryVo>> {
     return new R({ data: await this.dictionariesService.findMany(pageDictionaryDto) })

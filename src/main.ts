@@ -11,7 +11,7 @@ import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n'
 
 import { R } from './class'
 import type { AppConfig, DevConfig } from './configs'
-import { HttpExceptionFilter } from './filters'
+import { HttpExceptionFilter, MongoExceptionFilter } from './filters'
 import { AppModule } from './modules/app.module'
 import { Logger } from './shared/logger/logger.service'
 import { SwaggerUtils } from './utils'
@@ -65,6 +65,8 @@ async function bootstrap() {
     })
   )
 
+  // 全局过滤器 - Mongo 异常
+  app.useGlobalFilters(new MongoExceptionFilter())
   // 全局过滤器 - 异常处理
   app.useGlobalFilters(new HttpExceptionFilter())
   // 全局过滤器 - 国际化

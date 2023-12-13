@@ -47,5 +47,14 @@
     "LENGTH": "值：长度不能超过 250 个字符",
     "NO.WHITESPACE": "值：不能包含空格",
     "NOT.EMPTY": "值：不能为空"
+  },
+  "NS": {
+    "INVALID": "命名空间：输入值不合法",
+    "NOT.EMPTY": "命名空间：不能为空",
+    "NO.WHITESPACE": "命名空间：不能包含空格"
+  },
+  "SORT": {
+    "INVALID": "排序：输入值不合法",
+    "NOT.EMPTY": "排序：不能为空"
   }
 }

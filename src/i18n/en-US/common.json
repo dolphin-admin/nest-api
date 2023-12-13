@@ -47,5 +47,14 @@
     "LENGTH": "Value: Length cannot exceed 250 characters",
     "NO.WHITESPACE": "Value: Must not contain whitespace",
     "NOT.EMPTY": "Value: Must not be empty"
+  },
+  "NS": {
+    "INVALID": "NS：Invalid value",
+    "NOT.EMPTY": "NS: Must not be empty",
+    "NO.WHITESPACE": "NS: Must not contain whitespace"
+  },
+  "SORT": {
+    "INVALID": "Sort：Invalid value",
+    "NOT.EMPTY": "Sort: Must not be empty"
   }
 }

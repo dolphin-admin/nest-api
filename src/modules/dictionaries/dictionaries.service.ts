@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common'
 import type { DictionaryTrans, Prisma } from '@prisma/client'
 import { plainToClass } from 'class-transformer'
 import _ from 'lodash'
-import { I18nService } from 'nestjs-i18n'
+import { I18nContext, I18nService } from 'nestjs-i18n'
 
 import { LanguageCode } from '@/enums'
 import type { I18nTranslations } from '@/generated/i18n.generated'
@@ -50,7 +50,10 @@ export class DictionariesService {
       return plainToClass(DictionaryVo, { ...dictionary, label, remark })
     } catch (e) {
       PrismaUtils.handleConflictException(e, [
-        { key: this.UNIQUE_FIELDS_CODE, msg: this.i18nService.t('dictionary.CODE.CONFLICT') }
+        {
+          key: this.UNIQUE_FIELDS_CODE,
+          msg: this.i18nService.t('dictionary.CODE.CONFLICT', { lang: I18nContext.current()!.lang })
+        }
       ])
       throw e
     }
@@ -58,7 +61,7 @@ export class DictionariesService {
 
   // 字典列表
   async findMany(pageDictionaryDto: PageDictionaryDto): Promise<PageDictionaryVo> {
-    const { page, pageSize, searchText, startTime, endTime, orderBy, code, enabled, builtIn, id } =
+    const { page, pageSize, keywords, startTime, endTime, orderBy, code, enabled, builtIn, id } =
       pageDictionaryDto
 
     const where: Prisma.DictionaryWhereInput = {
@@ -83,10 +86,10 @@ export class DictionariesService {
           }
         }
       ],
-      OR: searchText
+      OR: keywords
         ? [
-            { code: { contains: searchText } },
-            { id: { equals: _.toNumber(searchText) < 100000 ? _.toNumber(searchText) : 0 } }
+            { code: { contains: keywords } },
+            { id: { equals: _.toNumber(keywords) < 100000 ? _.toNumber(keywords) : 0 } }
           ]
         : undefined
     }
@@ -133,7 +136,9 @@ export class DictionariesService {
       include: { dictionaryTrans: true }
     })
     if (!dictionary) {
-      throw new NotFoundException(this.i18nService.t('common.RESOURCE.NOT.FOUND'))
+      throw new NotFoundException(
+        this.i18nService.t('common.RESOURCE.NOT.FOUND', { lang: I18nContext.current()!.lang })
+      )
     }
     const { dictionaryTrans, ...rest } = dictionary
     return plainToClass(DictionaryVo, {
@@ -153,7 +158,9 @@ export class DictionariesService {
       }
     })
     if (!dictionary) {
-      throw new NotFoundException(this.i18nService.t('common.RESOURCE.NOT.FOUND'))
+      throw new NotFoundException(
+        this.i18nService.t('common.RESOURCE.NOT.FOUND', { lang: I18nContext.current()!.lang })
+      )
     }
     const { dictionaryTrans, ...rest } = dictionary
     return plainToClass(DictionaryVo, {
@@ -195,7 +202,10 @@ export class DictionariesService {
       })
       return plainToClass(DictionaryVo, { ...dictionary, label, remark })
     } catch (e) {
-      PrismaUtils.handleNotFoundException(e, this.i18nService.t('common.RESOURCE.NOT.FOUND'))
+      PrismaUtils.handleNotFoundException(
+        e,
+        this.i18nService.t('common.RESOURCE.NOT.FOUND', { lang: I18nContext.current()!.lang })
+      )
       throw e
     }
   }
@@ -232,7 +242,10 @@ export class DictionariesService {
         }
       })
     } catch (e) {
-      PrismaUtils.handleNotFoundException(e, this.i18nService.t('common.RESOURCE.NOT.FOUND'))
+      PrismaUtils.handleNotFoundException(
+        e,
+        this.i18nService.t('common.RESOURCE.NOT.FOUND', { lang: I18nContext.current()!.lang })
+      )
       throw e
     }
   }
@@ -303,8 +316,14 @@ export class DictionariesService {
 
       await this.prismaService.$transaction([deleteDictionaryItem, deleteDictionary])
     } catch (e) {
-      PrismaUtils.handleBadRequestException(e, this.i18nService.t('common.DELETE.FAILED'))
-      PrismaUtils.handleNotFoundException(e, this.i18nService.t('common.RESOURCE.NOT.FOUND'))
+      PrismaUtils.handleBadRequestException(
+        e,
+        this.i18nService.t('common.DELETE.FAILED', { lang: I18nContext.current()!.lang })
+      )
+      PrismaUtils.handleNotFoundException(
+        e,
+        this.i18nService.t('common.RESOURCE.NOT.FOUND', { lang: I18nContext.current()!.lang })
+      )
       throw e
     }
   }

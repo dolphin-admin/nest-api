@@ -63,6 +63,15 @@ export type I18nTranslations = {
             "NO.WHITESPACE": string;
             "NOT.EMPTY": string;
         };
+        "NS": {
+            "INVALID": string;
+            "NOT.EMPTY": string;
+            "NO.WHITESPACE": string;
+        };
+        "SORT": {
+            "INVALID": string;
+            "NOT.EMPTY": string;
+        };
     };
     "dictionary": {
         "CODE": {
