@@ -3,7 +3,7 @@ import { ApiExtraModels, ApiQuery } from '@nestjs/swagger'
 
 import { PageDto } from '@/class/dto'
 
-type QueryType = 'searchText' | 'date'
+type QueryType = 'keywords' | 'date'
 
 // 分页参数
 export const ApiPageQuery = (...type: QueryType[]) => {
@@ -24,10 +24,10 @@ export const ApiPageQuery = (...type: QueryType[]) => {
       type: Number
     })
   ]
-  if (type.includes('searchText')) {
+  if (type.includes('keywords')) {
     decorators.push(
       ApiQuery({
-        name: 'searchText',
+        name: 'keywords',
         description: '搜索关键字',
         required: false,
         type: String

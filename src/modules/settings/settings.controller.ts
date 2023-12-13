@@ -14,7 +14,7 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { I18n, I18nContext } from 'nestjs-i18n'
 
 import { R } from '@/class'
-import { User } from '@/decorators'
+import { ApiPageQuery, User } from '@/decorators'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 
 import { PageSettingDto } from './dto'
@@ -45,6 +45,7 @@ export class SettingsController {
   }
 
   @ApiOperation({ summary: '设置列表' })
+  @ApiPageQuery('keywords', 'date')
   @Get()
   async findMany(@Query() pageSettingDto: PageSettingDto): Promise<R<PageSettingVo>> {
     return new R({

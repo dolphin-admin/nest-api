@@ -1,7 +1,7 @@
 import { ConflictException, Injectable } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
 import { plainToClass, plainToInstance } from 'class-transformer'
-import { I18nService } from 'nestjs-i18n'
+import { I18nContext, I18nService } from 'nestjs-i18n'
 
 import type { PageDto } from '@/class'
 import type { I18nTranslations } from '@/generated/i18n.generated'
@@ -34,7 +34,11 @@ export class UsersService {
         const { meta, code } = e
         if (code === 'P2002') {
           if ((meta?.target as string[]).includes('username')) {
-            throw new ConflictException(this.i18nService.t('user.USERNAME.ALREADY.EXIST'))
+            throw new ConflictException(
+              this.i18nService.t('user.USERNAME.ALREADY.EXIST', {
+                lang: I18nContext.current()!.lang
+              })
+            )
           }
         }
       }
@@ -43,8 +47,8 @@ export class UsersService {
   }
 
   async findMany(pageDto: PageDto): Promise<[UserVo[], number]> {
-    const { page, pageSize, searchText, startTime, endTime } = pageDto
-    console.log(page, pageSize, searchText, startTime, endTime)
+    const { page, pageSize, keywords, startTime, endTime } = pageDto
+    console.log(page, pageSize, keywords, startTime, endTime)
     const users = await this.prismaService.user.findMany()
     const total = await this.prismaService.user.count()
     const userVoList = plainToInstance(UserVo, users)

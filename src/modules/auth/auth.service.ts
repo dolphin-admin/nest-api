@@ -3,7 +3,7 @@ import { ConfigType } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 import { compare } from '@node-rs/bcrypt'
 import { plainToClass } from 'class-transformer'
-import { I18nService } from 'nestjs-i18n'
+import { I18nContext, I18nService } from 'nestjs-i18n'
 
 import { JwtConfig } from '@/configs'
 import type { I18nTranslations } from '@/generated/i18n.generated'
@@ -59,16 +59,22 @@ export class AuthService {
       }
     })
     if (!user) {
-      throw new BadRequestException(this.i18nService.t('auth.USERNAME.OR.PASSWORD.ERROR'))
+      throw new BadRequestException(
+        this.i18nService.t('auth.USERNAME.OR.PASSWORD.ERROR', { lang: I18nContext.current()!.lang })
+      )
     }
     if (!(await compare(loginDto.password, user.password ?? ''))) {
-      throw new BadRequestException(this.i18nService.t('auth.USERNAME.OR.PASSWORD.ERROR'))
+      throw new BadRequestException(
+        this.i18nService.t('auth.USERNAME.OR.PASSWORD.ERROR', { lang: I18nContext.current()!.lang })
+      )
     }
     return plainToClass(UserVo, user)
   }
 
   // 邮箱登录
   loginByEmail() {
-    throw new NotImplementedException(this.i18nService.t('auth.LOGIN.TYPE.NOT.SUPPORTED'))
+    throw new NotImplementedException(
+      this.i18nService.t('auth.LOGIN.TYPE.NOT.SUPPORTED', { lang: I18nContext.current()!.lang })
+    )
   }
 }

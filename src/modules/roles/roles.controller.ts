@@ -37,7 +37,7 @@ export class RolesController {
   @ApiOperation({ summary: '角色列表' })
   @ApiOkResponse({ description: '请求成功' })
   @ApiUnauthorizedResponse({ description: '认证失败' })
-  @ApiPageQuery('searchText', 'date')
+  @ApiPageQuery('keywords', 'date')
   @Get()
   findAll() {
     return this.rolesService.findAll()

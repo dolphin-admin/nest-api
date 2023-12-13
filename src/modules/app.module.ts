@@ -42,6 +42,7 @@ import { DepartmentsModule } from './departments/departments.module'
 import { DictionariesModule } from './dictionaries/dictionaries.module'
 import { DictionaryItemsModule } from './dictionary-items/dictionary-items.module'
 import { FilesModule } from './files/files.module'
+import { LocalesModule } from './locales/locales.module'
 import { LoginLogsModule } from './login-logs/login-logs.module'
 import { MenuItemsModule } from './menu-items/menu-items.module'
 import { NotificationsModule } from './notifications/notifications.module'
@@ -75,6 +76,14 @@ import { UsersModule } from './users/users.module'
       cache: true, // 开启缓存，提高性能
       expandVariables: true // 允许变量扩展
     }),
+    // Mongoose 模块
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.get<string>('MONGO_URL')
+      }),
+      inject: [ConfigService]
+    }),
     // i18n 模块
     I18nModule.forRoot({
       fallbackLanguage: LanguageCode['en-US'],
@@ -100,14 +109,6 @@ import { UsersModule } from './users/users.module'
       { name: 'medium', ttl: 10000, limit: 50 }, // 每 10 秒调用不超过 50 次
       { name: 'long', ttl: 60000, limit: 300 } // 每分钟调用不超过 300 次
     ]),
-    // Mongoose 模块
-    MongooseModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        uri: configService.get<string>('MONGO_URL')
-      }),
-      inject: [ConfigService]
-    }),
     // 定时任务模块
     ScheduleModule.forRoot(),
     // 队列模块
@@ -146,6 +147,7 @@ import { UsersModule } from './users/users.module'
     PositionsModule,
     MenuItemsModule,
     SettingsModule,
+    UserSettingsModule,
     DictionariesModule,
     DictionaryItemsModule,
     FilesModule,
@@ -157,7 +159,7 @@ import { UsersModule } from './users/users.module'
     OperationLogsModule,
     CronJobLogsModule,
     LoginLogsModule,
-    UserSettingsModule
+    LocalesModule
   ],
   controllers: [AppController],
   providers: [
