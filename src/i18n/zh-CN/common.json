@@ -56,5 +56,8 @@
   "SORT": {
     "INVALID": "排序：输入值不合法",
     "NOT.EMPTY": "排序：不能为空"
+  },
+  "LANGUAGE": {
+    "NOT.SUPPORT": "不支持该语言"
   }
 }

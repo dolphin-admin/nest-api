@@ -56,5 +56,8 @@
   "SORT": {
     "INVALID": "Sort：Invalid value",
     "NOT.EMPTY": "Sort: Must not be empty"
+  },
+  "LANGUAGE": {
+    "NOT.SUPPORT": "Language not support"
   }
 }

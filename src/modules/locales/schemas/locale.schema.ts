@@ -5,10 +5,11 @@ export type LocaleDocument = HydratedDocument<Locale>
 
 @Schema({
   id: true,
-  timestamps: true
+  timestamps: true,
+  autoIndex: true
 })
 export class Locale {
-  @Prop({ required: true, unique: true })
+  @Prop({ required: true })
   key: string
 
   @Prop({ required: true })
@@ -24,4 +25,7 @@ export class Locale {
   'zh-CN': string
 }
 
-export const LocaleSchema = SchemaFactory.createForClass(Locale)
+export const LocaleSchema = SchemaFactory.createForClass(Locale).index(
+  { key: 1, ns: 1 },
+  { unique: true }
+)

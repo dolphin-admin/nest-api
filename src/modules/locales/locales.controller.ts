@@ -1,15 +1,27 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  NotFoundException,
+  Param,
+  ParseEnumPipe,
+  Post,
+  Put,
+  Query
+} from '@nestjs/common'
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { I18n, I18nContext } from 'nestjs-i18n'
 
 import { R } from '@/class'
+import { LanguageCode } from '@/enums'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 
 import { PageLocaleDto } from './dto'
 import { CreateLocaleDto } from './dto/create-locale.dto'
 import { UpdateLocaleDto } from './dto/update-locale.dto'
 import { LocalesService } from './locales.service'
-import type { LocaleVo, PageLocaleVo } from './vo'
+import type { LocaleResourceVO, LocaleVo, PageLocaleVo } from './vo'
 
 @ApiTags('多语言资源')
 @ApiBearerAuth('bearer')
@@ -35,9 +47,26 @@ export class LocalesController {
     return new R({ data: await this.localesService.findAll(pageLocaleDto) })
   }
 
+  @ApiOperation({ summary: '多语言资源 [根据语言]' })
+  @Get(':lang')
+  async findManyByLang(
+    @Param(
+      'lang',
+      new ParseEnumPipe(LanguageCode, {
+        exceptionFactory: () => {
+          const i18n = I18nContext.current<I18nTranslations>()!
+          throw new NotFoundException(i18n.t('common.LANGUAGE.NOT.SUPPORT'))
+        }
+      })
+    )
+    lang: string
+  ): Promise<R<LocaleResourceVO[]>> {
+    return new R({ data: await this.localesService.findManyByLang(lang) })
+  }
+
   @ApiOperation({ summary: '多语言资源详情' })
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<R<LocaleVo>> {
+  async findOneById(@Param('id') id: string): Promise<R<LocaleVo>> {
     return new R({ data: await this.localesService.findOneById(id) })
   }
 
