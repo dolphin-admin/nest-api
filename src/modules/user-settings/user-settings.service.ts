@@ -94,10 +94,12 @@ export class UserSettingsService {
       ],
       OR: keywords
         ? [
+            { id: { equals: _.toNumber(keywords) < 100000 ? _.toNumber(keywords) : 0 } },
+            { userId: { equals: _.toNumber(keywords) < 100000 ? _.toNumber(keywords) : 0 } },
             { key: { contains: keywords } },
             { value: { contains: keywords } },
-            { id: { equals: _.toNumber(keywords) < 100000 ? _.toNumber(keywords) : 0 } },
-            { userId: { equals: _.toNumber(keywords) < 100000 ? _.toNumber(keywords) : 0 } }
+            { label: { contains: keywords } },
+            { remark: { contains: keywords } }
           ]
         : undefined
     }

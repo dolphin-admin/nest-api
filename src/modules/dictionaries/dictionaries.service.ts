@@ -13,7 +13,7 @@ import type {
   PatchDictionaryDto,
   UpdateDictionaryDto
 } from './dto'
-import { DictionaryVo, PageDictionaryVo } from './vo'
+import { DictionaryVo, ListDictionarySelectItemVo, PageDictionaryVo } from './vo'
 
 @Injectable()
 export class DictionariesService {
@@ -32,7 +32,7 @@ export class DictionariesService {
   }
 
   // 创建字典
-  async create(createDictionaryDto: CreateDictionaryDto, userId: number): Promise<DictionaryVo> {
+  async create(createDictionaryDto: CreateDictionaryDto, userId: number) {
     return plainToClass(
       DictionaryVo,
       await this.prismaService.dictionary.create({
@@ -73,8 +73,10 @@ export class DictionariesService {
       ],
       OR: keywords
         ? [
+            { id: { equals: _.toNumber(keywords) < 100000 ? _.toNumber(keywords) : 0 } },
             { code: { contains: keywords } },
-            { id: { equals: _.toNumber(keywords) < 100000 ? _.toNumber(keywords) : 0 } }
+            { label: { contains: keywords } },
+            { remark: { contains: keywords } }
           ]
         : undefined
     }
@@ -106,11 +108,33 @@ export class DictionariesService {
     const dictionary = await this.prismaService.dictionary.findUnique({
       where: {
         code,
+        enabled: true, // 只查询启用的字典
         deletedAt: null
+      },
+      include: {
+        dictionaryItems: {
+          where: {
+            enabled: true,
+            deletedAt: null
+          },
+          select: {
+            id: true,
+            label: true,
+            value: true
+          },
+          orderBy: {
+            sort: 'asc',
+            createdAt: 'desc'
+          }
+        }
       }
     })
     this.checkExists(dictionary)
-    return plainToClass(DictionaryVo, dictionary)
+
+    return plainToClass(ListDictionarySelectItemVo, {
+      record: dictionary?.dictionaryItems ?? [],
+      code
+    })
   }
 
   // 更新字典

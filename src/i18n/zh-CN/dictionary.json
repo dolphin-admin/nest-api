@@ -5,5 +5,9 @@
     "LENGTH": "字典编码: 长度不能超过 50 个字符",
     "NO.WHITESPACE": "字典编码：不能包含空格",
     "NOT.EMPTY": "字典编码：不能为空"
+  },
+  "ID": {
+    "INVALID": "字典 ID：输入值不合法",
+    "NOT.EMPTY": "字典 ID：不能为空"
   }
 }
