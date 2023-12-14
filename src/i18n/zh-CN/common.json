@@ -19,25 +19,33 @@
     "INVALID": "ID：输入值不合法"
   },
   "KEY": {
-    "INVALID": "键输入值不合法",
+    "INVALID": "键：输入值不合法",
     "LENGTH": "键: 长度不能超过 50 个字符",
-    "NO.WHITESPACE": "键不能包含空格",
-    "NOT.EMPTY": "键不能为空"
+    "NO.WHITESPACE": "键：不能包含空格",
+    "NOT.EMPTY": "键：不能为空"
   },
   "LABEL": {
-    "LENGTH.EN.US": "展示名称 - 英文：长度不能超过 50 个字符",
-    "LENGTH.ZH.CN": "展示名称 - 中文：长度不能超过 50 个字符",
-    "TRANS.MISSING": "展示名称：缺少翻译内容"
+    "INVALID": "名称：输入值不合法",
+    "LENGTH": "名称：长度不能超过 50 个字符",
+    "NOT.EMPTY": "名称：不能为空"
+  },
+  "LANGUAGE.NOT.SUPPORT": "不支持该语言",
+  "NS": {
+    "INVALID": "命名空间：输入值不合法",
+    "NO.WHITESPACE": "命名空间：不能包含空格",
+    "NOT.EMPTY": "命名空间：不能为空"
   },
   "OPERATE.FAILED": "操作失败",
   "OPERATE.SUCCESS": "操作成功",
   "REMARK": {
-    "LENGTH.EN.US": "备注 - 英文：长度不能超过 500 个字符",
-    "LENGTH.ZH.CN": "备注 - 中文：长度不能超过 500 个字符",
-    "TRANS.MISSING": "备注：缺少翻译内容"
+    "INVALID": "备注：输入值不合法",
+    "LENGTH": "备注：长度不能超过 500 个字符"
   },
   "RESOURCE.CONFLICT": "操作失败：资源冲突",
   "RESOURCE.NOT.FOUND": "操作失败：资源不存在",
+  "SORT": {
+    "INVALID": "排序：输入值不合法"
+  },
   "SORT.FAILED": "排序失败",
   "SORT.SUCCESS": "排序成功",
   "UPDATE.FAILED": "修改失败",
@@ -47,17 +55,5 @@
     "LENGTH": "值：长度不能超过 250 个字符",
     "NO.WHITESPACE": "值：不能包含空格",
     "NOT.EMPTY": "值：不能为空"
-  },
-  "NS": {
-    "INVALID": "命名空间：输入值不合法",
-    "NOT.EMPTY": "命名空间：不能为空",
-    "NO.WHITESPACE": "命名空间：不能包含空格"
-  },
-  "SORT": {
-    "INVALID": "排序：输入值不合法",
-    "NOT.EMPTY": "排序：不能为空"
-  },
-  "LANGUAGE": {
-    "NOT.SUPPORT": "不支持该语言"
   }
 }

@@ -13,14 +13,13 @@ import {
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { I18n, I18nContext } from 'nestjs-i18n'
 
-import { PageDto, R } from '@/class'
+import { BaseResponseVo, PageDto } from '@/class'
 import { User } from '@/decorators'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
 import { UsersService } from './users.service'
-import type { UserVo } from './vo'
 
 @ApiTags('用户')
 @ApiBearerAuth('bearer')
@@ -30,39 +29,36 @@ export class UsersController {
 
   @ApiOperation({ summary: '创建用户' })
   @Post()
-  async create(@Body() createUserDto: CreateUserDto): Promise<R<UserVo>> {
-    return new R({ data: await this.usersService.create(createUserDto) })
+  async create(@Body() createUserDto: CreateUserDto) {
+    return new BaseResponseVo({ data: await this.usersService.create(createUserDto) })
   }
 
   @ApiOperation({ summary: '用户列表' })
   @Get()
-  async findMany(@Query() pageDto: PageDto): Promise<R<any>> {
+  async findMany(@Query() pageDto: PageDto) {
     const { page, pageSize } = pageDto
     const [records, total] = await this.usersService.findMany(pageDto)
-    return new R({ data: { page, pageSize, total, records } })
+    return new BaseResponseVo({ data: { page, pageSize, total, records } })
   }
 
   @ApiOperation({ summary: '个人信息' })
   @Get('me')
-  async findCurrent(
-    @User('sub') id: number,
-    @I18n() i18n: I18nContext<I18nTranslations>
-  ): Promise<R<UserVo>> {
+  async findCurrent(@User('sub') id: number, @I18n() i18n: I18nContext<I18nTranslations>) {
     const currentUser = await this.usersService.findOneById(id)
     if (!currentUser) {
       throw new UnauthorizedException(i18n.t('auth.UNAUTHORIZED'))
     }
-    return new R({ data: currentUser })
+    return new BaseResponseVo({ data: currentUser })
   }
 
   @ApiOperation({ summary: '用户详情' })
   @Get(':id(\\d+)')
-  async findOneById(@Param('id') id: number): Promise<R<UserVo>> {
+  async findOneById(@Param('id') id: number) {
     const user = await this.usersService.findOneById(id)
     if (!user) {
       throw new NotFoundException('用户不存在')
     }
-    return new R({ data: user })
+    return new BaseResponseVo({ data: user })
   }
 
   @ApiOperation({ summary: '修改用户' })

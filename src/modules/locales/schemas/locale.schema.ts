@@ -16,7 +16,7 @@ export class Locale {
   ns: string
 
   @Prop({ default: 0 })
-  sort: number
+  sort?: number
 
   @Prop()
   'en-US': string

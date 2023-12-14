@@ -1,17 +1,24 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
-import { IsBoolean, IsNumber, IsOptional, IsString, MaxLength, NotContains } from 'class-validator'
+import { IsBoolean, IsOptional, IsString, MaxLength, NotContains } from 'class-validator'
 
 import { I18nUtils } from '@/utils'
 
 const { t } = I18nUtils
 
-export class PatchDictionaryDto {
-  @ApiPropertyOptional({ description: '字典编码' })
+export class PatchUserSettingDto {
+  @ApiPropertyOptional({ description: '键' })
   @MaxLength(50, { message: t('common.KEY.LENGTH') })
   @NotContains(' ', { message: t('common.KEY.NO.WHITESPACE') })
   @IsString({ message: t('common.KEY.INVALID') })
   @IsOptional()
-  code: string
+  key?: string
+
+  @ApiPropertyOptional({ description: '值' })
+  @MaxLength(250, { message: t('common.VALUE.LENGTH') })
+  @NotContains(' ', { message: t('common.VALUE.NO.WHITESPACE') })
+  @IsString({ message: t('common.VALUE.INVALID') })
+  @IsOptional()
+  value?: string
 
   @ApiPropertyOptional({ description: '名称' })
   @MaxLength(50, { message: t('common.LABEL.LENGTH') })
@@ -34,9 +41,4 @@ export class PatchDictionaryDto {
   @IsBoolean({ message: t('common.BUILTIN.INVALID') })
   @IsOptional()
   builtIn?: boolean
-
-  @ApiPropertyOptional({ description: '排序' })
-  @IsNumber({}, { message: t('common.SORT.INVALID') })
-  @IsOptional()
-  sort?: number
 }

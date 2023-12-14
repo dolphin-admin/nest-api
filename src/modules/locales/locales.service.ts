@@ -1,3 +1,4 @@
+import { Lang } from '@dolphin-admin/utils'
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { plainToClass } from 'class-transformer'
@@ -5,7 +6,7 @@ import type { FilterQuery, SortOrder } from 'mongoose'
 import { Model } from 'mongoose'
 import { I18nContext, I18nService } from 'nestjs-i18n'
 
-import { LanguageCode, type SortColumnKey } from '@/enums'
+import { type SortColumnKey } from '@/enums'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 import { RedisService } from '@/shared/redis/redis.service'
 
@@ -29,7 +30,7 @@ export class LocalesService {
   }
 
   private clearAllResourcesCache() {
-    Object.values(LanguageCode).forEach((lang) => {
+    Object.values(Lang).forEach((lang) => {
       this.redisService.delete(this.getLocaleResourcesCacheKey(lang))
     })
   }
@@ -45,19 +46,19 @@ export class LocalesService {
       pageLocaleDto
 
     const query: FilterQuery<Locale> = {
+      ...(key && { key: { $regex: key, $options: 'i' } }),
+      ...(ns && { ns: { $regex: ns, $options: 'i' } }),
+      ...(startTime && { createdAt: { $gte: startTime } }),
+      ...(endTime && { createdAt: { $lte: endTime } }),
       ...(keywords && {
         $or: [
           { key: { $regex: keywords, $options: 'i' } },
           { ns: { $regex: keywords, $options: 'i' } },
-          ...Object.values(LanguageCode).map((lang) => ({
+          ...Object.values(Lang).map((lang) => ({
             [lang]: { $regex: keywords, $options: 'i' }
           }))
         ]
-      }),
-      ...(key && { key: { $regex: key, $options: 'i' } }),
-      ...(ns && { ns: { $regex: ns, $options: 'i' } }),
-      ...(startTime && { createdAt: { $gte: startTime } }),
-      ...(endTime && { createdAt: { $lte: endTime } })
+      })
     }
 
     const sort: [string, SortOrder][] = sortColumnKeys.map((field: SortColumnKey, index) => [
@@ -84,7 +85,17 @@ export class LocalesService {
       return JSON.parse(cache)
     }
     const results = await this.LocaleModel.aggregate([
-      { $match: { [lang]: { $exists: true } } },
+      {
+        $match: {
+          $and: [
+            {
+              [lang]: { $exists: true }
+            },
+            { [lang]: { $ne: null } },
+            { [lang]: { $ne: '' } }
+          ]
+        }
+      },
       { $project: { _id: 0, ns: 1, key: 1, value: `$${lang}` } },
       { $group: { _id: '$ns', items: { $push: { key: '$key', value: '$value' } } } },
       {

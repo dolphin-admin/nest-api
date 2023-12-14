@@ -17,5 +17,5 @@ export class MongoBaseVo {
 
   @ApiProperty({ description: '排序' })
   @Expose()
-  sort: number
+  sort?: number
 }

@@ -13,7 +13,7 @@ import {
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { I18n, I18nContext } from 'nestjs-i18n'
 
-import { R } from '@/class'
+import { BaseResponseVo } from '@/class'
 import {
   ApiCreatedResponse,
   ApiOkResponse,
@@ -30,7 +30,6 @@ import {
   PatchDictionaryDto,
   UpdateDictionaryDto
 } from './dto'
-import type { PageDictionaryVo } from './vo'
 import { DictionaryVo } from './vo'
 
 @ApiTags('字典')
@@ -46,8 +45,8 @@ export class DictionariesController {
     @Body() createDictionaryDto: CreateDictionaryDto,
     @User('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
-  ): Promise<R<DictionaryVo>> {
-    return new R({
+  ) {
+    return new BaseResponseVo({
       data: await this.dictionariesService.create(createDictionaryDto, userId),
       msg: i18n.t('common.CREATE.SUCCESS')
     })
@@ -57,22 +56,28 @@ export class DictionariesController {
   @ApiPageOKResponse(DictionaryVo)
   @ApiPageQuery('keywords', 'date')
   @Get()
-  async findMany(@Query() pageDictionaryDto: PageDictionaryDto): Promise<R<PageDictionaryVo>> {
-    return new R({ data: await this.dictionariesService.findMany(pageDictionaryDto) })
+  async findMany(@Query() pageDictionaryDto: PageDictionaryDto) {
+    return new BaseResponseVo({
+      data: await this.dictionariesService.findMany(pageDictionaryDto)
+    })
   }
 
   @ApiOperation({ summary: '字典详情 [ID]' })
   @ApiOkResponse(DictionaryVo)
   @Get(':id(\\d+)')
-  async findOneById(@Param('id') id: number): Promise<R<DictionaryVo>> {
-    return new R({ data: await this.dictionariesService.findOneById(id) })
+  async findOneById(@Param('id') id: number) {
+    return new BaseResponseVo({
+      data: await this.dictionariesService.findOneById(id)
+    })
   }
 
   @ApiOperation({ summary: '字典详情 [Code]' })
   @ApiOkResponse(DictionaryVo)
   @Get(':code')
-  async findOneByCode(@Param('code') code: string): Promise<R<DictionaryVo>> {
-    return new R({ data: await this.dictionariesService.findOneByCode(code) })
+  async findOneByCode(@Param('code') code: string) {
+    return new BaseResponseVo({
+      data: await this.dictionariesService.findOneByCode(code)
+    })
   }
 
   @ApiOperation({ summary: '更新字典' })
@@ -81,9 +86,13 @@ export class DictionariesController {
   async update(
     @Param('id', new ParseIntPipe()) id: number,
     @Body() updateDictionaryDto: UpdateDictionaryDto,
-    @User('sub') userId: number
-  ): Promise<R<DictionaryVo>> {
-    return new R({ data: await this.dictionariesService.update(id, updateDictionaryDto, userId) })
+    @User('sub') userId: number,
+    @I18n() i18n: I18nContext<I18nTranslations>
+  ) {
+    return new BaseResponseVo({
+      data: await this.dictionariesService.update(id, updateDictionaryDto, userId),
+      msg: i18n.t('common.OPERATE.SUCCESS')
+    })
   }
 
   @ApiOperation({ summary: '修改字典' })
@@ -94,9 +103,11 @@ export class DictionariesController {
     @Body() patchDictionaryDto: PatchDictionaryDto,
     @User('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
-  ): Promise<R> {
-    await this.dictionariesService.patch(id, patchDictionaryDto, userId)
-    return new R({ msg: i18n.t('common.OPERATE.SUCCESS') })
+  ) {
+    return new BaseResponseVo({
+      data: await this.dictionariesService.patch(id, patchDictionaryDto, userId),
+      msg: i18n.t('common.OPERATE.SUCCESS')
+    })
   }
 
   @ApiOperation({ summary: '删除字典' })
@@ -106,8 +117,10 @@ export class DictionariesController {
     @Param('id', new ParseIntPipe()) id: number,
     @User('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
-  ): Promise<R> {
+  ) {
     await this.dictionariesService.remove(id, userId)
-    return new R({ msg: i18n.t('common.DELETE.SUCCESS') })
+    return new BaseResponseVo({
+      msg: i18n.t('common.DELETE.SUCCESS')
+    })
   }
 }

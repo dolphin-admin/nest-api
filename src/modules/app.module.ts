@@ -1,5 +1,6 @@
 import path from 'node:path'
 
+import { Lang } from '@dolphin-admin/utils'
 import { HttpModule } from '@nestjs/axios'
 import { BullModule } from '@nestjs/bull'
 import type { MiddlewareConsumer, NestModule } from '@nestjs/common'
@@ -23,7 +24,6 @@ import {
   PostgresConfig,
   RedisConfig
 } from '@/configs'
-import { LanguageCode } from '@/enums'
 import { AuthGuard } from '@/guards'
 import { ErrorsInterceptor, LoggingInterceptor } from '@/interceptors'
 import { DelayMiddleware } from '@/middlewares'
@@ -86,7 +86,7 @@ import { UsersModule } from './users/users.module'
     }),
     // i18n 模块
     I18nModule.forRoot({
-      fallbackLanguage: LanguageCode['en-US'],
+      fallbackLanguage: Lang['en-US'],
       loaderOptions: {
         path: path.join(__dirname, '../i18n/'),
         watch: true

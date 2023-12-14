@@ -1,10 +1,10 @@
 import { Type } from 'class-transformer'
 
-import { Page } from '@/class'
+import { PageVo } from '@/class'
 
 import { DictionaryVo } from './dictionary.vo'
 
-export class PageDictionaryVo extends Page {
+export class PageDictionaryVo extends PageVo {
   @Type(() => DictionaryVo)
   records: DictionaryVo[]
 }

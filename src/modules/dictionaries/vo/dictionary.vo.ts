@@ -1,7 +1,6 @@
-import { ApiProperty } from '@nestjs/swagger'
-import { Type } from 'class-transformer'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import { BaseResourceVo, MultilingualVo } from '@/class'
+import { BaseResourceVo } from '@/class'
 
 export class DictionaryVo extends BaseResourceVo {
   @ApiProperty({ description: 'ID' })
@@ -10,13 +9,11 @@ export class DictionaryVo extends BaseResourceVo {
   @ApiProperty({ description: '字典编码' })
   code: string
 
-  @ApiProperty({ description: '展示名称', type: MultilingualVo })
-  @Type(() => MultilingualVo)
-  label: MultilingualVo
+  @ApiProperty({ description: '名称' })
+  label: string
 
-  @ApiProperty({ description: '备注', type: MultilingualVo })
-  @Type(() => MultilingualVo)
-  remark: MultilingualVo
+  @ApiPropertyOptional({ description: '备注' })
+  remark?: string
 
   @ApiProperty({ description: '是否启用' })
   enabled: boolean
@@ -24,6 +21,6 @@ export class DictionaryVo extends BaseResourceVo {
   @ApiProperty({ description: '是否内置' })
   builtIn: boolean
 
-  @ApiProperty({ description: '排序' })
-  sort: number
+  @ApiPropertyOptional({ description: '排序' })
+  sort?: number
 }
