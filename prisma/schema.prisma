@@ -536,10 +536,8 @@ model Dictionary {
 model DictionaryItem {
   /// 唯一标识
   id      Int     @id @default(autoincrement())
-  /// 键
-  key     String  @unique @db.VarChar(100)
   /// 值
-  value   String? @db.VarChar(255)
+  value   String  @db.VarChar(255)
   /// 名称
   label   String  @db.VarChar(50)
   /// 备注

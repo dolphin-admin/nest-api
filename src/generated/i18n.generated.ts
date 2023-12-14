@@ -80,6 +80,10 @@ export type I18nTranslations = {
             "NO.WHITESPACE": string;
             "NOT.EMPTY": string;
         };
+        "ID": {
+            "INVALID": string;
+            "NOT.EMPTY": string;
+        };
     };
     "user": {
         "CONFIRM.PASSWORD": {
