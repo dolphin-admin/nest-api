@@ -1,10 +1,8 @@
-import { Controller, Get, Redirect, Render } from '@nestjs/common'
+import { Controller, Get, Render } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
-import { I18n, I18nContext } from 'nestjs-i18n'
 
-import { R } from '@/class'
+import { BaseResponseVo } from '@/class'
 import { SkipAuth } from '@/decorators'
-import type { I18nTranslations } from '@/generated/i18n.generated'
 
 import { AppService } from './app.service'
 
@@ -22,19 +20,8 @@ export class AppController {
   }
 
   @ApiOperation({ summary: '应用信息' })
-  @Get('app-info')
+  @Get('info')
   getVersion() {
-    return new R({ data: this.appService.getAppInfo() })
-  }
-
-  @ApiOperation({ summary: '测试重定向' })
-  @Redirect('/')
-  @Get('redirect')
-  getRedirect() {}
-
-  @ApiOperation({ summary: '语言标识' })
-  @Get('lang')
-  getCurrentLang(@I18n() i18n: I18nContext<I18nTranslations>) {
-    return new R({ data: i18n.lang })
+    return new BaseResponseVo({ data: this.appService.getAppInfo() })
   }
 }

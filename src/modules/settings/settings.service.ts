@@ -1,14 +1,13 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
-import { Prisma } from '@prisma/client'
+import { Injectable, NotFoundException } from '@nestjs/common'
+import type { Prisma, Setting } from '@prisma/client'
 import { plainToClass } from 'class-transformer'
 import _ from 'lodash'
 import { I18nContext, I18nService } from 'nestjs-i18n'
 
 import type { SortColumnKey } from '@/enums'
-import { LanguageCode, SortOrder } from '@/enums'
+import { SortOrder } from '@/enums'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 import { PrismaService } from '@/shared/prisma/prisma.service'
-import { I18nUtils } from '@/utils'
 
 import type { PageSettingDto } from './dto'
 import type { CreateSettingDto } from './dto/create-setting.dto'
@@ -24,46 +23,30 @@ export class SettingsService {
     private readonly i18nService: I18nService<I18nTranslations>
   ) {}
 
-  // 创建设置
-  async create(createSettingDto: CreateSettingDto, userId: number): Promise<SettingVo> {
-    try {
-      const { label, remark, ...rest } = createSettingDto
-      const setting = await this.prismaService.setting.create({
-        data: {
-          ...rest,
-          createdBy: userId,
-          settingTrans: {
-            createMany: {
-              data: [
-                ...Object.values(LanguageCode).map((lang) => ({
-                  label: label[lang],
-                  remark: remark[lang],
-                  lang,
-                  createdBy: userId
-                }))
-              ]
-            }
-          }
-        }
-      })
-      return plainToClass(SettingVo, { ...setting, label, remark })
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        const { code, meta } = e
-        if (code === 'P2002') {
-          if ((meta?.target as string[]).includes('key')) {
-            throw new BadRequestException(
-              this.i18nService.t('common.RESOURCE.CONFLICT', { lang: I18nContext.current()!.lang })
-            )
-          }
-        }
-      }
-      throw e
+  // 检查字典是否存在
+  private checkExists(setting: Setting | null) {
+    if (!setting) {
+      throw new NotFoundException(
+        this.i18nService.t('common.RESOURCE.NOT.FOUND', { lang: I18nContext.current()!.lang })
+      )
     }
   }
 
+  // 创建设置
+  async create(createSettingDto: CreateSettingDto, userId: number) {
+    return plainToClass(
+      SettingVo,
+      await this.prismaService.setting.create({
+        data: {
+          ...createSettingDto,
+          createdBy: userId
+        }
+      })
+    )
+  }
+
   // 设置列表
-  async findMany(pageSettingDto: PageSettingDto): Promise<PageSettingVo> {
+  async findMany(pageSettingDto: PageSettingDto) {
     const {
       page,
       pageSize,
@@ -84,6 +67,7 @@ export class SettingsService {
     }))
 
     const where: Prisma.SettingWhereInput = {
+      deletedAt: null,
       AND: [
         {
           createdAt: {
@@ -116,31 +100,15 @@ export class SettingsService {
         : undefined
     }
 
-    const results = await this.prismaService.setting.findMany({
+    const records = await this.prismaService.setting.findMany({
       where,
-      include: {
-        settingTrans: {
-          where: {
-            deletedAt: null
-          },
-          select: {
-            label: true,
-            remark: true,
-            lang: true
-          }
-        }
-      },
       orderBy,
       skip: (page - 1) * pageSize,
       take: pageSize
     })
-
     const total = await this.prismaService.setting.count({ where })
     return plainToClass(PageSettingVo, {
-      records: results.map((setting) => ({
-        ...setting,
-        ...I18nUtils.generateTransByKeys(setting.settingTrans, ['label', 'remark'])
-      })),
+      records,
       total,
       page,
       pageSize
@@ -148,242 +116,144 @@ export class SettingsService {
   }
 
   // 根据 ID 查询设置
-  async findOneById(id: number): Promise<SettingVo> {
+  async findOneById(id: number) {
     const setting = await this.prismaService.setting.findUnique({
-      where: { id },
-      include: { settingTrans: true }
+      where: {
+        id,
+        deletedAt: null
+      }
     })
-    if (!setting) {
-      throw new NotFoundException('设置不存在')
-    }
-    return plainToClass(SettingVo, {
-      ...setting,
-      ...I18nUtils.generateTransByKeys(setting.settingTrans, ['label', 'remark'])
-    })
+    this.checkExists(setting)
+    return plainToClass(SettingVo, setting)
   }
 
   // 根据键查询设置
-  async findOneByKey(key: string): Promise<SettingVo> {
+  async findOneByKey(key: string) {
     const setting = await this.prismaService.setting.findUnique({
-      where: { key },
-      include: { settingTrans: true }
+      where: {
+        key,
+        deletedAt: null
+      }
     })
-    if (!setting) {
-      throw new NotFoundException(
-        this.i18nService.t('common.RESOURCE.NOT.FOUND', { lang: I18nContext.current()!.lang })
-      )
-    }
-    return plainToClass(SettingVo, {
-      ...setting,
-      ...I18nUtils.generateTransByKeys(setting.settingTrans, ['label', 'remark'])
-    })
+    this.checkExists(setting)
+    return plainToClass(SettingVo, setting)
   }
 
   // 更新设置
-  async update(id: number, updateSettingDto: UpdateSettingDto, userId: number): Promise<SettingVo> {
-    const { label, remark, ...rest } = updateSettingDto
-    try {
-      const setting = await this.prismaService.setting.update({
-        where: {
-          id,
-          deletedAt: null
-        },
-        data: {
-          ...rest,
-          updatedBy: userId,
-          settingTrans: {
-            updateMany: [
-              ...Object.values(LanguageCode).map((lang) => ({
-                where: {
-                  settingId: id,
-                  lang,
-                  deletedAt: null
-                },
-                data: {
-                  ...(label[lang] && { label: label[lang] }),
-                  ...(remark[lang] && { remark: remark[lang] }),
-                  updatedBy: userId
-                }
-              }))
-            ]
-          }
-        }
-      })
-      return plainToClass(SettingVo, { ...setting, label, remark })
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        const { code } = e
-        if (code === 'P2025') {
-          throw new NotFoundException(
-            this.i18nService.t('common.RESOURCE.NOT.FOUND', { lang: I18nContext.current()!.lang })
-          )
-        }
-      }
-      throw e
-    }
-  }
-
-  // 修改设置
-  async patch(id: number, patchSettingDto: PatchSettingDto, userId: number): Promise<void> {
-    const { label, remark, ...rest } = patchSettingDto
-    try {
+  async update(id: number, updateSettingDto: UpdateSettingDto, userId: number) {
+    return plainToClass(
+      SettingVo,
       await this.prismaService.setting.update({
         where: {
           id,
           deletedAt: null
         },
         data: {
-          ...rest,
-          updatedBy: userId,
-          settingTrans: {
-            updateMany: [
-              ...Object.values(LanguageCode)
-                .filter((lang) => label?.[lang] || remark?.[lang])
-                .map((lang) => ({
-                  where: {
-                    settingId: id,
-                    lang,
-                    deletedAt: null
-                  },
-                  data: {
-                    ...(label?.[lang] && { label: label[lang] }),
-                    ...(remark?.[lang] && { remark: remark[lang] }),
-                    updatedBy: userId
-                  }
-                }))
-            ]
-          }
+          ...updateSettingDto,
+          updatedBy: userId
         }
       })
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        const { code } = e
-        if (code === 'P2025') {
-          throw new NotFoundException(
-            this.i18nService.t('common.RESOURCE.NOT.FOUND', { lang: I18nContext.current()!.lang })
-          )
+    )
+  }
+
+  // 修改设置
+  async patch(id: number, patchSettingDto: PatchSettingDto, userId: number) {
+    return plainToClass(
+      SettingVo,
+      await this.prismaService.setting.update({
+        where: {
+          id,
+          deletedAt: null
+        },
+        data: {
+          ...patchSettingDto,
+          updatedBy: userId
         }
-      }
-      throw e
-    }
+      })
+    )
   }
 
   // 删除设置
   async remove(id: number, userId: number): Promise<void> {
-    try {
-      const deleteSettingTrans = this.prismaService.settingTrans.updateMany({
-        where: {
-          settingId: id,
-          deletedAt: null
-        },
-        data: {
-          deletedAt: new Date().toISOString(),
-          deletedBy: userId
-        }
-      })
-      const deleteSetting = this.prismaService.setting.update({
-        where: {
-          id,
-          deletedAt: null
-        },
-        data: {
-          deletedAt: new Date().toISOString(),
-          deletedBy: userId
-        }
-      })
-      await this.prismaService.$transaction([deleteSettingTrans, deleteSetting])
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        const { code } = e
-        if (code === 'P2003') {
-          throw new BadRequestException(
-            this.i18nService.t('common.DELETE.FAILED', { lang: I18nContext.current()!.lang })
-          )
-        }
-        if (code === 'P2025') {
-          throw new NotFoundException(
-            this.i18nService.t('common.RESOURCE.NOT.FOUND', { lang: I18nContext.current()!.lang })
-          )
-        }
+    await this.prismaService.setting.update({
+      where: {
+        id,
+        deletedAt: null
+      },
+      data: {
+        deletedAt: new Date().toISOString(),
+        deletedBy: userId
       }
-      throw e
-    }
+    })
   }
 
   // 排序设置
   async sort(id: number, targetId: number, userId: number): Promise<void> {
-    try {
-      const [currentItem, targetItem] = await Promise.all([
-        this.prismaService.setting.findUnique({
-          where: {
-            id
-          }
-        }),
-        this.prismaService.setting.findUnique({
-          where: {
-            id: targetId
-          }
-        })
-      ])
-
-      if (!currentItem || !targetItem) {
-        throw new NotFoundException(
-          this.i18nService.t('common.RESOURCE.NOT.FOUND', { lang: I18nContext.current()!.lang })
-        )
-      }
-
-      const currentSort = currentItem.sort ?? 0
-      const targetSort = targetItem.sort ?? 0
-
-      // 计算插入位置
-      const insertSort = targetSort <= currentSort ? targetSort : targetSort - 1
-
-      // 更新当前设置的排序
-      await this.prismaService.setting.update({
+    const [currentItem, targetItem] = await Promise.all([
+      this.prismaService.setting.findUnique({
         where: {
           id,
           deletedAt: null
-        },
-        data: {
-          sort: insertSort,
-          updatedBy: userId
         }
-      })
-
-      // 查询排序范围内的设置记录
-      const settingsToUpdate = await this.prismaService.setting.findMany({
+      }),
+      this.prismaService.setting.findUnique({
         where: {
-          id: { not: id },
-          sort: {
-            ...(targetSort < currentSort
-              ? { gte: targetSort, lt: currentSort }
-              : { gt: currentSort, lte: targetSort })
-          }
-        },
-        orderBy: [{ sort: SortOrder.ASC }, { createdAt: SortOrder.DESC }]
+          id: targetId,
+          deletedAt: null
+        }
       })
+    ])
 
-      // 更新其他设置的排序
-      await this.prismaService.setting.updateMany({
-        where: {
-          deletedAt: null,
-          id: { in: settingsToUpdate.map((setting) => setting.id) }
-        },
-        data: {
-          sort: { ...(targetSort < currentSort ? { increment: 1 } : { decrement: 1 }) },
-          updatedBy: userId
-        }
-      })
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        const { code } = e
-        if (code === 'P2025') {
-          throw new NotFoundException(
-            this.i18nService.t('common.RESOURCE.NOT.FOUND', { lang: I18nContext.current()!.lang })
-          )
-        }
-      }
-      throw e
+    if (!currentItem || !targetItem) {
+      throw new NotFoundException(
+        this.i18nService.t('common.RESOURCE.NOT.FOUND', { lang: I18nContext.current()!.lang })
+      )
     }
+
+    const currentSort = currentItem.sort ?? 0
+    const targetSort = targetItem.sort ?? 0
+
+    // 计算插入位置
+    const insertSort = targetSort <= currentSort ? targetSort : targetSort - 1
+
+    // 更新当前设置的排序
+    const sortCurrent = this.prismaService.setting.update({
+      where: {
+        id,
+        deletedAt: null
+      },
+      data: {
+        sort: insertSort,
+        updatedBy: userId
+      }
+    })
+
+    // 查询排序范围内的设置记录
+    const settingsToUpdate = await this.prismaService.setting.findMany({
+      where: {
+        id: { not: id },
+        deletedAt: null,
+        sort: {
+          ...(targetSort < currentSort
+            ? { gte: targetSort, lt: currentSort }
+            : { gt: currentSort, lte: targetSort })
+        }
+      },
+      orderBy: [{ sort: SortOrder.ASC }, { createdAt: SortOrder.DESC }]
+    })
+
+    // 更新其他设置的排序
+    const sortOthers = this.prismaService.setting.updateMany({
+      where: {
+        deletedAt: null,
+        id: { in: settingsToUpdate.map((setting) => setting.id) }
+      },
+      data: {
+        sort: { ...(targetSort < currentSort ? { increment: 1 } : { decrement: 1 }) },
+        updatedBy: userId
+      }
+    })
+
+    await this.prismaService.$transaction([sortCurrent, sortOthers])
   }
 }

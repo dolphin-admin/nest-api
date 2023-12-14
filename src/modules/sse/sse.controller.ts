@@ -40,11 +40,7 @@ export class SseController {
     res.write('data: abcd\n\n')
 
     this.notificationQueue.on('completed', (job) => {
-      console.log(job.data.userId, userId)
-      console.log(typeof job.data.userId, typeof userId)
-      console.log(job.data.userId === userId)
       if (job.data.userId === parseInt(userId as string, 10)) {
-        console.log(job.data)
         const { type, ...others } = job.data
         listener(type, others)
         job.remove()

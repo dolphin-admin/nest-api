@@ -7,11 +7,12 @@ import type { ConfigType } from '@nestjs/config'
 import { ConfigService } from '@nestjs/config'
 import { NestFactory, Reflector } from '@nestjs/core'
 import type { NestExpressApplication } from '@nestjs/platform-express'
+import compression from 'compression'
 import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n'
 
-import { R } from './class'
+import { BaseResponseVo } from './class'
 import type { AppConfig, DevConfig } from './configs'
-import { HttpExceptionFilter, MongoExceptionFilter } from './filters'
+import { HttpExceptionFilter, MongoExceptionFilter, PrismaExceptionFilter } from './filters'
 import { AppModule } from './modules/app.module'
 import { Logger } from './shared/logger/logger.service'
 import { SwaggerUtils } from './utils'
@@ -28,6 +29,7 @@ async function bootstrap() {
   const appConfig = configService.get<ConfigType<typeof AppConfig>>('app')!
   const devConfig = configService.get<ConfigType<typeof DevConfig>>('dev')!
 
+  app.use(compression())
   app.useLogger(new Logger(appConfig))
 
   // 跨域白名单
@@ -65,6 +67,8 @@ async function bootstrap() {
     })
   )
 
+  // 全局过滤器 - Prisma 异常
+  app.useGlobalFilters(new PrismaExceptionFilter())
   // 全局过滤器 - Mongo 异常
   app.useGlobalFilters(new MongoExceptionFilter())
   // 全局过滤器 - 异常处理
@@ -76,9 +80,8 @@ async function bootstrap() {
       errorHttpStatusCode: HttpStatus.BAD_REQUEST,
       responseBodyFormatter: (_host, _exc, formattedErrors) => {
         const errors = formattedErrors as string[]
-        return new R({
-          msg: errors[0],
-          errors
+        return new BaseResponseVo({
+          msg: errors[0]
         }) as Record<string, unknown>
       }
     })

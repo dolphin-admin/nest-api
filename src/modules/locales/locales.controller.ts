@@ -1,3 +1,4 @@
+import { Lang } from '@dolphin-admin/utils'
 import {
   Body,
   Controller,
@@ -13,8 +14,7 @@ import {
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { I18n, I18nContext } from 'nestjs-i18n'
 
-import { R } from '@/class'
-import { LanguageCode } from '@/enums'
+import { BaseResponseVo } from '@/class'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 
 import { PageLocaleDto } from './dto'
@@ -34,8 +34,8 @@ export class LocalesController {
   async create(
     @Body() createLocaleDto: CreateLocaleDto,
     @I18n() i18n: I18nContext<I18nTranslations>
-  ): Promise<R<LocaleVo>> {
-    return new R({
+  ): Promise<BaseResponseVo<LocaleVo>> {
+    return new BaseResponseVo({
       data: await this.localesService.create(createLocaleDto),
       msg: i18n.t('common.CREATE.SUCCESS')
     })
@@ -43,8 +43,8 @@ export class LocalesController {
 
   @ApiOperation({ summary: '多语言资源列表' })
   @Get()
-  async findAll(@Query() pageLocaleDto: PageLocaleDto): Promise<R<PageLocaleVo>> {
-    return new R({ data: await this.localesService.findAll(pageLocaleDto) })
+  async findAll(@Query() pageLocaleDto: PageLocaleDto): Promise<BaseResponseVo<PageLocaleVo>> {
+    return new BaseResponseVo({ data: await this.localesService.findAll(pageLocaleDto) })
   }
 
   @ApiOperation({ summary: '多语言资源 [根据语言]' })
@@ -52,7 +52,7 @@ export class LocalesController {
   async findManyByLang(
     @Param(
       'lang',
-      new ParseEnumPipe(LanguageCode, {
+      new ParseEnumPipe(Lang, {
         exceptionFactory: () => {
           const i18n = I18nContext.current<I18nTranslations>()!
           throw new NotFoundException(i18n.t('common.LANGUAGE.NOT.SUPPORT'))
@@ -60,14 +60,14 @@ export class LocalesController {
       })
     )
     lang: string
-  ): Promise<R<LocaleResourceVO[]>> {
-    return new R({ data: await this.localesService.findManyByLang(lang) })
+  ): Promise<BaseResponseVo<LocaleResourceVO[]>> {
+    return new BaseResponseVo({ data: await this.localesService.findManyByLang(lang) })
   }
 
   @ApiOperation({ summary: '多语言资源详情' })
   @Get(':id')
-  async findOneById(@Param('id') id: string): Promise<R<LocaleVo>> {
-    return new R({ data: await this.localesService.findOneById(id) })
+  async findOneById(@Param('id') id: string): Promise<BaseResponseVo<LocaleVo>> {
+    return new BaseResponseVo({ data: await this.localesService.findOneById(id) })
   }
 
   @ApiOperation({ summary: '修改多语言资源' })
@@ -76,8 +76,8 @@ export class LocalesController {
     @Param('id') id: string,
     @Body() updateLocaleDto: UpdateLocaleDto,
     @I18n() i18n: I18nContext<I18nTranslations>
-  ): Promise<R<LocaleVo>> {
-    return new R({
+  ): Promise<BaseResponseVo<LocaleVo>> {
+    return new BaseResponseVo({
       data: await this.localesService.update(id, updateLocaleDto),
       msg: i18n.t('common.UPDATE.SUCCESS')
     })
@@ -85,8 +85,11 @@ export class LocalesController {
 
   @ApiOperation({ summary: '删除多语言资源' })
   @Delete(':id')
-  async remove(@Param('id') id: string, @I18n() i18n: I18nContext<I18nTranslations>): Promise<R> {
+  async remove(
+    @Param('id') id: string,
+    @I18n() i18n: I18nContext<I18nTranslations>
+  ): Promise<BaseResponseVo> {
     await this.localesService.remove(id)
-    return new R({ msg: i18n.t('common.DELETE.SUCCESS') })
+    return new BaseResponseVo({ msg: i18n.t('common.DELETE.SUCCESS') })
   }
 }

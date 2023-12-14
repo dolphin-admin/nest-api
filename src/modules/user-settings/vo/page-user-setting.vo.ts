@@ -1,10 +1,10 @@
 import { Type } from 'class-transformer'
 
-import { Page } from '@/class'
+import { PageVo } from '@/class'
 
 import { UserSettingVo } from './user-setting.vo'
 
-export class PageUserSettingVo extends Page {
+export class PageUserSettingVo extends PageVo {
   @Type(() => UserSettingVo)
   records: UserSettingVo[]
 }

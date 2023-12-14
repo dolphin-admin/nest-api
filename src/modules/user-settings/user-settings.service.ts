@@ -1,15 +1,14 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
-import { Prisma } from '@prisma/client'
+import { Injectable, NotFoundException } from '@nestjs/common'
+import type { Prisma, UserSetting } from '@prisma/client'
 import { plainToClass } from 'class-transformer'
 import _ from 'lodash'
 import { I18nContext, I18nService } from 'nestjs-i18n'
 
-import { LanguageCode, type SortColumnKey } from '@/enums'
+import { type SortColumnKey } from '@/enums'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 import { PrismaService } from '@/shared/prisma/prisma.service'
-import { I18nUtils } from '@/utils'
 
-import type { PageUserSettingDto } from './dto'
+import type { PageUserSettingDto, PatchUserSettingDto } from './dto'
 import type { CreateUserSettingDto } from './dto/create-user-setting.dto'
 import type { UpdateUserSettingDto } from './dto/update-user-setting.dto'
 import { PageUserSettingVo, UserSettingVo } from './vo'
@@ -21,47 +20,30 @@ export class UserSettingsService {
     private readonly i18nService: I18nService<I18nTranslations>
   ) {}
 
-  // 创建用户设置
-  async create(createUserSettingDto: CreateUserSettingDto, userId: number): Promise<UserSettingVo> {
-    try {
-      const { label, remark, ...rest } = createUserSettingDto
-      const userSetting = await this.prismaService.userSetting.create({
-        data: {
-          ...rest,
-          createdBy: userId,
-          userId,
-          userSettingTrans: {
-            createMany: {
-              data: [
-                ...Object.values(LanguageCode).map((lang) => ({
-                  label: label[lang],
-                  remark: remark[lang],
-                  lang,
-                  createdBy: userId
-                }))
-              ]
-            }
-          }
-        }
-      })
-      return plainToClass(UserSettingVo, { ...userSetting, label, remark })
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        const { code, meta } = e
-        if (code === 'P2002') {
-          if ((meta?.target as string[]).includes('key')) {
-            throw new BadRequestException(
-              this.i18nService.t('common.RESOURCE.CONFLICT', { lang: I18nContext.current()!.lang })
-            )
-          }
-        }
-      }
-      throw e
+  private checkExists(userSetting: UserSetting | null) {
+    if (!userSetting) {
+      throw new NotFoundException(
+        this.i18nService.t('common.RESOURCE.NOT.FOUND', { lang: I18nContext.current()!.lang })
+      )
     }
   }
 
+  // 创建用户设置
+  async create(createUserSettingDto: CreateUserSettingDto, userId: number) {
+    return plainToClass(
+      UserSettingVo,
+      await this.prismaService.userSetting.create({
+        data: {
+          ...createUserSettingDto,
+          createdBy: userId,
+          userId
+        }
+      })
+    )
+  }
+
   // 设置列表
-  async findMany(pageUserSettingDto: PageUserSettingDto): Promise<PageUserSettingVo> {
+  async findMany(pageUserSettingDto: PageUserSettingDto) {
     const {
       page,
       pageSize,
@@ -83,6 +65,7 @@ export class UserSettingsService {
     }))
 
     const where: Prisma.UserSettingWhereInput = {
+      deletedAt: null,
       AND: [
         {
           createdAt: {
@@ -119,31 +102,15 @@ export class UserSettingsService {
         : undefined
     }
 
-    const results = await this.prismaService.userSetting.findMany({
+    const records = await this.prismaService.userSetting.findMany({
       where,
-      include: {
-        userSettingTrans: {
-          where: {
-            deletedAt: null
-          },
-          select: {
-            label: true,
-            remark: true,
-            lang: true
-          }
-        }
-      },
       orderBy,
       skip: (page - 1) * pageSize,
       take: pageSize
     })
-
     const total = await this.prismaService.userSetting.count({ where })
     return plainToClass(PageUserSettingVo, {
-      records: results.map((userSetting) => ({
-        ...userSetting,
-        ...I18nUtils.generateTransByKeys(userSetting.userSettingTrans, ['label', 'remark'])
-      })),
+      records,
       total,
       page,
       pageSize
@@ -151,180 +118,74 @@ export class UserSettingsService {
   }
 
   // 根据 ID 查询用户设置
-  async findOneById(id: number): Promise<UserSettingVo> {
+  async findOneById(id: number) {
     const userSetting = await this.prismaService.userSetting.findUnique({
-      where: { id },
-      include: { userSettingTrans: true }
+      where: {
+        id,
+        deletedAt: null
+      }
     })
-    if (!userSetting) {
-      throw new NotFoundException(
-        this.i18nService.t('common.RESOURCE.NOT.FOUND', { lang: I18nContext.current()!.lang })
-      )
-    }
-    return plainToClass(UserSettingVo, {
-      ...userSetting,
-      ...I18nUtils.generateTransByKeys(userSetting.userSettingTrans, ['label', 'remark'])
-    })
+    this.checkExists(userSetting)
+    return plainToClass(UserSettingVo, userSetting)
   }
 
   // 根据 Key 查询用户设置
-  async findOneByKey(key: string): Promise<UserSettingVo> {
+  async findOneByKey(key: string) {
     const userSetting = await this.prismaService.userSetting.findUnique({
-      where: { key },
-      include: { userSettingTrans: true }
+      where: {
+        key,
+        deletedAt: null
+      }
     })
-    if (!userSetting) {
-      throw new NotFoundException(
-        this.i18nService.t('common.RESOURCE.NOT.FOUND', { lang: I18nContext.current()!.lang })
-      )
-    }
-    return plainToClass(UserSettingVo, {
-      ...userSetting,
-      ...I18nUtils.generateTransByKeys(userSetting.userSettingTrans, ['label', 'remark'])
-    })
+    this.checkExists(userSetting)
+    return plainToClass(UserSettingVo, userSetting)
   }
 
   // 修改用户设置
-  async update(
-    id: number,
-    updateUserSettingDto: UpdateUserSettingDto,
-    userId: number
-  ): Promise<UserSettingVo> {
-    const { label, remark, ...rest } = updateUserSettingDto
-    try {
-      const userSetting = await this.prismaService.userSetting.update({
-        where: {
-          id,
-          deletedAt: null
-        },
-        data: {
-          ...rest,
-          updatedBy: userId,
-          userSettingTrans: {
-            updateMany: [
-              ...Object.values(LanguageCode).map((lang) => ({
-                where: {
-                  userSettingId: id,
-                  lang: LanguageCode[lang],
-                  deletedAt: null
-                },
-                data: {
-                  label: label[lang],
-                  remark: remark[lang],
-                  updatedBy: userId
-                }
-              }))
-            ]
-          }
-        }
-      })
-      return plainToClass(UserSettingVo, { ...userSetting, label, remark })
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        const { code } = e
-        if (code === 'P2025') {
-          throw new NotFoundException(
-            this.i18nService.t('common.RESOURCE.NOT.FOUND', { lang: I18nContext.current()!.lang })
-          )
-        }
-      }
-      throw e
-    }
-  }
-
-  // 启用设置
-  async enable(id: number, userId: number): Promise<void> {
-    try {
+  async update(id: number, updateUserSettingDto: UpdateUserSettingDto, userId: number) {
+    return plainToClass(
+      UserSettingVo,
       await this.prismaService.userSetting.update({
         where: {
           id,
           deletedAt: null
         },
         data: {
-          enabled: true,
+          ...updateUserSettingDto,
           updatedBy: userId
         }
       })
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        const { code } = e
-        if (code === 'P2025') {
-          throw new NotFoundException(
-            this.i18nService.t('common.RESOURCE.NOT.FOUND', { lang: I18nContext.current()!.lang })
-          )
-        }
-      }
-      throw e
-    }
+    )
   }
 
-  // 禁用设置
-  async disable(id: number, userId: number): Promise<void> {
-    try {
+  // 修改设置
+  async patch(id: number, patchUserSettingDto: PatchUserSettingDto, userId: number) {
+    return plainToClass(
+      UserSettingVo,
       await this.prismaService.userSetting.update({
         where: {
           id,
           deletedAt: null
         },
         data: {
-          enabled: false,
+          ...patchUserSettingDto,
           updatedBy: userId
         }
       })
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        const { code } = e
-        if (code === 'P2025') {
-          throw new NotFoundException(
-            this.i18nService.t('common.RESOURCE.NOT.FOUND', { lang: I18nContext.current()!.lang })
-          )
-        }
-      }
-      throw e
-    }
+    )
   }
 
   // 删除用户设置
-  async remove(id: number, userId: number): Promise<void> {
-    try {
-      // 删除多语言翻译
-      const deleteUserSettingTrans = this.prismaService.userSettingTrans.updateMany({
-        where: {
-          userSettingId: id,
-          deletedAt: null
-        },
-        data: {
-          deletedAt: new Date().toISOString(),
-          deletedBy: userId
-        }
-      })
-      // 删除设置
-      const deleteUserSetting = this.prismaService.userSetting.update({
-        where: {
-          id,
-          deletedAt: null
-        },
-        data: {
-          deletedAt: new Date().toISOString(),
-          deletedBy: userId
-        }
-      })
-      await this.prismaService.$transaction([deleteUserSettingTrans, deleteUserSetting])
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        const { code } = e
-        if (code === 'P2003') {
-          throw new BadRequestException(
-            this.i18nService.t('common.DELETE.FAILED', { lang: I18nContext.current()!.lang })
-          )
-        }
-        if (code === 'P2025') {
-          throw new NotFoundException(
-            this.i18nService.t('common.RESOURCE.NOT.FOUND', { lang: I18nContext.current()!.lang })
-          )
-        }
+  async remove(id: number, userId: number) {
+    this.prismaService.userSetting.update({
+      where: {
+        id,
+        deletedAt: null
+      },
+      data: {
+        deletedAt: new Date().toISOString(),
+        deletedBy: userId
       }
-      throw e
-    }
+    })
   }
 }

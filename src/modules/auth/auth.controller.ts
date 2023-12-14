@@ -13,7 +13,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { SkipThrottle } from '@nestjs/throttler'
 import { I18n, I18nContext } from 'nestjs-i18n'
 
-import { R } from '@/class'
+import { BaseResponseVo } from '@/class'
 import { SkipAuth } from '@/decorators'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 import type { JWTPayload } from '@/interfaces'
@@ -41,10 +41,10 @@ export class AuthController {
   async signup(
     @Body() signupDto: SignupDto,
     @I18n() i18n: I18nContext<I18nTranslations>
-  ): Promise<R<AuthVo>> {
+  ): Promise<BaseResponseVo<AuthVo>> {
     const user = await this.authService.signup(signupDto)
     const { id, username } = user
-    return new R({
+    return new BaseResponseVo({
       data: new AuthVo({
         user,
         accessToken: this.authService.generateToken(id, username),
@@ -70,7 +70,7 @@ export class AuthController {
     type: number,
     @Body() loginDto: LoginDto,
     @I18n() i18n: I18nContext<I18nTranslations>
-  ): Promise<R<AuthVo>> {
+  ): Promise<BaseResponseVo<AuthVo>> {
     let user: UserVo
 
     switch (type) {
@@ -86,7 +86,7 @@ export class AuthController {
 
     const { id, username } = user
 
-    return new R({
+    return new BaseResponseVo({
       data: new AuthVo({
         user,
         accessToken: this.authService.generateToken(id, username),
@@ -102,7 +102,7 @@ export class AuthController {
   async refresh(
     @Query('token') refreshToken: string,
     @I18n() i18n: I18nContext<I18nTranslations>
-  ): Promise<R<TokenVo>> {
+  ): Promise<BaseResponseVo<TokenVo>> {
     let sub: number
     try {
       const jwtPayload = await this.jwtService.verifyAsync<JWTPayload>(refreshToken)
@@ -114,7 +114,7 @@ export class AuthController {
     if (!user) {
       throw new UnauthorizedException(i18n.t('auth.UNAUTHORIZED'))
     }
-    return new R({
+    return new BaseResponseVo({
       data: new TokenVo({
         accessToken: this.authService.generateToken(sub, user.username),
         refreshToken: this.authService.generateRefreshToken(sub, user.username)

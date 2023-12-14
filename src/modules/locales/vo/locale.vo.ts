@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Exclude, Expose } from 'class-transformer'
 
 import { MongoBaseVo } from '@/class'
@@ -13,9 +13,9 @@ export class LocaleVo extends MongoBaseVo {
   @Expose()
   ns: string
 
-  @ApiProperty({ description: '排序' })
+  @ApiPropertyOptional({ description: '排序' })
   @Expose()
-  sort: number
+  sort?: number
 
   @ApiProperty({ description: '英文' })
   @Expose()

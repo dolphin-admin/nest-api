@@ -1,7 +1,7 @@
 import { applyDecorators } from '@nestjs/common'
 import { ApiExtraModels, ApiQuery } from '@nestjs/swagger'
 
-import { PageDto } from '@/class/dto'
+import { PageDto } from '@/class'
 
 type QueryType = 'keywords' | 'date'
 

@@ -40,19 +40,27 @@ export type I18nTranslations = {
             "NOT.EMPTY": string;
         };
         "LABEL": {
-            "LENGTH.EN.US": string;
-            "LENGTH.ZH.CN": string;
-            "TRANS.MISSING": string;
+            "INVALID": string;
+            "LENGTH": string;
+            "NOT.EMPTY": string;
+        };
+        "LANGUAGE.NOT.SUPPORT": string;
+        "NS": {
+            "INVALID": string;
+            "NO.WHITESPACE": string;
+            "NOT.EMPTY": string;
         };
         "OPERATE.FAILED": string;
         "OPERATE.SUCCESS": string;
         "REMARK": {
-            "LENGTH.EN.US": string;
-            "LENGTH.ZH.CN": string;
-            "TRANS.MISSING": string;
+            "INVALID": string;
+            "LENGTH": string;
         };
         "RESOURCE.CONFLICT": string;
         "RESOURCE.NOT.FOUND": string;
+        "SORT": {
+            "INVALID": string;
+        };
         "SORT.FAILED": string;
         "SORT.SUCCESS": string;
         "UPDATE.FAILED": string;
@@ -62,18 +70,6 @@ export type I18nTranslations = {
             "LENGTH": string;
             "NO.WHITESPACE": string;
             "NOT.EMPTY": string;
-        };
-        "NS": {
-            "INVALID": string;
-            "NOT.EMPTY": string;
-            "NO.WHITESPACE": string;
-        };
-        "SORT": {
-            "INVALID": string;
-            "NOT.EMPTY": string;
-        };
-        "LANGUAGE": {
-            "NOT.SUPPORT": string;
         };
     };
     "dictionary": {

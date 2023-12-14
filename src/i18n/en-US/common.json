@@ -25,19 +25,27 @@
     "NOT.EMPTY": "Key: Must not be empty"
   },
   "LABEL": {
-    "LENGTH.EN.US": "Label - English：Length must not exceed 50 characters",
-    "LENGTH.ZH.CN": "Label - Chinese: Length must not exceed 50 characters",
-    "TRANS.MISSING": "Label：Translation missing"
+    "INVALID": "Label: Invalid value",
+    "LENGTH": "Label：Length must not exceed 50 characters",
+    "NOT.EMPTY": "Label：Must not be empty"
+  },
+  "LANGUAGE.NOT.SUPPORT": "Language not support",
+  "NS": {
+    "INVALID": "NS：Invalid value",
+    "NO.WHITESPACE": "NS: Must not contain whitespace",
+    "NOT.EMPTY": "NS: Must not be empty"
   },
   "OPERATE.FAILED": "Operate failed",
   "OPERATE.SUCCESS": "Operate success",
   "REMARK": {
-    "LENGTH.EN.US": "Remark - English: Length must not exceed 500 characters",
-    "LENGTH.ZH.CN": "Remark - Chinese: Length must not exceed 500 characters",
-    "TRANS.MISSING": "Remark：Translation missing"
+    "INVALID": "Remark: Invalid value",
+    "LENGTH": "Remark: Length must not exceed 500 characters"
   },
   "RESOURCE.CONFLICT": "Operate failed: Resource conflict",
   "RESOURCE.NOT.FOUND": "Operate failed: Resource not found",
+  "SORT": {
+    "INVALID": "Sort：Invalid value"
+  },
   "SORT.FAILED": "Sort failed",
   "SORT.SUCCESS": "Sort success",
   "UPDATE.FAILED": "Update failed",
@@ -47,17 +55,5 @@
     "LENGTH": "Value: Length cannot exceed 250 characters",
     "NO.WHITESPACE": "Value: Must not contain whitespace",
     "NOT.EMPTY": "Value: Must not be empty"
-  },
-  "NS": {
-    "INVALID": "NS：Invalid value",
-    "NOT.EMPTY": "NS: Must not be empty",
-    "NO.WHITESPACE": "NS: Must not contain whitespace"
-  },
-  "SORT": {
-    "INVALID": "Sort：Invalid value",
-    "NOT.EMPTY": "Sort: Must not be empty"
-  },
-  "LANGUAGE": {
-    "NOT.SUPPORT": "Language not support"
   }
 }
