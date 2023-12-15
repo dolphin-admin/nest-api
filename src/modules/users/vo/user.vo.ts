@@ -19,13 +19,10 @@ export class UserVo extends BaseResourceVo {
   email: string
 
   @ApiProperty({ description: '手机号' })
-  phone: string
-
-  @ApiProperty({ description: '姓名' })
-  name: string
+  phoneNumber: string
 
   @ApiProperty({ description: '昵称' })
-  nickname: string
+  nickName: string
 
   @ApiProperty({ description: '名' })
   firstName: string
@@ -72,18 +69,9 @@ export class UserVo extends BaseResourceVo {
   @ApiProperty({ description: '出生日期' })
   birthDate: Date
 
-  @ApiProperty({ description: '邮箱是否验证' })
-  emailVerified: boolean
-
-  @ApiProperty({ description: '手机号是否验证' })
-  phoneNumberVerified: boolean
-
   @ApiProperty({ description: '是否启用' })
   enabled: boolean
 
   @ApiProperty({ description: '是否内置' })
   builtIn: boolean
-
-  @ApiProperty({ description: '认证 ID' })
-  authId: number
 }
