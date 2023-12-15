@@ -1,8 +1,4 @@
 {
-  "BUILTIN": {
-    "INVALID": "Built-in：Invalid value",
-    "NOT.EMPTY": "Built-in: Must not be empty"
-  },
   "CREATE.FAILED": "Create failed",
   "CREATE.SUCCESS": "Create success",
   "DELETE.FAILED": "Delete failed",
@@ -46,8 +42,6 @@
   "SORT": {
     "INVALID": "Sort：Invalid value"
   },
-  "SORT.FAILED": "Sort failed",
-  "SORT.SUCCESS": "Sort success",
   "UPDATE.FAILED": "Update failed",
   "UPDATE.SUCCESS": "Update success",
   "VALUE": {

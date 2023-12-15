@@ -1,10 +1,10 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Exclude, Expose } from 'class-transformer'
 
-import { MongoBaseVo } from '@/class'
+import { MongoBaseResource } from '@/class'
 
 @Exclude()
-export class LocaleVo extends MongoBaseVo {
+export class LocaleVo extends MongoBaseResource {
   @ApiProperty({ description: '键' })
   @Expose()
   key: string

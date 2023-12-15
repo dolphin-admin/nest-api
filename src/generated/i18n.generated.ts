@@ -14,10 +14,6 @@ export type I18nTranslations = {
         "USERNAME.OR.PASSWORD.ERROR": string;
     };
     "common": {
-        "BUILTIN": {
-            "INVALID": string;
-            "NOT.EMPTY": string;
-        };
         "CREATE.FAILED": string;
         "CREATE.SUCCESS": string;
         "DELETE.FAILED": string;
@@ -61,8 +57,6 @@ export type I18nTranslations = {
         "SORT": {
             "INVALID": string;
         };
-        "SORT.FAILED": string;
-        "SORT.SUCCESS": string;
         "UPDATE.FAILED": string;
         "UPDATE.SUCCESS": string;
         "VALUE": {
@@ -86,15 +80,42 @@ export type I18nTranslations = {
         };
     };
     "user": {
-        "CONFIRM.PASSWORD": {
+        "ADDRESS": {
+            "INVALID": string;
+            "LENGTH": string;
+        };
+        "AVATAR.URL": {
+            "INVALID": string;
+            "LENGTH": string;
+        };
+        "BIOGRAPHY": {
+            "INVALID": string;
+            "LENGTH": string;
+        };
+        "BIRTH.DATE": {
+            "INVALID": string;
+        };
+        "CITY": {
+            "INVALID": string;
+            "LENGTH": string;
+        };
+        "COUNTRY": {
+            "INVALID": string;
+            "LENGTH": string;
+        };
+        "EMAIL": {
+            "INVALID": string;
+            "LENGTH": string;
             "NOT.EMPTY": string;
-            "NOT.SAME": string;
         };
         "FIRST.NAME": {
             "INVALID": string;
             "LENGTH": string;
-            "NO.WHITESPACE": string;
             "NOT.EMPTY": string;
+        };
+        "GENDER": {
+            "INVALID": string;
+            "LENGTH": string;
         };
         "ID": {
             "INVALID": string;
@@ -102,22 +123,49 @@ export type I18nTranslations = {
         "LAST.NAME": {
             "INVALID": string;
             "LENGTH": string;
-            "NO.WHITESPACE": string;
             "NOT.EMPTY": string;
+        };
+        "MIDDLE.NAME": {
+            "INVALID": string;
+            "LENGTH": string;
+            "NOT.EMPTY": string;
+        };
+        "NICK.NAME": {
+            "INVALID": string;
+            "LENGTH": string;
         };
         "PASSWORD": {
             "CONTAIN.ONE.DIGITAL.CHARACTER": string;
             "CONTAIN.ONE.LETTER": string;
+            "INVALID": string;
             "LENGTH": string;
             "NO.WHITESPACE": string;
             "NOT.EMPTY": string;
         };
+        "PHONE.NUMBER": {
+            "INVALID": string;
+            "LENGTH": string;
+            "NOT.EMPTY": string;
+        };
+        "PROFILE": {
+            "INVALID": string;
+            "LENGTH": string;
+        };
+        "PROVINCE": {
+            "INVALID": string;
+            "LENGTH": string;
+        };
         "USERNAME": {
             "ALREADY.EXIST": string;
+            "INVALID": string;
             "LENGTH": string;
             "NO.WHITESPACE": string;
             "NOT.EMPTY": string;
             "NOT.EXIST": string;
+        };
+        "WEBSITE": {
+            "INVALID": string;
+            "LENGTH": string;
         };
     };
 };

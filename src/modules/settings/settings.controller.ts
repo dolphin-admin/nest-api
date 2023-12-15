@@ -13,7 +13,7 @@ import {
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { I18n, I18nContext } from 'nestjs-i18n'
 
-import { BaseResponseVo } from '@/class'
+import { R } from '@/class'
 import { ApiPageQuery, User } from '@/decorators'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 
@@ -36,7 +36,7 @@ export class SettingsController {
     @User('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
-    return new BaseResponseVo({
+    return new R({
       data: await this.settingsService.create(createSettingDto, userId),
       msg: i18n.t('common.CREATE.SUCCESS')
     })
@@ -46,7 +46,7 @@ export class SettingsController {
   @ApiPageQuery('keywords', 'date')
   @Get()
   async findMany(@Query() pageSettingDto: PageSettingDto) {
-    return new BaseResponseVo({
+    return new R({
       data: await this.settingsService.findMany(pageSettingDto)
     })
   }
@@ -54,7 +54,7 @@ export class SettingsController {
   @ApiOperation({ summary: '设置详情 [ID]' })
   @Get(':id(\\d+)')
   async findOneById(@Param('id', new ParseIntPipe()) id: number) {
-    return new BaseResponseVo({
+    return new R({
       data: await this.settingsService.findOneById(id)
     })
   }
@@ -62,7 +62,7 @@ export class SettingsController {
   @ApiOperation({ summary: '设置详情 [Key]' })
   @Get(':key')
   async findOneByKey(@Param('key') key: string) {
-    return new BaseResponseVo({
+    return new R({
       data: await this.settingsService.findOneByKey(key)
     })
   }
@@ -75,7 +75,7 @@ export class SettingsController {
     @User('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
-    return new BaseResponseVo({
+    return new R({
       data: await this.settingsService.update(id, updateSettingDto, userId),
       msg: i18n.t('common.UPDATE.SUCCESS')
     })
@@ -89,7 +89,7 @@ export class SettingsController {
     @User('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
-    return new BaseResponseVo({
+    return new R({
       data: await this.settingsService.patch(id, patchSettingDto, userId),
       msg: i18n.t('common.OPERATE.SUCCESS')
     })
@@ -103,22 +103,8 @@ export class SettingsController {
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
     await this.settingsService.remove(id, userId)
-    return new BaseResponseVo({
+    return new R({
       msg: i18n.t('common.DELETE.SUCCESS')
-    })
-  }
-
-  @ApiOperation({ summary: '排序设置' })
-  @Patch(':id(\\d+)/sort/:targetId(\\d+)')
-  async sort(
-    @Param('id', new ParseIntPipe()) id: number,
-    @Param('targetId', new ParseIntPipe()) targetId: number,
-    @User('sub') userId: number,
-    @I18n() i18n: I18nContext<I18nTranslations>
-  ) {
-    await this.settingsService.sort(id, targetId, userId)
-    return new BaseResponseVo({
-      msg: i18n.t('common.SORT.SUCCESS')
     })
   }
 }

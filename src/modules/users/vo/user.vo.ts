@@ -1,37 +1,37 @@
-import { ApiHideProperty, ApiProperty } from '@nestjs/swagger'
+import { ApiHideProperty, ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Exclude, Expose } from 'class-transformer'
 
-import { BaseResourceVo } from '@/class'
+import { BaseResource } from '@/class'
 
-export class UserVo extends BaseResourceVo {
-  @ApiProperty({ description: '用户 ID' })
+export class UserVo extends BaseResource {
+  @ApiProperty({ description: 'ID' })
   id: number
 
   @ApiProperty({ description: '用户名' })
   username: string
+
+  @ApiPropertyOptional({ description: '昵称' })
+  nickName?: string
 
   // 密码
   @ApiHideProperty()
   @Exclude()
   password: string
 
-  @ApiProperty({ description: '邮箱' })
-  email: string
+  @ApiPropertyOptional({ description: '邮箱' })
+  email?: string
 
-  @ApiProperty({ description: '手机号' })
-  phoneNumber: string
+  @ApiPropertyOptional({ description: '手机号' })
+  phoneNumber?: string
 
-  @ApiProperty({ description: '昵称' })
-  nickName: string
+  @ApiPropertyOptional({ description: '名' })
+  firstName?: string
 
-  @ApiProperty({ description: '名' })
-  firstName: string
+  @ApiPropertyOptional({ description: '中间名' })
+  middleName?: string
 
-  @ApiProperty({ description: '中间名' })
-  middleName: string
-
-  @ApiProperty({ description: '姓' })
-  lastName: string
+  @ApiPropertyOptional({ description: '姓' })
+  lastName?: string
 
   @ApiProperty({ description: '全名', type: () => String })
   @Expose({ name: 'fullName' })
@@ -39,39 +39,36 @@ export class UserVo extends BaseResourceVo {
     return [this.firstName, this.middleName ?? '', this.lastName].filter((item) => item).join(' ')
   }
 
-  @ApiProperty({ description: '头像' })
-  avatar: string
+  @ApiPropertyOptional({ description: '头像' })
+  avatarUrl?: string
 
-  @ApiProperty({ description: '性别' })
-  gender: string
+  @ApiPropertyOptional({ description: '性别' })
+  gender?: string
 
-  @ApiProperty({ description: '国家' })
-  country: string
+  @ApiPropertyOptional({ description: '国家' })
+  country?: string
 
-  @ApiProperty({ description: '省份' })
-  province: string
+  @ApiPropertyOptional({ description: '省份' })
+  province?: string
 
-  @ApiProperty({ description: '城市' })
-  city: string
+  @ApiPropertyOptional({ description: '城市' })
+  city?: string
 
-  @ApiProperty({ description: '地址' })
-  address: string
+  @ApiPropertyOptional({ description: '地址' })
+  address?: string
 
-  @ApiProperty({ description: '个人简介' })
-  biography: string
+  @ApiPropertyOptional({ description: '个人简介' })
+  biography?: string
 
-  @ApiProperty({ description: '个人网站' })
-  website: string
+  @ApiPropertyOptional({ description: '个人网站' })
+  website?: string
 
-  @ApiProperty({ description: '个人主页' })
-  profile: string
+  @ApiPropertyOptional({ description: '个人主页' })
+  profile?: string
 
   @ApiProperty({ description: '出生日期' })
-  birthDate: Date
+  birthDate?: Date
 
   @ApiProperty({ description: '是否启用' })
   enabled: boolean
-
-  @ApiProperty({ description: '是否内置' })
-  builtIn: boolean
 }

@@ -1,13 +1,40 @@
 {
-  "CONFIRM.PASSWORD": {
-    "NOT.EMPTY": "确认密码：不能为空",
-    "NOT.SAME": "两次输入的密码不一致"
+  "ADDRESS": {
+    "INVALID": "地址：输入值不合法",
+    "LENGTH": "地址：不能超过 100 个字符"
+  },
+  "AVATAR.URL": {
+    "INVALID": "头像 URL: 格式不正确",
+    "LENGTH": "头像 URL: 不能超过 100 个字符"
+  },
+  "BIOGRAPHY": {
+    "INVALID": "个人简介：输入值不合法",
+    "LENGTH": "个人简介：不能超过 500 个字符"
+  },
+  "BIRTH.DATE": {
+    "INVALID": "出生日期：格式不正确"
+  },
+  "CITY": {
+    "INVALID": "城市：输入值不合法",
+    "LENGTH": "城市：不能超过 25 个字符"
+  },
+  "COUNTRY": {
+    "INVALID": "国家：输入值不合法",
+    "LENGTH": "国家：不能超过 25 个字符"
+  },
+  "EMAIL": {
+    "INVALID": "邮箱：格式不正确",
+    "LENGTH": "邮箱：长度不能超过 50 个字符",
+    "NOT.EMPTY": "邮箱：不能为空"
   },
   "FIRST.NAME": {
     "INVALID": "名：输入值不合法",
     "LENGTH": "名：不能超过 10 个字符",
-    "NO.WHITESPACE": "名：不能包含空格",
     "NOT.EMPTY": "名：不能为空"
+  },
+  "GENDER": {
+    "INVALID": "性别：输入值不合法",
+    "LENGTH": "性别：不能超过 10 个字符"
   },
   "ID": {
     "INVALID": "用户 ID: 输入值不合法"
@@ -15,21 +42,48 @@
   "LAST.NAME": {
     "INVALID": "姓：输入值不合法",
     "LENGTH": "姓：不能超过 10 个字符",
-    "NO.WHITESPACE": "姓：不能包含空格",
     "NOT.EMPTY": "姓：不能为空"
+  },
+  "MIDDLE.NAME": {
+    "INVALID": "中间名：输入值不合法",
+    "LENGTH": "中间名：不能超过 10 个字符",
+    "NOT.EMPTY": "中间名：不能为空"
+  },
+  "NICK.NAME": {
+    "INVALID": "昵称：输入值不合法",
+    "LENGTH": "昵称：不能超过 16 个字符"
   },
   "PASSWORD": {
     "CONTAIN.ONE.DIGITAL.CHARACTER": "密码：必须至少包含一个数字",
     "CONTAIN.ONE.LETTER": "密码：必须至少包含一个英文字母",
+    "INVALID": "密码：输入值不合法",
     "LENGTH": "密码：长度范围为 4 ~ 16 位",
     "NO.WHITESPACE": "密码：不能包含空格",
     "NOT.EMPTY": "密码：不能为空"
   },
+  "PHONE.NUMBER": {
+    "INVALID": "手机号：格式不正确",
+    "LENGTH": "手机号：长度不能超过 25 个字符",
+    "NOT.EMPTY": "手机号：不能为空"
+  },
+  "PROFILE": {
+    "INVALID": "个人主页：格式不正确",
+    "LENGTH": "个人主页：不能超过 50 个字符"
+  },
+  "PROVINCE": {
+    "INVALID": "省份：输入值不合法",
+    "LENGTH": "省份：不能超过 25 个字符"
+  },
   "USERNAME": {
     "ALREADY.EXIST": "用户名：已存在",
+    "INVALID": "用户名：输入值不合法",
     "LENGTH": "用户名：长度范围为 4 ~ 16 位",
     "NO.WHITESPACE": "用户名：不能包含空格",
     "NOT.EMPTY": "用户名：不能为空",
     "NOT.EXIST": "用户名：不存在"
+  },
+  "WEBSITE": {
+    "INVALID": "个人网站：格式不正确",
+    "LENGTH": "个人网站：不能超过 50 个字符"
   }
 }

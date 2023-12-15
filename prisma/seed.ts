@@ -20,8 +20,7 @@ async function main() {
     province: 'Jiangsu',
     city: 'Suzhou',
     biography: 'The author of Dolphin Admin',
-    enabled: true,
-    builtIn: true
+    enabled: true
   }
 
   const defaultAdminUser: Prisma.UserCreateInput = {

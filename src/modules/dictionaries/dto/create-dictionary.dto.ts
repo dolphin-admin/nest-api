@@ -38,11 +38,6 @@ export class CreateDictionaryDto {
   @ApiProperty({ description: '是否启用' })
   enabled: boolean
 
-  @IsBoolean({ message: t('common.BUILTIN.INVALID') })
-  @IsNotEmpty({ message: t('common.BUILTIN.NOT.EMPTY') })
-  @ApiProperty({ description: '是否内置' })
-  builtIn: boolean
-
   @ApiPropertyOptional({ description: '排序' })
   @IsNumber({}, { message: t('common.SORT.INVALID') })
   @IsOptional()

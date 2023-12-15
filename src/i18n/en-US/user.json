@@ -1,13 +1,40 @@
 {
-  "CONFIRM.PASSWORD": {
-    "NOT.EMPTY": "Confirm password: Must not be empty",
-    "NOT.SAME": "Confirm password: Must be the same as password"
+  "ADDRESS": {
+    "INVALID": "Address: Invalid value",
+    "LENGTH": "Address: Length must no more than 100 characters"
+  },
+  "AVATAR.URL": {
+    "INVALID": "Avatar URL: Invalid format",
+    "LENGTH": "Avatar URL: Length must no more than 100 characters"
+  },
+  "BIOGRAPHY": {
+    "INVALID": "Biography: Invalid value",
+    "LENGTH": "Biography: Length must no more than 500 characters"
+  },
+  "BIRTH.DATE": {
+    "INVALID": "Birth day: Invalid format"
+  },
+  "CITY": {
+    "INVALID": "City: Invalid value",
+    "LENGTH": "City: Length must no more than 25 characters"
+  },
+  "COUNTRY": {
+    "INVALID": "Country: Invalid value",
+    "LENGTH": "Country: Length must no more than 25 characters"
+  },
+  "EMAIL": {
+    "INVALID": "Email: Invalid format",
+    "LENGTH": "Email: Length must no more than 50 characters",
+    "NOT.EMPTY": "Email: Must not be empty"
   },
   "FIRST.NAME": {
     "INVALID": "First name: Invalid value",
     "LENGTH": "First name: Length must no more than 10 characters",
-    "NO.WHITESPACE": "First name: Must not contain whitespace",
     "NOT.EMPTY": "First name: Must not be empty"
+  },
+  "GENDER": {
+    "INVALID": "Avatar URL: Invalid value",
+    "LENGTH": "Avatar URL: Length must no more than 10 characters"
   },
   "ID": {
     "INVALID": "User ID: Invalid value"
@@ -15,21 +42,48 @@
   "LAST.NAME": {
     "INVALID": "Last name: Invalid value",
     "LENGTH": "Last name: Length must no more than 10 characters",
-    "NO.WHITESPACE": "Last name: Must not contain whitespace",
     "NOT.EMPTY": "Last name: Must not be empty"
+  },
+  "MIDDLE.NAME": {
+    "INVALID": "Middle name: Invalid value",
+    "LENGTH": "Middle name: Length must no more than 10 characters",
+    "NOT.EMPTY": "Middle name: Must not be empty"
+  },
+  "NICK.NAME": {
+    "INVALID": "Nick name: Invalid value",
+    "LENGTH": "Nick name: Length must no more than 10 characters"
   },
   "PASSWORD": {
     "CONTAIN.ONE.DIGITAL.CHARACTER": "Password: Must contain at least one digital character",
     "CONTAIN.ONE.LETTER": "Password: Must contain at least one letter",
+    "INVALID": "Password: Invalid value",
     "LENGTH": "Password: Length must be between 6 and 16",
     "NO.WHITESPACE": "Password: Must not contain whitespace",
     "NOT.EMPTY": "Password: Must not be empty"
   },
+  "PHONE.NUMBER": {
+    "INVALID": "Phone number: Invalid format",
+    "LENGTH": "Phone number: Length must no more than 25 characters",
+    "NOT.EMPTY": "Phone number: Must not be empty"
+  },
+  "PROFILE": {
+    "INVALID": "Profile: Invalid format",
+    "LENGTH": "Profile: Length must no more than 50 characters"
+  },
+  "PROVINCE": {
+    "INVALID": "Province: Invalid value",
+    "LENGTH": "Province: Length must no more than 25 characters"
+  },
   "USERNAME": {
     "ALREADY.EXIST": "Username: Already exist",
+    "INVALID": "Username: Invalid value",
     "LENGTH": "Username: Length must be between 4 and 16",
     "NO.WHITESPACE": "Username: Must not contain whitespace",
     "NOT.EMPTY": "Username: Must not be empty",
     "NOT.EXIST": "Username: Does not exist"
+  },
+  "WEBSITE": {
+    "INVALID": "Website: Invalid format",
+    "LENGTH": "Website: Length must no more than 50 characters"
   }
 }

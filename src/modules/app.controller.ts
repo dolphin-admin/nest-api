@@ -1,7 +1,7 @@
 import { Controller, Get, Render } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
 
-import { BaseResponseVo } from '@/class'
+import { R } from '@/class'
 import { SkipAuth } from '@/decorators'
 
 import { AppService } from './app.service'
@@ -22,6 +22,6 @@ export class AppController {
   @ApiOperation({ summary: '应用信息' })
   @Get('info')
   getVersion() {
-    return new BaseResponseVo({ data: this.appService.getAppInfo() })
+    return new R({ data: this.appService.getAppInfo() })
   }
 }

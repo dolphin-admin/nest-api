@@ -13,8 +13,9 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { SkipThrottle } from '@nestjs/throttler'
 import { I18n, I18nContext } from 'nestjs-i18n'
 
-import { BaseResponseVo } from '@/class'
+import { R } from '@/class'
 import { SkipAuth } from '@/decorators'
+import { LoginType } from '@/enums'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 import type { JWTPayload } from '@/interfaces'
 
@@ -22,7 +23,6 @@ import { UsersService } from '../users/users.service'
 import type { UserVo } from '../users/vo'
 import { AuthService } from './auth.service'
 import { LoginDto, SignupDto } from './dto'
-import { LoginType } from './enum'
 import { AuthVo, TokenVo } from './vo'
 
 @ApiTags('认证')
@@ -41,14 +41,13 @@ export class AuthController {
   async signup(
     @Body() signupDto: SignupDto,
     @I18n() i18n: I18nContext<I18nTranslations>
-  ): Promise<BaseResponseVo<AuthVo>> {
+  ): Promise<R<AuthVo>> {
     const user = await this.authService.signup(signupDto)
     const { id, username } = user
-    return new BaseResponseVo({
+    return new R({
       data: new AuthVo({
         user,
-        accessToken: this.authService.generateToken(id, username),
-        refreshToken: this.authService.generateRefreshToken(id, username)
+        ...this.authService.generateTokens(id, username)
       }),
       msg: i18n.t('auth.SIGN.UP.SUCCESS')
     })
@@ -67,30 +66,25 @@ export class AuthController {
         }
       })
     )
-    type: number,
+    type: LoginType,
     @Body() loginDto: LoginDto,
     @I18n() i18n: I18nContext<I18nTranslations>
-  ): Promise<BaseResponseVo<AuthVo>> {
+  ): Promise<R<AuthVo>> {
     let user: UserVo
 
     switch (type) {
-      // 用户名登录
       case LoginType.USERNAME:
         user = await this.authService.loginByUsername(loginDto)
         break
-      // 邮箱登录
       case LoginType.EMAIL:
       default:
         throw new BadRequestException(i18n.t('auth.LOGIN.TYPE.NOT.SUPPORTED'))
     }
-
     const { id, username } = user
-
-    return new BaseResponseVo({
+    return new R({
       data: new AuthVo({
         user,
-        accessToken: this.authService.generateToken(id, username),
-        refreshToken: this.authService.generateRefreshToken(id, username)
+        ...this.authService.generateTokens(id, username)
       }),
       msg: i18n.t('auth.LOGIN.SUCCESS')
     })
@@ -102,7 +96,7 @@ export class AuthController {
   async refresh(
     @Query('token') refreshToken: string,
     @I18n() i18n: I18nContext<I18nTranslations>
-  ): Promise<BaseResponseVo<TokenVo>> {
+  ): Promise<R<TokenVo>> {
     let sub: number
     try {
       const jwtPayload = await this.jwtService.verifyAsync<JWTPayload>(refreshToken)
@@ -114,11 +108,8 @@ export class AuthController {
     if (!user) {
       throw new UnauthorizedException(i18n.t('auth.UNAUTHORIZED'))
     }
-    return new BaseResponseVo({
-      data: new TokenVo({
-        accessToken: this.authService.generateToken(sub, user.username),
-        refreshToken: this.authService.generateRefreshToken(sub, user.username)
-      })
+    return new R({
+      data: new TokenVo(this.authService.generateTokens(sub, user.username))
     })
   }
 }

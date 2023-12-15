@@ -43,9 +43,4 @@ export class CreateUserSettingDto {
   @IsBoolean({ message: t('common.ENABLED.INVALID') })
   @IsNotEmpty({ message: t('common.ENABLED.NOT.EMPTY') })
   enabled: boolean
-
-  @ApiProperty({ description: '是否内置' })
-  @IsBoolean({ message: t('common.BUILTIN.INVALID') })
-  @IsNotEmpty({ message: t('common.BUILTIN.NOT.EMPTY') })
-  builtIn: boolean
 }

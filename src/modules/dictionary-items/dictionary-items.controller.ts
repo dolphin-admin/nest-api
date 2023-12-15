@@ -13,7 +13,7 @@ import {
 import { ApiBasicAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { I18n, I18nContext } from 'nestjs-i18n'
 
-import { BaseResponseVo } from '@/class'
+import { R } from '@/class'
 import {
   ApiCreatedResponse,
   ApiOkResponse,
@@ -46,7 +46,7 @@ export class DictionaryItemsController {
     @User('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
-    return new BaseResponseVo({
+    return new R({
       data: await this.dictionaryItemsService.create(createDictionaryDto, userId),
       msg: i18n.t('common.CREATE.SUCCESS')
     })
@@ -57,7 +57,7 @@ export class DictionaryItemsController {
   @ApiPageQuery('keywords', 'date')
   @Get()
   async findMany(@Query() pageDictionaryItemDto: PageDictionaryItemDto) {
-    return new BaseResponseVo({
+    return new R({
       data: await this.dictionaryItemsService.findMany(pageDictionaryItemDto)
     })
   }
@@ -66,7 +66,7 @@ export class DictionaryItemsController {
   @ApiOkResponse(DictionaryItemVo)
   @Get(':id(\\d+)')
   async findOneById(@Param('id') id: number) {
-    return new BaseResponseVo({
+    return new R({
       data: await this.dictionaryItemsService.findOneById(id)
     })
   }
@@ -80,7 +80,7 @@ export class DictionaryItemsController {
     @User('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
-    return new BaseResponseVo({
+    return new R({
       data: await this.dictionaryItemsService.update(id, updateDictionaryItemDto, userId),
       msg: i18n.t('common.OPERATE.SUCCESS')
     })
@@ -95,7 +95,7 @@ export class DictionaryItemsController {
     @User('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
-    return new BaseResponseVo({
+    return new R({
       data: await this.dictionaryItemsService.patch(id, patchDictionaryItemDto, userId),
       msg: i18n.t('common.OPERATE.SUCCESS')
     })
@@ -110,7 +110,7 @@ export class DictionaryItemsController {
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
     await this.dictionaryItemsService.remove(id, userId)
-    return new BaseResponseVo({
+    return new R({
       msg: i18n.t('common.DELETE.SUCCESS')
     })
   }

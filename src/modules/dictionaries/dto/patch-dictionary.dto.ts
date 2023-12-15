@@ -30,11 +30,6 @@ export class PatchDictionaryDto {
   @IsOptional()
   enabled?: boolean
 
-  @ApiPropertyOptional({ description: '是否内置' })
-  @IsBoolean({ message: t('common.BUILTIN.INVALID') })
-  @IsOptional()
-  builtIn?: boolean
-
   @ApiPropertyOptional({ description: '排序' })
   @IsNumber({}, { message: t('common.SORT.INVALID') })
   @IsOptional()

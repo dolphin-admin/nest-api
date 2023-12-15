@@ -13,7 +13,7 @@ import {
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { I18n, I18nContext } from 'nestjs-i18n'
 
-import { BaseResponseVo } from '@/class'
+import { R } from '@/class'
 import { User } from '@/decorators'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 
@@ -34,7 +34,7 @@ export class UserSettingsController {
     @User('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
-    return new BaseResponseVo({
+    return new R({
       data: await this.userSettingsService.create(createUserSettingDto, userId),
       msg: i18n.t('common.CREATE.SUCCESS')
     })
@@ -43,7 +43,7 @@ export class UserSettingsController {
   @ApiOperation({ summary: '用户设置列表' })
   @Get()
   async findMany(@Query() pageUserSettingDto: PageUserSettingDto) {
-    return new BaseResponseVo({
+    return new R({
       data: await this.userSettingsService.findMany(pageUserSettingDto)
     })
   }
@@ -51,7 +51,7 @@ export class UserSettingsController {
   @ApiOperation({ summary: '用户设置详情 [ID]' })
   @Get(':id(\\d+)')
   async findOneById(@Param('id', new ParseIntPipe()) id: number) {
-    return new BaseResponseVo({
+    return new R({
       data: await this.userSettingsService.findOneById(id)
     })
   }
@@ -59,7 +59,7 @@ export class UserSettingsController {
   @ApiOperation({ summary: '用户设置详情 [Key]' })
   @Get(':key')
   async findOneByKey(@Param('key') key: string) {
-    return new BaseResponseVo({
+    return new R({
       data: await this.userSettingsService.findOneByKey(key)
     })
   }
@@ -72,7 +72,7 @@ export class UserSettingsController {
     @User('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
-    return new BaseResponseVo({
+    return new R({
       data: await this.userSettingsService.update(id, updateUserSettingDto, userId),
       msg: i18n.t('common.UPDATE.SUCCESS')
     })
@@ -86,7 +86,7 @@ export class UserSettingsController {
     @User('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
-    return new BaseResponseVo({
+    return new R({
       msg: i18n.t('common.ENABLE.SUCCESS'),
       data: await this.userSettingsService.patch(id, patchUserSettingDto, userId)
     })
@@ -98,9 +98,9 @@ export class UserSettingsController {
     @Param('id', new ParseIntPipe()) id: number,
     @User('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
-  ): Promise<BaseResponseVo> {
+  ): Promise<R> {
     await this.userSettingsService.remove(id, userId)
-    return new BaseResponseVo({
+    return new R({
       msg: i18n.t('common.DELETE.SUCCESS')
     })
   }

@@ -10,7 +10,7 @@ import type { NestExpressApplication } from '@nestjs/platform-express'
 import compression from 'compression'
 import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n'
 
-import { BaseResponseVo } from './class'
+import { R } from './class'
 import type { AppConfig, DevConfig } from './configs'
 import { HttpExceptionFilter, MongoExceptionFilter, PrismaExceptionFilter } from './filters'
 import { AppModule } from './modules/app.module'
@@ -80,7 +80,7 @@ async function bootstrap() {
       errorHttpStatusCode: HttpStatus.BAD_REQUEST,
       responseBodyFormatter: (_host, _exc, formattedErrors) => {
         const errors = formattedErrors as string[]
-        return new BaseResponseVo({
+        return new R({
           msg: errors[0]
         }) as Record<string, unknown>
       }

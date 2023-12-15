@@ -1,9 +1,3 @@
--- CreateEnum
-CREATE TYPE "AuthType" AS ENUM ('USERNAME', 'PHONE_NUMBER', 'EMAIL', 'GITHUB', 'GOOGLE', 'WECHAT', 'ALIPAY');
-
--- CreateEnum
-CREATE TYPE "MenuItemType" AS ENUM ('DIR', 'MENU', 'LINK', 'BUTTON');
-
 -- CreateTable
 CREATE TABLE "system_user" (
     "id" SERIAL NOT NULL,
@@ -16,7 +10,7 @@ CREATE TABLE "system_user" (
     "middle_name" VARCHAR(10),
     "last_name" VARCHAR(10),
     "avatar_url" VARCHAR(100),
-    "gender" VARCHAR(100),
+    "gender" VARCHAR(50),
     "country" VARCHAR(25),
     "province" VARCHAR(25),
     "city" VARCHAR(25),
@@ -26,7 +20,6 @@ CREATE TABLE "system_user" (
     "profile" VARCHAR(50),
     "birth_date" DATE,
     "enabled" BOOLEAN NOT NULL DEFAULT true,
-    "built_in" BOOLEAN NOT NULL DEFAULT false,
     "created_at" TIMESTAMPTZ(3) DEFAULT CURRENT_TIMESTAMP,
     "created_by" INTEGER,
     "updated_at" TIMESTAMPTZ(3),
@@ -40,8 +33,8 @@ CREATE TABLE "system_user" (
 -- CreateTable
 CREATE TABLE "system_auth" (
     "id" SERIAL NOT NULL,
-    "auth_type" "AuthType" NOT NULL,
-    "open_id" VARCHAR(50) NOT NULL,
+    "auth_type" VARCHAR(50) NOT NULL,
+    "open_id" VARCHAR(100) NOT NULL,
     "token" VARCHAR(255),
     "data" JSON,
     "user_id" INTEGER NOT NULL,
@@ -62,8 +55,7 @@ CREATE TABLE "system_role" (
     "label" VARCHAR(50) NOT NULL,
     "remark" VARCHAR(500),
     "enabled" BOOLEAN NOT NULL DEFAULT true,
-    "built_in" BOOLEAN NOT NULL DEFAULT false,
-    "sort" INTEGER DEFAULT 0,
+    "sort" INTEGER NOT NULL DEFAULT 0,
     "created_at" TIMESTAMPTZ(3) DEFAULT CURRENT_TIMESTAMP,
     "created_by" INTEGER,
     "updated_at" TIMESTAMPTZ(3),
@@ -92,7 +84,7 @@ CREATE TABLE "system_user_role" (
 -- CreateTable
 CREATE TABLE "system_menu_item" (
     "id" SERIAL NOT NULL,
-    "type" "MenuItemType" NOT NULL,
+    "type" VARCHAR(50),
     "path" VARCHAR(255),
     "icon" VARCHAR(50),
     "component_path" VARCHAR(255),
@@ -101,8 +93,7 @@ CREATE TABLE "system_menu_item" (
     "label" VARCHAR(50) NOT NULL,
     "remark" VARCHAR(500),
     "enabled" BOOLEAN NOT NULL DEFAULT true,
-    "built_in" BOOLEAN NOT NULL DEFAULT false,
-    "sort" INTEGER DEFAULT 0,
+    "sort" INTEGER NOT NULL DEFAULT 0,
     "parent_id" INTEGER,
     "created_at" TIMESTAMPTZ(3) DEFAULT CURRENT_TIMESTAMP,
     "created_by" INTEGER,
@@ -138,8 +129,7 @@ CREATE TABLE "system_department" (
     "label" VARCHAR(50) NOT NULL,
     "remark" VARCHAR(500),
     "enabled" BOOLEAN NOT NULL DEFAULT true,
-    "built_in" BOOLEAN NOT NULL DEFAULT false,
-    "sort" INTEGER DEFAULT 0,
+    "sort" INTEGER NOT NULL DEFAULT 0,
     "parent_Ids" INTEGER[],
     "parent_id" INTEGER,
     "created_at" TIMESTAMPTZ(3) DEFAULT CURRENT_TIMESTAMP,
@@ -174,8 +164,7 @@ CREATE TABLE "system_position" (
     "label" VARCHAR(50) NOT NULL,
     "remark" VARCHAR(500),
     "enabled" BOOLEAN NOT NULL DEFAULT true,
-    "built_in" BOOLEAN NOT NULL DEFAULT false,
-    "sort" INTEGER DEFAULT 0,
+    "sort" INTEGER NOT NULL DEFAULT 0,
     "created_at" TIMESTAMPTZ(3) DEFAULT CURRENT_TIMESTAMP,
     "created_by" INTEGER,
     "updated_at" TIMESTAMPTZ(3),
@@ -209,8 +198,6 @@ CREATE TABLE "system_user_setting" (
     "label" VARCHAR(50) NOT NULL,
     "remark" VARCHAR(500),
     "enabled" BOOLEAN NOT NULL DEFAULT true,
-    "built_in" BOOLEAN NOT NULL DEFAULT false,
-    "sort" INTEGER DEFAULT 0,
     "user_id" INTEGER NOT NULL,
     "created_at" TIMESTAMPTZ(3) DEFAULT CURRENT_TIMESTAMP,
     "created_by" INTEGER,
@@ -230,8 +217,6 @@ CREATE TABLE "system_setting" (
     "label" VARCHAR(50) NOT NULL,
     "remark" VARCHAR(500),
     "enabled" BOOLEAN NOT NULL DEFAULT true,
-    "built_in" BOOLEAN NOT NULL DEFAULT false,
-    "sort" INTEGER DEFAULT 0,
     "created_at" TIMESTAMPTZ(3) DEFAULT CURRENT_TIMESTAMP,
     "created_by" INTEGER,
     "updated_at" TIMESTAMPTZ(3),
@@ -249,8 +234,6 @@ CREATE TABLE "system_dictionary" (
     "label" VARCHAR(50) NOT NULL,
     "remark" VARCHAR(500),
     "enabled" BOOLEAN NOT NULL DEFAULT true,
-    "built_in" BOOLEAN NOT NULL DEFAULT false,
-    "sort" INTEGER DEFAULT 0,
     "created_at" TIMESTAMPTZ(3) DEFAULT CURRENT_TIMESTAMP,
     "created_by" INTEGER,
     "updated_at" TIMESTAMPTZ(3),
@@ -264,13 +247,11 @@ CREATE TABLE "system_dictionary" (
 -- CreateTable
 CREATE TABLE "system_dictionary_item" (
     "id" SERIAL NOT NULL,
-    "key" VARCHAR(100) NOT NULL,
-    "value" VARCHAR(255),
+    "value" VARCHAR(255) NOT NULL,
     "label" VARCHAR(50) NOT NULL,
     "remark" VARCHAR(500),
     "enabled" BOOLEAN NOT NULL DEFAULT true,
-    "built_in" BOOLEAN NOT NULL DEFAULT false,
-    "sort" INTEGER DEFAULT 0,
+    "sort" INTEGER NOT NULL DEFAULT 0,
     "dictionary_id" INTEGER NOT NULL,
     "created_at" TIMESTAMPTZ(3) DEFAULT CURRENT_TIMESTAMP,
     "created_by" INTEGER,
@@ -290,7 +271,6 @@ CREATE TABLE "system_notification" (
     "content" VARCHAR(500),
     "remark" VARCHAR(500),
     "enabled" BOOLEAN NOT NULL DEFAULT true,
-    "user_id" INTEGER NOT NULL,
     "created_at" TIMESTAMPTZ(3) DEFAULT CURRENT_TIMESTAMP,
     "created_by" INTEGER,
     "updated_at" TIMESTAMPTZ(3),
@@ -351,13 +331,13 @@ CREATE TABLE "system_user_traffic_record" (
 -- CreateTable
 CREATE TABLE "system_login_log" (
     "id" SERIAL NOT NULL,
-    "type" "AuthType" NOT NULL,
+    "auth_type" VARCHAR(50) NOT NULL,
     "ip" VARCHAR(25),
     "area" VARCHAR(100),
     "source" VARCHAR(25),
     "user_agent" VARCHAR(1000),
     "message" VARCHAR(255),
-    "is_success" BOOLEAN DEFAULT false,
+    "is_success" BOOLEAN NOT NULL DEFAULT false,
     "user_id" INTEGER NOT NULL,
     "created_at" TIMESTAMPTZ(3) DEFAULT CURRENT_TIMESTAMP,
     "created_by" INTEGER,
@@ -372,7 +352,7 @@ CREATE TABLE "system_login_log" (
 -- CreateTable
 CREATE TABLE "system_operation_log" (
     "id" SERIAL NOT NULL,
-    "moduleName" VARCHAR(25),
+    "module_name" VARCHAR(25),
     "type" VARCHAR(25),
     "method" VARCHAR(100),
     "request_method" VARCHAR(25),
@@ -390,7 +370,7 @@ CREATE TABLE "system_operation_log" (
     "source" VARCHAR(25),
     "user_agent" VARCHAR(1000),
     "message" VARCHAR(255),
-    "is_success" BOOLEAN DEFAULT false,
+    "is_success" BOOLEAN NOT NULL DEFAULT false,
     "user_id" INTEGER NOT NULL,
     "created_at" TIMESTAMPTZ(3) DEFAULT CURRENT_TIMESTAMP,
     "created_by" INTEGER,
@@ -428,9 +408,6 @@ CREATE UNIQUE INDEX "system_setting_key_key" ON "system_setting"("key");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "system_dictionary_code_key" ON "system_dictionary"("code");
-
--- CreateIndex
-CREATE UNIQUE INDEX "system_dictionary_item_key_key" ON "system_dictionary_item"("key");
 
 -- AddForeignKey
 ALTER TABLE "system_auth" ADD CONSTRAINT "system_auth_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "system_user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -470,9 +447,6 @@ ALTER TABLE "system_user_setting" ADD CONSTRAINT "system_user_setting_user_id_fk
 
 -- AddForeignKey
 ALTER TABLE "system_dictionary_item" ADD CONSTRAINT "system_dictionary_item_dictionary_id_fkey" FOREIGN KEY ("dictionary_id") REFERENCES "system_dictionary"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "system_notification" ADD CONSTRAINT "system_notification_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "system_user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "system_user_traffic" ADD CONSTRAINT "system_user_traffic_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "system_user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

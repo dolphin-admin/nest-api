@@ -1,7 +1,7 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger'
 import { Exclude } from 'class-transformer'
 
-export class BaseResourceVo {
+export class BaseResource {
   @ApiProperty({ description: '创建时间' })
   createdAt: Date
 

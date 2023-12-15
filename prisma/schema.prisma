@@ -32,7 +32,7 @@ model User {
   /// 头像
   avatarUrl   String?   @map("avatar_url") @db.VarChar(100)
   /// 性别：数据字典
-  gender      String?   @db.VarChar(100)
+  gender      String?   @db.VarChar(50)
   /// 国家
   country     String?   @db.VarChar(25)
   /// 省份
@@ -51,8 +51,6 @@ model User {
   birthDate   DateTime? @map("birth_date") @db.Date
   /// 是否启用
   enabled     Boolean   @default(true)
-  /// 是否内置
-  builtIn     Boolean   @default(false) @map("built_in")
 
   /// 用户 - 认证
   auths         Auth[]
@@ -62,8 +60,6 @@ model User {
   userPositions UserPosition[]
   /// 设置
   userSettings  UserSetting[]
-  /// 系统通知
-  notifications Notification[]
   /// 用户流量记录
   userTraffics  UserTraffic[]
   /// 登录日志
@@ -90,15 +86,15 @@ model User {
 /// 认证
 model Auth {
   /// 唯一标识
-  id       Int      @id @default(autoincrement())
-  /// 认证类型
-  authType AuthType @map("auth_type")
+  id       Int     @id @default(autoincrement())
+  /// 认证类型：数据字典
+  authType String  @map("auth_type") @db.VarChar(50)
   /// 认证唯一标识
-  openId   String   @map("open_id") @db.VarChar(50)
+  openId   String  @map("open_id") @db.VarChar(100)
   /// Token
-  token    String?  @map("token") @db.VarChar(255)
+  token    String? @map("token") @db.VarChar(255)
   /// 数据
-  data     Json?    @db.Json
+  data     Json?   @db.Json
 
   /// 用户
   user   User @relation(fields: [userId], references: [id])
@@ -134,10 +130,8 @@ model Role {
   remark  String? @db.VarChar(500)
   /// 是否启用
   enabled Boolean @default(true)
-  /// 是否内置
-  builtIn Boolean @default(false) @map("built_in")
   /// 排序
-  sort    Int?    @default(0)
+  sort    Int     @default(0)
 
   /// 用户 - 角色
   userRoles       UserRole[]
@@ -196,29 +190,27 @@ model UserRole {
 /// 菜单
 model MenuItem {
   /// 唯一标识
-  id            Int          @id @default(autoincrement())
+  id            Int     @id @default(autoincrement())
   /// 类型
-  type          MenuItemType
+  type          String? @db.VarChar(50)
   /// URL 路径
-  path          String?      @db.VarChar(255)
+  path          String? @db.VarChar(255)
   /// 图标
-  icon          String?      @db.VarChar(50)
+  icon          String? @db.VarChar(50)
   /// 组件路径
-  componentPath String?      @map("component_path") @db.VarChar(255)
+  componentPath String? @map("component_path") @db.VarChar(255)
   /// 权限编码
-  code          String?      @db.VarChar(255)
+  code          String? @db.VarChar(255)
   /// 是否隐藏
-  hidden        Boolean      @default(false)
+  hidden        Boolean @default(false)
   /// 名称
-  label         String       @db.VarChar(50)
+  label         String  @db.VarChar(50)
   /// 备注
-  remark        String?      @db.VarChar(500)
+  remark        String? @db.VarChar(500)
   /// 是否启用
-  enabled       Boolean      @default(true)
-  /// 是否内置
-  builtIn       Boolean      @default(false) @map("built_in")
+  enabled       Boolean @default(true)
   /// 排序
-  sort          Int?         @default(0)
+  sort          Int     @default(0)
 
   /// 父级菜单
   parent        MenuItem?      @relation("MenuItemToParent", fields: [parentId], references: [id])
@@ -292,10 +284,8 @@ model Department {
   remark      String? @db.VarChar(500)
   /// 是否启用
   enabled     Boolean @default(true)
-  /// 是否内置
-  builtIn     Boolean @default(false) @map("built_in")
   /// 排序
-  sort        Int?    @default(0)
+  sort        Int     @default(0)
   /// 祖先部门
   parentIds   Int[]   @map("parent_Ids")
 
@@ -367,10 +357,8 @@ model Position {
   remark  String? @db.VarChar(500)
   /// 是否启用
   enabled Boolean @default(true)
-  /// 是否内置
-  builtIn Boolean @default(false) @map("built_in")
   /// 排序
-  sort    Int?    @default(0)
+  sort    Int     @default(0)
 
   /// 用户 - 部门
   userPositions UserPosition[]
@@ -435,10 +423,6 @@ model UserSetting {
   remark  String? @db.VarChar(500)
   /// 是否启用
   enabled Boolean @default(true)
-  /// 是否内置
-  builtIn Boolean @default(false) @map("built_in")
-  /// 排序
-  sort    Int?    @default(0)
 
   /// 用户
   user   User @relation(fields: [userId], references: [id])
@@ -475,10 +459,6 @@ model Setting {
   remark  String? @db.VarChar(500)
   /// 是否启用
   enabled Boolean @default(true)
-  /// 是否内置
-  builtIn Boolean @default(false) @map("built_in")
-  /// 排序
-  sort    Int?    @default(0)
 
   /// 创建时间
   createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
@@ -508,10 +488,6 @@ model Dictionary {
   remark  String? @db.VarChar(500)
   /// 是否启用
   enabled Boolean @default(true)
-  /// 是否内置
-  builtIn Boolean @default(false) @map("built_in")
-  /// 排序
-  sort    Int?    @default(0)
 
   /// 字典 - 字典数据
   dictionaryItems DictionaryItem[]
@@ -544,10 +520,8 @@ model DictionaryItem {
   remark  String? @db.VarChar(500)
   /// 是否启用
   enabled Boolean @default(true)
-  /// 是否内置
-  builtIn Boolean @default(false) @map("built_in")
   /// 排序
-  sort    Int?    @default(0)
+  sort    Int     @default(0)
 
   /// 字典
   dictionary   Dictionary @relation(fields: [dictionaryId], references: [id])
@@ -584,11 +558,6 @@ model Notification {
   remark  String? @db.VarChar(500)
   /// 是否启用
   enabled Boolean @default(true)
-
-  /// 用户
-  user   User @relation(fields: [userId], references: [id])
-  /// 用户 ID
-  userId Int  @map("user_id")
 
   /// 创建时间
   createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
@@ -701,21 +670,21 @@ model UserTrafficRecord {
 /// 登录日志
 model LoginLog {
   /// 唯一标识
-  id        Int      @id @default(autoincrement())
-  /// 登录类型
-  type      AuthType
+  id        Int     @id @default(autoincrement())
+  /// 登录类型：数据字典
+  authType  String  @map("auth_type") @db.VarChar(50)
   /// 用户 IP
-  ip        String?  @db.VarChar(25)
+  ip        String? @db.VarChar(25)
   /// 用户地区
-  area      String?  @db.VarChar(100)
+  area      String? @db.VarChar(100)
   /// 访问来源（例如：Web 端、手机端、桌面端）
-  source    String?  @db.VarChar(25)
+  source    String? @db.VarChar(25)
   /// 用户代理
-  userAgent String?  @map("user_agent") @db.VarChar(1000)
+  userAgent String? @map("user_agent") @db.VarChar(1000)
   /// 提示信息
-  message   String?  @db.VarChar(255)
+  message   String? @db.VarChar(255)
   /// 是否成功
-  isSuccess Boolean? @default(false) @map("is_success")
+  isSuccess Boolean @default(false) @map("is_success")
 
   /// 用户
   user   User @relation(fields: [userId], references: [id])
@@ -741,45 +710,45 @@ model LoginLog {
 /// 操作日志
 model OperationLog {
   /// 唯一标识
-  id                 Int      @id @default(autoincrement())
+  id                 Int     @id @default(autoincrement())
   /// 模块名称
-  moduleName         String?  @db.VarChar(25)
+  moduleName         String? @map("module_name") @db.VarChar(25)
   /// 操作类型
-  type               String?  @db.VarChar(25)
+  type               String? @db.VarChar(25)
   /// 方法名称
-  method             String?  @db.VarChar(100)
+  method             String? @db.VarChar(100)
   /// 请求方法
-  requestMethod      String?  @map("request_method") @db.VarChar(25)
+  requestMethod      String? @map("request_method") @db.VarChar(25)
   /// 请求路径
-  requestUrl         String?  @map("request_url") @db.VarChar(255)
+  requestUrl         String? @map("request_url") @db.VarChar(255)
   /// 请求查询参数
-  requestQueries     Json?    @map("request_queries")
+  requestQueries     Json?   @map("request_queries")
   /// 请求路径参数
-  requestParams      Json?    @map("request_params")
+  requestParams      Json?   @map("request_params")
   /// 请求体
-  requestBody        Json?    @map("request_body")
+  requestBody        Json?   @map("request_body")
   /// 响应体
-  responseBody       Json?    @map("response_body")
+  responseBody       Json?   @map("response_body")
   /// 响应状态码
-  responseStatusCode Int?     @map("response_status_code")
+  responseStatusCode Int?    @map("response_status_code")
   /// 响应业务码
-  responseCode       String?  @map("response_code") @db.VarChar(10)
+  responseCode       String? @map("response_code") @db.VarChar(10)
   /// 错误信息
-  errorMessage       String?  @map("error_message") @db.VarChar(255)
+  errorMessage       String? @map("error_message") @db.VarChar(255)
   /// 操作时间
   duration           Int?
   /// 用户 IP
-  ip                 String?  @db.VarChar(25)
+  ip                 String? @db.VarChar(25)
   /// 用户地区
-  area               String?  @db.VarChar(100)
+  area               String? @db.VarChar(100)
   /// 访问来源（例如：Web 端、手机端、桌面端）
-  source             String?  @db.VarChar(25)
+  source             String? @db.VarChar(25)
   /// 用户代理
-  userAgent          String?  @map("user_agent") @db.VarChar(1000)
+  userAgent          String? @map("user_agent") @db.VarChar(1000)
   /// 提示信息
-  message            String?  @db.VarChar(255)
+  message            String? @db.VarChar(255)
   /// 是否成功
-  isSuccess          Boolean? @default(false) @map("is_success")
+  isSuccess          Boolean @default(false) @map("is_success")
 
   /// 用户
   user   User @relation(fields: [userId], references: [id])
@@ -800,23 +769,4 @@ model OperationLog {
   deletedBy Int?      @map("deleted_by")
 
   @@map("system_operation_log")
-}
-
-/// 认证类型
-enum AuthType {
-  USERNAME
-  PHONE_NUMBER
-  EMAIL
-  GITHUB
-  GOOGLE
-  WECHAT
-  ALIPAY
-}
-
-/// 菜单类型
-enum MenuItemType {
-  DIR
-  MENU
-  LINK
-  BUTTON
 }

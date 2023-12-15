@@ -20,12 +20,7 @@ export class PageDto {
   @Trim()
   keywords?: string
 
-  @ApiPropertyOptional({
-    description: '开始时间',
-    example: new Date(
-      new Date().setTime(new Date().getTime() - 24 * 60 * 60 * 1000 * 7)
-    ).toISOString()
-  })
+  @ApiPropertyOptional({ description: '开始时间' })
   @IsISO8601(
     {
       strict: true,
@@ -37,12 +32,9 @@ export class PageDto {
   @ToISOString()
   startTime?: string
 
-  @ApiPropertyOptional({ description: '结束时间', example: new Date().toISOString() })
+  @ApiPropertyOptional({ description: '结束时间' })
   @IsISO8601(
-    {
-      strict: true,
-      strictSeparator: true
-    },
+    { strict: true, strictSeparator: true },
     { message: '结束时间必须是一个有效的日期字符串' }
   )
   @IsOptional()

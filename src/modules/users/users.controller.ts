@@ -13,11 +13,11 @@ import {
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { I18n, I18nContext } from 'nestjs-i18n'
 
-import { BaseResponseVo } from '@/class'
+import { R } from '@/class'
 import { ApiOkResponse, ApiPageOKResponse, ApiPageQuery, User } from '@/decorators'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 
-import { CreateUserDto, PageUserDto, PatchUserDto, UpdatePasswordDto, UpdateUserDto } from './dto'
+import { CreateUserDto, PageUserDto, PatchUserDto, UpdateUserDto } from './dto'
 import { UsersService } from './users.service'
 import { UserVo } from './vo'
 
@@ -34,7 +34,7 @@ export class UsersController {
     @User('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
-    return new BaseResponseVo({
+    return new R({
       data: await this.usersService.create(createUserDto, userId),
       msg: i18n.t('common.CREATE.SUCCESS')
     })
@@ -45,34 +45,20 @@ export class UsersController {
   @ApiPageQuery('keywords', 'date')
   @Get()
   async findMany(@Query() pageUserDto: PageUserDto) {
-    return new BaseResponseVo({ data: await this.usersService.findMany(pageUserDto) })
+    return new R({ data: await this.usersService.findMany(pageUserDto) })
   }
 
   @ApiOperation({ summary: '个人信息' })
   @Get('me')
   async findCurrent(@User('sub') id: number) {
-    return new BaseResponseVo({ data: await this.usersService.findOneById(id) })
-  }
-
-  @ApiOperation({ summary: '修改密码' })
-  @Post('/:id(\\d+)/change-password')
-  async updatePassword(
-    @Param('id') id: number,
-    @Body() updatePasswordDto: UpdatePasswordDto,
-    @User('sub') userId: number,
-    @I18n() i18n: I18nContext<I18nTranslations>
-  ) {
-    return new BaseResponseVo({
-      data: await this.usersService.updatePassword(id, updatePasswordDto, userId),
-      msg: i18n.t('common.OPERATE.SUCCESS')
-    })
+    return new R({ data: await this.usersService.findOneById(id) })
   }
 
   @ApiOperation({ summary: '用户详情 [id]' })
   @ApiOkResponse(UserVo)
   @Get(':id(\\d+)')
   async findOneById(@Param('id') id: number) {
-    return new BaseResponseVo({ data: await this.usersService.findOneById(id) })
+    return new R({ data: await this.usersService.findOneById(id) })
   }
 
   @ApiOperation({ summary: '更新用户' })
@@ -84,7 +70,7 @@ export class UsersController {
     @User('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
-    return new BaseResponseVo({
+    return new R({
       data: await this.usersService.update(id, updateUserDto, userId),
       msg: i18n.t('common.OPERATE.SUCCESS')
     })
@@ -99,7 +85,7 @@ export class UsersController {
     @User('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
-    return new BaseResponseVo({
+    return new R({
       data: await this.usersService.patch(id, patchUserDto, userId),
       msg: i18n.t('common.OPERATE.SUCCESS')
     })
@@ -114,7 +100,7 @@ export class UsersController {
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
     await this.usersService.remove(id, userId)
-    return new BaseResponseVo({
+    return new R({
       msg: i18n.t('common.DELETE.SUCCESS')
     })
   }
