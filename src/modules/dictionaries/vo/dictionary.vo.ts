@@ -1,8 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import { BaseResourceVo } from '@/class'
+import { BaseResource } from '@/class'
 
-export class DictionaryVo extends BaseResourceVo {
+export class DictionaryVo extends BaseResource {
   @ApiProperty({ description: 'ID' })
   id: number
 
@@ -17,9 +17,6 @@ export class DictionaryVo extends BaseResourceVo {
 
   @ApiProperty({ description: '是否启用' })
   enabled: boolean
-
-  @ApiProperty({ description: '是否内置' })
-  builtIn: boolean
 
   @ApiPropertyOptional({ description: '排序' })
   sort?: number

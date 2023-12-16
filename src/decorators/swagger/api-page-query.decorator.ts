@@ -40,16 +40,12 @@ export const ApiPageQuery = (...type: QueryType[]) => {
         name: 'startTime',
         description: '开始时间',
         required: false,
-        example: new Date(
-          new Date().setTime(new Date().getTime() - 24 * 60 * 60 * 1000 * 7)
-        ).toISOString(),
         type: String
       }),
       ApiQuery({
         name: 'endTime',
         description: '结束时间',
         required: false,
-        example: new Date().toISOString(),
         type: String
       })
     )

@@ -13,7 +13,7 @@ import {
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { I18n, I18nContext } from 'nestjs-i18n'
 
-import { BaseResponseVo } from '@/class'
+import { R } from '@/class'
 import {
   ApiCreatedResponse,
   ApiOkResponse,
@@ -46,7 +46,7 @@ export class DictionariesController {
     @User('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
-    return new BaseResponseVo({
+    return new R({
       data: await this.dictionariesService.create(createDictionaryDto, userId),
       msg: i18n.t('common.CREATE.SUCCESS')
     })
@@ -57,7 +57,7 @@ export class DictionariesController {
   @ApiPageQuery('keywords', 'date')
   @Get()
   async findMany(@Query() pageDictionaryDto: PageDictionaryDto) {
-    return new BaseResponseVo({
+    return new R({
       data: await this.dictionariesService.findMany(pageDictionaryDto)
     })
   }
@@ -66,7 +66,7 @@ export class DictionariesController {
   @ApiOkResponse(DictionaryVo)
   @Get(':id(\\d+)')
   async findOneById(@Param('id') id: number) {
-    return new BaseResponseVo({
+    return new R({
       data: await this.dictionariesService.findOneById(id)
     })
   }
@@ -75,7 +75,7 @@ export class DictionariesController {
   @ApiOkResponse(DictionaryVo)
   @Get(':code')
   async findOneByCode(@Param('code') code: string) {
-    return new BaseResponseVo({
+    return new R({
       data: await this.dictionariesService.findOneByCode(code)
     })
   }
@@ -89,7 +89,7 @@ export class DictionariesController {
     @User('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
-    return new BaseResponseVo({
+    return new R({
       data: await this.dictionariesService.update(id, updateDictionaryDto, userId),
       msg: i18n.t('common.OPERATE.SUCCESS')
     })
@@ -104,7 +104,7 @@ export class DictionariesController {
     @User('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
-    return new BaseResponseVo({
+    return new R({
       data: await this.dictionariesService.patch(id, patchDictionaryDto, userId),
       msg: i18n.t('common.OPERATE.SUCCESS')
     })
@@ -119,7 +119,7 @@ export class DictionariesController {
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
     await this.dictionariesService.remove(id, userId)
-    return new BaseResponseVo({
+    return new R({
       msg: i18n.t('common.DELETE.SUCCESS')
     })
   }

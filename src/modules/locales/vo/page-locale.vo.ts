@@ -1,10 +1,10 @@
 import { Type } from 'class-transformer'
 
-import { PageVo } from '@/class'
+import { Page } from '@/class'
 
 import { LocaleVo } from './locale.vo'
 
-export class PageLocaleVo extends PageVo<LocaleVo> {
+export class PageLocaleVo extends Page<LocaleVo> {
   @Type(() => LocaleVo)
   records: LocaleVo[]
 }

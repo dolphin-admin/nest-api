@@ -31,11 +31,6 @@ export class PageUserSettingDto extends PageDto {
   @IsOptional()
   enabled?: boolean
 
-  @ApiPropertyOptional({ description: '是否内置' })
-  @IsBoolean({ message: t('common.BUILTIN.INVALID') })
-  @IsOptional()
-  builtIn?: boolean
-
   @ApiPropertyOptional({ description: '用户 ID' })
   @IsNumber({}, { message: t('user.ID.INVALID') })
   @IsOptional()

@@ -4,7 +4,7 @@ import { Prisma } from '@prisma/client'
 import type { Response } from 'express'
 import { I18nContext } from 'nestjs-i18n'
 
-import { BaseResponseVo } from '@/class'
+import { R } from '@/class'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 
 @Catch(Prisma.PrismaClientKnownRequestError)
@@ -21,19 +21,19 @@ export class PrismaExceptionFilter implements ExceptionFilter {
         // 处理 Prisma Unique 字段冲突异常
         response
           .status(HttpStatus.CONFLICT)
-          .json(new BaseResponseVo({ msg: i18n.t('common.RESOURCE.CONFLICT') }))
+          .json(new R({ msg: i18n.t('common.RESOURCE.CONFLICT') }))
         break
       case 'P2003':
         // 处理 Prisma 操作失败异常
         response
           .status(HttpStatus.BAD_REQUEST)
-          .json(new BaseResponseVo({ msg: i18n.t('common.OPERATE.FAILED') }))
+          .json(new R({ msg: i18n.t('common.OPERATE.FAILED') }))
         break
       case 'P2025':
         // 处理 Prisma 资源未找到异常
         response
           .status(HttpStatus.NOT_FOUND)
-          .json(new BaseResponseVo({ msg: i18n.t('common.RESOURCE.NOT.FOUND') }))
+          .json(new R({ msg: i18n.t('common.RESOURCE.NOT.FOUND') }))
         break
       default:
         response.status(HttpStatus.INTERNAL_SERVER_ERROR).json()

@@ -29,9 +29,4 @@ export class PageDictionaryItemDto extends PageDto {
   @IsBoolean({ message: t('common.ENABLED.INVALID') })
   @IsOptional()
   enabled?: boolean
-
-  @ApiPropertyOptional({ description: '是否内置' })
-  @IsBoolean({ message: t('common.BUILTIN.INVALID') })
-  @IsOptional()
-  builtIn?: boolean
 }

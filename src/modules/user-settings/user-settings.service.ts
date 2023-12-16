@@ -55,7 +55,6 @@ export class UserSettingsService {
       key,
       value,
       enabled,
-      builtIn,
       id,
       userId
     } = pageUserSettingDto
@@ -83,9 +82,6 @@ export class UserSettingsService {
           },
           enabled: {
             ...(enabled && { equals: enabled })
-          },
-          builtIn: {
-            ...(builtIn && { equals: builtIn })
           },
           userId: {
             ...(userId && { equals: userId })

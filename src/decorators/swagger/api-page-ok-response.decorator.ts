@@ -2,23 +2,22 @@ import type { Type } from '@nestjs/common'
 import { applyDecorators } from '@nestjs/common'
 import { ApiExtraModels, ApiOkResponse, getSchemaPath } from '@nestjs/swagger'
 
-import { PageVo } from '@/class'
+import { Page } from '@/class'
 
 export const ApiPageOKResponse = <T extends Type>(type: T) =>
   applyDecorators(
-    ApiExtraModels(PageVo, type),
+    ApiExtraModels(Page, type),
     ApiOkResponse({
       schema: {
         description: '分页数据',
         allOf: [
-          { $ref: getSchemaPath(PageVo) },
+          { $ref: getSchemaPath(Page) },
           {
             properties: {
-              data: {
+              records: {
                 type: 'array',
-                items: {
-                  $ref: getSchemaPath(type)
-                }
+                description: '分页数据',
+                items: { $ref: getSchemaPath(type) }
               }
             }
           }

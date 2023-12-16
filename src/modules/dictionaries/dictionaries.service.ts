@@ -46,7 +46,7 @@ export class DictionariesService {
 
   // 字典列表
   async findMany(pageDictionaryDto: PageDictionaryDto) {
-    const { page, pageSize, keywords, startTime, endTime, orderBy, code, enabled, builtIn, id } =
+    const { page, pageSize, keywords, startTime, endTime, orderBy, code, enabled, id } =
       pageDictionaryDto
 
     const where: Prisma.DictionaryWhereInput = {
@@ -65,9 +65,6 @@ export class DictionariesService {
           },
           enabled: {
             ...(enabled && { equals: enabled })
-          },
-          builtIn: {
-            ...(builtIn && { equals: builtIn })
           }
         }
       ],

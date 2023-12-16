@@ -1,7 +1,7 @@
 import { applyDecorators, HttpStatus } from '@nestjs/common'
 import { ApiForbiddenResponse, ApiResponse, ApiUnauthorizedResponse } from '@nestjs/swagger'
 
-import { BaseResponseVo } from '@/class'
+import { R } from '@/class'
 
 interface Option {
   status: HttpStatus
@@ -24,14 +24,14 @@ const getDecorator = (option: HttpStatus | Option) => {
     return ApiResponse({
       status: option,
       description: statusCodeDescriptionMap.get(option),
-      type: BaseResponseVo
+      type: R
     })
   }
   const { status, description } = option
   return ApiResponse({
     status,
     description: description ?? statusCodeDescriptionMap.get(status),
-    type: BaseResponseVo
+    type: R
   })
 }
 
@@ -44,11 +44,11 @@ export const ApiErrorResponse = (...options: (HttpStatus | Option)[]) => {
   return applyDecorators(
     ApiUnauthorizedResponse({
       description: statusCodeDescriptionMap.get(HttpStatus.UNAUTHORIZED),
-      type: BaseResponseVo
+      type: R
     }),
     ApiForbiddenResponse({
       description: statusCodeDescriptionMap.get(HttpStatus.FORBIDDEN),
-      type: BaseResponseVo
+      type: R
     }),
     ...decorators
   )

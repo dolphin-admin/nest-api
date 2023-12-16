@@ -56,7 +56,6 @@ export class DictionaryItemsService {
       dictionaryId,
       label,
       enabled,
-      builtIn,
       id
     } = pageDictionaryItemDto
 
@@ -73,9 +72,6 @@ export class DictionaryItemsService {
           },
           enabled: {
             ...(enabled && { equals: enabled })
-          },
-          builtIn: {
-            ...(builtIn && { equals: builtIn })
           },
           dictionaryId: {
             ...(dictionaryId && { equals: dictionaryId })

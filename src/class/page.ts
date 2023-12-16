@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-export class PageVo<T = any> {
+export class Page<T = any> {
   @ApiProperty({ description: '页码', example: 1 })
   page: number
 
@@ -13,7 +13,7 @@ export class PageVo<T = any> {
   @ApiProperty({ description: '分页数据', type: () => [Object] })
   records: T[] = []
 
-  constructor(pageVo?: PageVo<T>) {
-    Object.assign(this, pageVo)
+  constructor(page?: Page<T>) {
+    Object.assign(this, page)
   }
 }

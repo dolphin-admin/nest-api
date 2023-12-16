@@ -5,7 +5,6 @@ import _ from 'lodash'
 import { I18nContext, I18nService } from 'nestjs-i18n'
 
 import type { SortColumnKey } from '@/enums'
-import { SortOrder } from '@/enums'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 import { PrismaService } from '@/shared/prisma/prisma.service'
 
@@ -58,7 +57,6 @@ export class SettingsService {
       key,
       value,
       enabled,
-      builtIn,
       id
     } = pageSettingDto
 
@@ -85,9 +83,6 @@ export class SettingsService {
           },
           enabled: {
             ...(enabled && { equals: enabled })
-          },
-          builtIn: {
-            ...(builtIn && { equals: builtIn })
           }
         }
       ],
@@ -187,75 +182,5 @@ export class SettingsService {
         deletedBy: userId
       }
     })
-  }
-
-  // 排序设置
-  async sort(id: number, targetId: number, userId: number): Promise<void> {
-    const [currentItem, targetItem] = await Promise.all([
-      this.prismaService.setting.findUnique({
-        where: {
-          id,
-          deletedAt: null
-        }
-      }),
-      this.prismaService.setting.findUnique({
-        where: {
-          id: targetId,
-          deletedAt: null
-        }
-      })
-    ])
-
-    if (!currentItem || !targetItem) {
-      throw new NotFoundException(
-        this.i18nService.t('common.RESOURCE.NOT.FOUND', { lang: I18nContext.current()!.lang })
-      )
-    }
-
-    const currentSort = currentItem.sort ?? 0
-    const targetSort = targetItem.sort ?? 0
-
-    // 计算插入位置
-    const insertSort = targetSort <= currentSort ? targetSort : targetSort - 1
-
-    // 更新当前设置的排序
-    const sortCurrent = this.prismaService.setting.update({
-      where: {
-        id,
-        deletedAt: null
-      },
-      data: {
-        sort: insertSort,
-        updatedBy: userId
-      }
-    })
-
-    // 查询排序范围内的设置记录
-    const settingsToUpdate = await this.prismaService.setting.findMany({
-      where: {
-        id: { not: id },
-        deletedAt: null,
-        sort: {
-          ...(targetSort < currentSort
-            ? { gte: targetSort, lt: currentSort }
-            : { gt: currentSort, lte: targetSort })
-        }
-      },
-      orderBy: [{ sort: SortOrder.ASC }, { createdAt: SortOrder.DESC }]
-    })
-
-    // 更新其他设置的排序
-    const sortOthers = this.prismaService.setting.updateMany({
-      where: {
-        deletedAt: null,
-        id: { in: settingsToUpdate.map((setting) => setting.id) }
-      },
-      data: {
-        sort: { ...(targetSort < currentSort ? { increment: 1 } : { decrement: 1 }) },
-        updatedBy: userId
-      }
-    })
-
-    await this.prismaService.$transaction([sortCurrent, sortOthers])
   }
 }

@@ -24,29 +24,9 @@ export class AuthService {
     @Inject(JwtConfig.KEY) private readonly jwtConfig: ConfigType<typeof JwtConfig>
   ) {}
 
-  // 生成 access token
-  generateToken(id: number, username: string): string {
-    const payload: JWTPayload = { sub: id, username }
-    const { accessTokenExp } = this.jwtConfig
-    return this.jwtService.sign(payload, {
-      expiresIn: accessTokenExp
-    })
-  }
-
-  // 生成 refresh token
-  generateRefreshToken(id: number, username: string): string {
-    const payload: JWTPayload = { sub: id, username }
-    const { refreshTokenExp } = this.jwtConfig
-    return this.jwtService.sign(payload, {
-      expiresIn: refreshTokenExp
-    })
-  }
-
   // 注册
   async signup(signupDto: SignupDto): Promise<UserVo> {
-    // eslint-disable-next-line unused-imports/no-unused-vars
-    const { confirmPassword, ...createDto } = signupDto
-    const user = await this.usersService.create(createDto)
+    const user = await this.usersService.create(signupDto)
     return user
   }
 
@@ -76,5 +56,31 @@ export class AuthService {
     throw new NotImplementedException(
       this.i18nService.t('auth.LOGIN.TYPE.NOT.SUPPORTED', { lang: I18nContext.current()!.lang })
     )
+  }
+
+  // 生成 access token
+  private generateToken(id: number, username: string): string {
+    const payload: JWTPayload = { sub: id, username }
+    const { accessTokenExp } = this.jwtConfig
+    return this.jwtService.sign(payload, {
+      expiresIn: accessTokenExp
+    })
+  }
+
+  // 生成 refresh token
+  private generateRefreshToken(id: number, username: string): string {
+    const payload: JWTPayload = { sub: id, username }
+    const { refreshTokenExp } = this.jwtConfig
+    return this.jwtService.sign(payload, {
+      expiresIn: refreshTokenExp
+    })
+  }
+
+  // 生成 token
+  generateTokens(id: number, username: string) {
+    return {
+      accessToken: this.generateToken(id, username),
+      refreshToken: this.generateRefreshToken(id, username)
+    }
   }
 }

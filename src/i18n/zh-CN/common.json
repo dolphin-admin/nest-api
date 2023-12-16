@@ -1,8 +1,4 @@
 {
-  "BUILTIN": {
-    "INVALID": "是否内置：输入值不合法",
-    "NOT.EMPTY": "是否内置：不能为空"
-  },
   "CREATE.FAILED": "创建失败",
   "CREATE.SUCCESS": "创建成功",
   "DELETE.FAILED": "删除失败",
@@ -46,8 +42,6 @@
   "SORT": {
     "INVALID": "排序：输入值不合法"
   },
-  "SORT.FAILED": "排序失败",
-  "SORT.SUCCESS": "排序成功",
   "UPDATE.FAILED": "修改失败",
   "UPDATE.SUCCESS": "修改成功",
   "VALUE": {
