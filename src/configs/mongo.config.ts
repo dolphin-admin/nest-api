@@ -8,7 +8,7 @@ export const MongoConfig = registerAs('mongo', () =>
     user: env.MONGO_USERNAME ?? 'mongo',
     password: env.MONGO_PASSWORD ?? '',
     db: env.MONGO_DATABASE ?? 'dolphin-admin-mongo',
-    host: env.MONGO_HOST ?? 'localhost',
+    host: env.MONGO_HOST ?? '127.0.0.1',
     port: env.MONGO_PORT ? parseInt(env.MONGO_PORT, 10) : 27017,
     url: env.MONGO_URL
   })
