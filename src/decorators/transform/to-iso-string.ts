@@ -9,7 +9,7 @@ export function ToISOString(): PropertyDecorator {
       try {
         return new Date(value).toISOString()
       } catch {
-        return ''
+        return undefined
       }
     },
     { toClassOnly: true }

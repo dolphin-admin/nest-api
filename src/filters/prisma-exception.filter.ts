@@ -29,6 +29,12 @@ export class PrismaExceptionFilter implements ExceptionFilter {
           .status(HttpStatus.BAD_REQUEST)
           .json(new R({ msg: i18n.t('common.OPERATE.FAILED') }))
         break
+      case 'P2021':
+        // 处理 Prisma 表不存在
+        response
+          .status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .json(new R({ msg: i18n.t('common.OPERATE.FAILED') }))
+        break
       case 'P2025':
         // 处理 Prisma 资源未找到异常
         response
@@ -36,6 +42,7 @@ export class PrismaExceptionFilter implements ExceptionFilter {
           .json(new R({ msg: i18n.t('common.RESOURCE.NOT.FOUND') }))
         break
       default:
+        console.log(exception)
         response.status(HttpStatus.INTERNAL_SERVER_ERROR).json()
         break
     }

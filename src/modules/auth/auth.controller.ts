@@ -9,7 +9,7 @@ import {
   UnauthorizedException
 } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger'
 import { SkipThrottle } from '@nestjs/throttler'
 import { I18n, I18nContext } from 'nestjs-i18n'
 
@@ -54,6 +54,17 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: '登录' })
+  @ApiQuery({
+    name: 'type',
+    description: '登录类型：[1] 用户名，[2] 邮箱',
+    required: true,
+    type: 'string',
+    example: LoginType.USERNAME
+  })
+  @ApiBody({
+    type: LoginDto,
+    examples: { admin: { value: { username: 'admin', password: '123456' } } }
+  })
   @SkipThrottle()
   @Post('login')
   async login(
@@ -66,7 +77,7 @@ export class AuthController {
         }
       })
     )
-    type: LoginType,
+    type: string,
     @Body() loginDto: LoginDto,
     @I18n() i18n: I18nContext<I18nTranslations>
   ): Promise<R<AuthVo>> {
@@ -91,6 +102,7 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: '刷新令牌' })
+  @ApiQuery({ name: 'token', description: '刷新令牌', required: true, type: 'string' })
   @SkipThrottle()
   @Post('refresh')
   async refresh(
