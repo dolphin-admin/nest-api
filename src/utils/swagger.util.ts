@@ -28,14 +28,14 @@ export class SwaggerUtils {
     const document = SwaggerModule.createDocument(app, config, {})
 
     /**
-     * 文档地址为 /api
-     * 例如：http://localhost:3000/api/docs
-     * Swagger JSON 地址为 /api/docs-json
-     * 例如：http://localhost:3000/api/docs-json
+     * 文档地址为 /swagger
+     * 例如：http://localhost:3000/swagger
+     * Swagger JSON 地址为 /swagger-json
+     * 例如：http://localhost:3000/swagger-json
      */
-    SwaggerModule.setup('api/docs', app, document, {
+    SwaggerModule.setup('swagger', app, document, {
       swaggerOptions: {
-        displayOperationId: true, // 显示操作 ID
+        displayOperationId: false, // 显示操作 ID
         defaultModelsExpandDepth: 3, // 默认模型展开深度
         defaultModelExpandDepth: 3, // 默认模型展开深度
         docExpansion: 'list', // 折叠 ["list"*, "full", "none"]
