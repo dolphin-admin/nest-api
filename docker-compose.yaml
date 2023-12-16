@@ -29,6 +29,7 @@ services:
   mongodb:
     container_name: dolphin-admin-mongo
     image: mongo
+    command: [ "mongod", "--auth" ]
     volumes:
       - mongo_data:/data/db
     restart: always
@@ -40,11 +41,14 @@ services:
   redis:
     container_name: dolphin-admin-redis
     image: redis
+    command: [ "--requirepass", "${REDIS_PASSWORD}" ]
     volumes:
       - redis_data:/data
     restart: always
     ports:
       - 6379:6379
+    env_file:
+      - .env
 
 volumes:
   postgres_data:

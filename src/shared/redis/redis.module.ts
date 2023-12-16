@@ -18,9 +18,8 @@ import { RedisService } from './redis.service'
             host: configService.get('REDIS_HOST'),
             port: configService.get('REDIS_PORT')
           },
-          // TODO: 身份认证
-          // username: configService.get('REDIS_USER'),
-          // password: configService.get('REDIS_PASSWORD'),
+          username: configService.get('REDIS_USERNAME'),
+          password: configService.get('REDIS_PASSWORD'),
           database: configService.get('REDIS_DATABASE')
         })
         await client.connect()

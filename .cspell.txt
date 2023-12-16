@@ -15,6 +15,7 @@ officedocument
 openxmlformats
 picocolors
 preinstall
+requirepass
 Timestamptz
 WECHAT
 wordprocessingml
