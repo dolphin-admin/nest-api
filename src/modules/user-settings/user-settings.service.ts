@@ -4,7 +4,6 @@ import { plainToClass } from 'class-transformer'
 import _ from 'lodash'
 import { I18nContext, I18nService } from 'nestjs-i18n'
 
-import { type SortColumnKey } from '@/enums'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 import { PrismaService } from '@/shared/prisma/prisma.service'
 
@@ -50,18 +49,13 @@ export class UserSettingsService {
       keywords,
       startTime,
       endTime,
-      sortColumnKeys,
-      sortOrders,
+      orderBy,
       key,
       value,
       enabled,
       id,
       userId
     } = pageUserSettingDto
-
-    const orderBy = sortColumnKeys.map((field: SortColumnKey, index) => ({
-      [field]: sortOrders[index]
-    }))
 
     const where: Prisma.UserSettingWhereInput = {
       deletedAt: null,

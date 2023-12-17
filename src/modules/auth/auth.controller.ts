@@ -18,8 +18,8 @@ import { SkipAuth } from '@/decorators'
 import { LoginType } from '@/enums'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 import type { JWTPayload } from '@/interfaces'
+import { PrismaService } from '@/shared/prisma/prisma.service'
 
-import { UsersService } from '../users/users.service'
 import type { UserVo } from '../users/vo'
 import { AuthService } from './auth.service'
 import { LoginDto, SignupDto } from './dto'
@@ -32,7 +32,7 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly jwtService: JwtService,
-    private readonly usersService: UsersService
+    private readonly prismaService: PrismaService
   ) {}
 
   @ApiOperation({ summary: '注册' })
@@ -116,7 +116,12 @@ export class AuthController {
     } catch {
       throw new UnauthorizedException(i18n.t('auth.UNAUTHORIZED'))
     }
-    const user = await this.usersService.findOneById(sub)
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        id: sub,
+        deletedAt: null
+      }
+    })
     if (!user) {
       throw new UnauthorizedException(i18n.t('auth.UNAUTHORIZED'))
     }

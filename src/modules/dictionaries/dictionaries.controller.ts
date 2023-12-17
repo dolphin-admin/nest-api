@@ -96,7 +96,7 @@ export class DictionariesController {
   }
 
   @ApiOperation({ summary: '修改字典' })
-  @ApiOkResponse()
+  @ApiOkResponse(DictionaryVo)
   @Patch(':id(\\d+)')
   async patch(
     @Param('id', new ParseIntPipe()) id: number,

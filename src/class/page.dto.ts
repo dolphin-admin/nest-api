@@ -43,8 +43,7 @@ export class PageDto {
 
   @ApiPropertyOptional({
     description: '排序列名',
-    example: `${SortColumnKey.SORT},${SortColumnKey.CREATED_AT}`,
-    default: SortColumnKey.CREATED_AT
+    example: `${SortColumnKey.SORT},${SortColumnKey.CREATED_AT}`
   })
   @IsEnum(SortColumnKey, { each: true, message: '排序列名不支持' })
   @IsOptional()
@@ -53,23 +52,36 @@ export class PageDto {
 
   @ApiPropertyOptional({
     description: '排序方式',
-    example: `${SortOrder.ASC},${SortOrder.DESC}`,
-    default: SortOrder.DESC
+    example: `${SortOrder.ASC},${SortOrder.DESC}`
   })
   @IsEnum(SortOrder, { each: true, message: '排序方法不支持' })
   @IsOptional()
   @Transform(({ value }) => value.split(','))
   sortOrders: SortOrder[]
 
+  /**
+   * Prisma 排序对象数组
+   */
   orderBy?: Record<SortColumnKey, SortOrder>[]
 
-  // 默认排序顺序为：排序字段升序（优先）、创建时间降序（次要）
+  /**
+   * MongoDB 排序数组
+   */
+  sort?: [string, SortOrder][]
+
   constructor() {
-    this.sortColumnKeys = [SortColumnKey.SORT, SortColumnKey.CREATED_AT]
-    this.sortOrders = [SortOrder.ASC, SortOrder.DESC]
-    // 将排序字段和排序方式转化为 Prisma 的排序对象数组
-    this.orderBy = this.sortColumnKeys.map((field: SortColumnKey, index) => ({
-      [field]: this.sortOrders[index]
-    })) as Record<SortColumnKey, SortOrder>[]
+    if (this.sortColumnKeys && this.sortOrders) {
+      this.sortColumnKeys = this.sortColumnKeys.filter(Boolean)
+      this.sortOrders = this.sortOrders.filter(Boolean)
+      // 将排序字段和排序方式转化为 Prisma 的排序对象数组
+      this.orderBy = this.sortColumnKeys.map((field: SortColumnKey, index) => ({
+        [field]: this.sortOrders[index]
+      })) as Record<SortColumnKey, SortOrder>[]
+      // 将排序字段和排序方式转化为 MongoDB 的排序数组
+      this.sort = this.sortColumnKeys.map((field: SortColumnKey, index) => [
+        field,
+        this.sortOrders[index]
+      ])
+    }
   }
 }

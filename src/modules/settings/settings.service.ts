@@ -4,7 +4,6 @@ import { plainToClass } from 'class-transformer'
 import _ from 'lodash'
 import { I18nContext, I18nService } from 'nestjs-i18n'
 
-import type { SortColumnKey } from '@/enums'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 import { PrismaService } from '@/shared/prisma/prisma.service'
 
@@ -46,23 +45,8 @@ export class SettingsService {
 
   // 设置列表
   async findMany(pageSettingDto: PageSettingDto) {
-    const {
-      page,
-      pageSize,
-      keywords,
-      startTime,
-      endTime,
-      sortColumnKeys,
-      sortOrders,
-      key,
-      value,
-      enabled,
-      id
-    } = pageSettingDto
-
-    const orderBy = sortColumnKeys.map((field: SortColumnKey, index) => ({
-      [field]: sortOrders[index]
-    }))
+    const { page, pageSize, keywords, startTime, endTime, orderBy, key, value, enabled, id } =
+      pageSettingDto
 
     const where: Prisma.SettingWhereInput = {
       deletedAt: null,

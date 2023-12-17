@@ -33,7 +33,7 @@ export class UserVo extends BaseResource {
   @ApiPropertyOptional({ description: '姓' })
   lastName?: string
 
-  @ApiProperty({ description: '全名', type: () => String })
+  @ApiProperty({ name: 'fullName', description: '全名', type: () => String })
   @Expose({ name: 'fullName' })
   getFullName(): string {
     return [this.firstName, this.middleName ?? '', this.lastName].filter((item) => item).join(' ')

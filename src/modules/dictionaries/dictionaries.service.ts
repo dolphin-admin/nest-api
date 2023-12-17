@@ -127,7 +127,6 @@ export class DictionariesService {
       }
     })
     this.checkExists(dictionary)
-
     return plainToClass(ListDictionarySelectItemVo, {
       record: dictionary?.dictionaryItems ?? [],
       code

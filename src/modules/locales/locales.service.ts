@@ -2,11 +2,10 @@ import { Lang } from '@dolphin-admin/utils'
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { plainToClass } from 'class-transformer'
-import type { FilterQuery, SortOrder } from 'mongoose'
+import type { FilterQuery } from 'mongoose'
 import { Model } from 'mongoose'
 import { I18nContext, I18nService } from 'nestjs-i18n'
 
-import { type SortColumnKey } from '@/enums'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 import { RedisService } from '@/shared/redis/redis.service'
 
@@ -42,8 +41,7 @@ export class LocalesService {
   }
 
   async findAll(pageLocaleDto: PageLocaleDto): Promise<PageLocaleVo> {
-    const { page, pageSize, keywords, startTime, endTime, sortColumnKeys, sortOrders, key, ns } =
-      pageLocaleDto
+    const { page, pageSize, keywords, startTime, endTime, sort, key, ns } = pageLocaleDto
 
     const query: FilterQuery<Locale> = {
       ...(key && { key: { $regex: key, $options: 'i' } }),
@@ -60,11 +58,6 @@ export class LocalesService {
         ]
       })
     }
-
-    const sort: [string, SortOrder][] = sortColumnKeys.map((field: SortColumnKey, index) => [
-      field,
-      sortOrders[index]
-    ])
 
     return plainToClass(PageLocaleVo, {
       records: await this.LocaleModel.find(query)
