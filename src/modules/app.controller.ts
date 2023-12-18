@@ -24,4 +24,9 @@ export class AppController {
   getVersion() {
     return new R({ data: this.appService.getAppInfo() })
   }
+
+  @Get('test')
+  test() {
+    return new R({ data: 'test' })
+  }
 }
