@@ -1,5 +1,41 @@
 kind: pipeline
-name: deploy
+type: docker
+name: deploy staging
+
+platform:
+  os: linux
+  arch: amd64
+
+trigger:
+  ref:
+    - refs/pull/*
+  event:
+    - push
+
+steps:
+  - name: deploy staging
+    image: appleboy/drone-ssh
+    settings:
+      host:
+        from_secret: SSH_HOST_STAGING
+      username:
+        from_secret: SSH_USERNAME
+      password:
+        from_secret: SSH_PASSWORD
+      port: 22
+      script:
+        - cd /usr/repo/dolphin-admin-nest
+        - pnpm pm2 stop dolphin-admin-nest
+        - git fetch
+        - git checkout -f ${DRONE_BRANCH}
+        - git pull
+        - pnpm i
+        - pnpm build
+        - pnpm pm2 restart dolphin-admin-nest
+      debug: true
+---
+kind: pipeline
+name: deploy production
 
 platform:
   os: linux
@@ -10,14 +46,13 @@ trigger:
     - main
   event:
     - push
-    - pull_request
 
 steps:
-  - name: deploy
+  - name: deploy staging
     image: appleboy/drone-ssh
     settings:
       host:
-        from_secret: SSH_HOST
+        from_secret: SSH_HOST_STAGING
       username:
         from_secret: SSH_USERNAME
       password:
@@ -33,3 +68,26 @@ steps:
         - pnpm build
         - pnpm pm2 restart dolphin-admin-nest
       debug: true
+
+  - name: deploy production
+    image: appleboy/drone-ssh
+    settings:
+      host:
+        from_secret: SSH_HOST_PRODUCTION
+      username:
+        from_secret: SSH_USERNAME
+      password:
+        from_secret: SSH_PASSWORD
+      port: 22
+      script:
+        - cd /usr/repo/dolphin-admin-nest
+        - pnpm pm2 stop dolphin-admin-nest
+        - git fetch
+        - git checkout -f main
+        - git pull
+        - pnpm i
+        - pnpm build
+        - pnpm pm2 restart dolphin-admin-nest
+      debug: true
+      depends_on:
+        - deploy staging
