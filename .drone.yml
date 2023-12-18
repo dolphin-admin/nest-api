@@ -35,6 +35,7 @@ steps:
       debug: true
 ---
 kind: pipeline
+type: docker
 name: deploy production
 
 platform:
