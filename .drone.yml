@@ -1,0 +1,36 @@
+kind: pipeline
+name: deploy
+
+platform:
+  os: linux
+  arch: amd64
+
+depends_on:
+  - build
+trigger:
+  branch:
+    - main
+  event:
+    - push
+    - pull_request
+
+steps:
+  - name: deploy
+    image: appleboy/drone-ssh
+    settings:
+      host:
+        from_secret: SSH_HOST
+      username:
+        from_secret: SSH_USERNAME
+      password:
+        from_secret: SSH_PASSWORD
+      port: 22
+      script:
+        - pnpm pm2 stop dolphin-admin-nest
+        - git fetch
+        - git checkout -f main
+        - git pull
+        - pnpm i
+        - pnpm build
+        - pnpm pm2 restart dolphin-admin-nest
+      debug: true
