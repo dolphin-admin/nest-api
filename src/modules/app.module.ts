@@ -22,7 +22,8 @@ import {
   MongoConfig,
   NodemailerConfig,
   PostgresConfig,
-  RedisConfig
+  RedisConfig,
+  SwaggerStatsConfig
 } from '@/configs'
 import { AuthGuard } from '@/guards'
 import { ErrorsInterceptor, LoggingInterceptor } from '@/interceptors'
@@ -70,6 +71,7 @@ import { UsersModule } from './users/users.module'
         PostgresConfig,
         MongoConfig,
         RedisConfig,
+        SwaggerStatsConfig,
         NodemailerConfig,
         CosConfig
       ], // 加载配置文件
