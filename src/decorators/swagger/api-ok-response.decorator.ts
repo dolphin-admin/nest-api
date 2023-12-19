@@ -1,9 +1,17 @@
 import type { Type } from '@nestjs/common'
 import { applyDecorators, HttpStatus } from '@nestjs/common'
-import { ApiResponse, getSchemaPath } from '@nestjs/swagger'
+import { ApiExtraModels, ApiResponse, getSchemaPath } from '@nestjs/swagger'
 
-export function ApiOkResponse<T extends Type>(type?: T): ReturnType<typeof applyDecorators> {
+interface Options {
+  isArray?: boolean
+}
+
+export function ApiOkResponse<T extends Type>(
+  type?: T,
+  options?: Options
+): ReturnType<typeof applyDecorators> {
   return applyDecorators(
+    ...(type ? [ApiExtraModels(type)] : []),
     ApiResponse({
       status: HttpStatus.OK,
       description: '请求成功',
@@ -15,8 +23,17 @@ export function ApiOkResponse<T extends Type>(type?: T): ReturnType<typeof apply
           },
           ...(type && {
             data: {
-              type: 'object',
-              $ref: getSchemaPath(type)
+              ...(options?.isArray
+                ? {
+                    type: 'array',
+                    items: {
+                      $ref: getSchemaPath(type)
+                    }
+                  }
+                : {
+                    type: 'object',
+                    $ref: getSchemaPath(type)
+                  })
             }
           })
         }

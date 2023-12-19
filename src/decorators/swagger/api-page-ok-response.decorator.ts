@@ -17,7 +17,9 @@ export const ApiPageOKResponse = <T extends Type>(type: T) =>
               records: {
                 type: 'array',
                 description: '分页数据',
-                items: { $ref: getSchemaPath(type) }
+                items: {
+                  $ref: getSchemaPath(type)
+                }
               }
             }
           }
