@@ -11,7 +11,6 @@ import { RedisService } from '@/shared/redis/redis.service'
 
 import type { CreateLocaleDto, PageLocaleDto, UpdateLocaleDto } from './dto'
 import { Locale } from './schemas'
-import type { LocaleResourceVO } from './vo'
 import { LocaleVo, PageLocaleVo } from './vo'
 
 @Injectable()
@@ -34,13 +33,13 @@ export class LocalesService {
     })
   }
 
-  async create(createLocaleDto: CreateLocaleDto): Promise<LocaleVo> {
+  async create(createLocaleDto: CreateLocaleDto) {
     const locale = await new this.LocaleModel(createLocaleDto).save()
     this.clearAllResourcesCache()
     return plainToClass(LocaleVo, locale)
   }
 
-  async findAll(pageLocaleDto: PageLocaleDto): Promise<PageLocaleVo> {
+  async findAll(pageLocaleDto: PageLocaleDto) {
     const { page, pageSize, keywords, startTime, endTime, sort, key, ns } = pageLocaleDto
 
     const query: FilterQuery<Locale> = {
@@ -71,7 +70,7 @@ export class LocalesService {
     })
   }
 
-  async findManyByLang(lang: string): Promise<LocaleResourceVO[]> {
+  async findManyByLang(lang: string) {
     const CACHE_KEY = this.getLocaleResourcesCacheKey(lang)
     const cache = await this.redisService.get(CACHE_KEY)
     if (cache) {
@@ -114,7 +113,7 @@ export class LocalesService {
     return results
   }
 
-  async findOneById(id: string): Promise<LocaleVo> {
+  async findOneById(id: string) {
     const locale = await this.LocaleModel.findById(id).exec()
     if (!locale) {
       throw new NotFoundException(
@@ -124,14 +123,14 @@ export class LocalesService {
     return plainToClass(LocaleVo, locale)
   }
 
-  async update(id: string, updateLocaleDto: UpdateLocaleDto): Promise<LocaleVo> {
+  async update(id: string, updateLocaleDto: UpdateLocaleDto) {
     await this.findOneById(id)
     const locale = await this.LocaleModel.findByIdAndUpdate(id, updateLocaleDto).exec()
     this.clearAllResourcesCache()
     return plainToClass(LocaleVo, locale)
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string) {
     await this.findOneById(id)
     await this.LocaleModel.findByIdAndDelete(id).exec()
   }

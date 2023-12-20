@@ -6,10 +6,7 @@ interface Options {
   isArray?: boolean
 }
 
-export function ApiOkResponse<T extends Type>(
-  type?: T,
-  options?: Options
-): ReturnType<typeof applyDecorators> {
+export function ApiOkResponse<T extends Type>(type?: T, options?: Options) {
   return applyDecorators(
     ...(type ? [ApiExtraModels(type)] : []),
     ApiResponse({

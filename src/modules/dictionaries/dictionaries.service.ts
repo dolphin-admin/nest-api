@@ -1,9 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
-import type { Dictionary, Prisma } from '@prisma/client'
+import type { Prisma } from '@prisma/client'
 import { plainToClass } from 'class-transformer'
 import _ from 'lodash'
 import { I18nContext, I18nService } from 'nestjs-i18n'
 
+import { SortOrder } from '@/enums'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 import { PrismaService } from '@/shared/prisma/prisma.service'
 
@@ -21,15 +22,6 @@ export class DictionariesService {
     private readonly prismaService: PrismaService,
     private readonly i18nService: I18nService<I18nTranslations>
   ) {}
-
-  // 检查字典是否存在
-  private checkExists(dictionary: Dictionary | null) {
-    if (!dictionary) {
-      throw new NotFoundException(
-        this.i18nService.t('common.RESOURCE.NOT.FOUND', { lang: I18nContext.current()!.lang })
-      )
-    }
-  }
 
   // 创建字典
   async create(createDictionaryDto: CreateDictionaryDto, userId: number) {
@@ -84,7 +76,9 @@ export class DictionariesService {
       skip: (page - 1) * pageSize,
       take: pageSize
     })
+
     const total = await this.prismaService.dictionary.count({ where })
+
     return plainToClass(PageDictionaryVo, { records, total, page, pageSize })
   }
 
@@ -96,7 +90,11 @@ export class DictionariesService {
         deletedAt: null
       }
     })
-    this.checkExists(dictionary)
+    if (!dictionary) {
+      throw new NotFoundException(
+        this.i18nService.t('common.RESOURCE.NOT.FOUND', { lang: I18nContext.current()!.lang })
+      )
+    }
     return plainToClass(DictionaryVo, dictionary)
   }
 
@@ -111,7 +109,7 @@ export class DictionariesService {
       include: {
         dictionaryItems: {
           where: {
-            enabled: true,
+            enabled: true, // 只查询启用的字典项
             deletedAt: null
           },
           select: {
@@ -119,17 +117,69 @@ export class DictionariesService {
             label: true,
             value: true
           },
-          orderBy: {
-            sort: 'asc',
-            createdAt: 'desc'
-          }
+          orderBy: [
+            {
+              sort: SortOrder.ASC
+            },
+            {
+              createdAt: SortOrder.DESC
+            }
+          ]
         }
       }
     })
-    this.checkExists(dictionary)
+
+    if (!dictionary) {
+      throw new NotFoundException(
+        this.i18nService.t('common.RESOURCE.NOT.FOUND', { lang: I18nContext.current()!.lang })
+      )
+    }
+
     return plainToClass(ListDictionarySelectItemVo, {
-      record: dictionary?.dictionaryItems ?? [],
+      records: dictionary?.dictionaryItems ?? [],
       code
+    })
+  }
+
+  // 根据 Codes 查询字典
+  async findManyByCodes(codes: string[]) {
+    const dictionaries = await this.prismaService.dictionary.findMany({
+      where: {
+        code: {
+          in: codes
+        },
+        enabled: true, // 只查询启用的字典
+        deletedAt: null
+      },
+      include: {
+        dictionaryItems: {
+          where: {
+            enabled: true, // 只查询启用的字典项
+            deletedAt: null
+          },
+          select: {
+            id: true,
+            label: true,
+            value: true
+          },
+          orderBy: [
+            {
+              sort: SortOrder.ASC
+            },
+            {
+              createdAt: SortOrder.DESC
+            }
+          ]
+        }
+      }
+    })
+
+    return codes.map((code) => {
+      const dictionary = dictionaries.find((d) => d.code === code)
+      return plainToClass(ListDictionarySelectItemVo, {
+        records: dictionary?.dictionaryItems ?? [],
+        code
+      })
     })
   }
 
@@ -166,7 +216,10 @@ export class DictionariesService {
     )
   }
 
-  // 删除字典
+  /**
+   * 删除字典
+   * @description 删除字典时，同时删除字典下的全部字典项
+   */
   async remove(id: number, userId: number) {
     const deleteDictionaryItem = this.prismaService.dictionaryItem.updateMany({
       where: {
@@ -178,6 +231,7 @@ export class DictionariesService {
         deletedBy: userId
       }
     })
+
     const deleteDictionary = this.prismaService.dictionary.update({
       where: {
         id,
@@ -186,11 +240,9 @@ export class DictionariesService {
       data: {
         deletedAt: new Date().toISOString(),
         deletedBy: userId
-      },
-      include: {
-        dictionaryItems: true
       }
     })
+
     await this.prismaService.$transaction([deleteDictionaryItem, deleteDictionary])
   }
 }

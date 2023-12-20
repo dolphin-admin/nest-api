@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
-import type { DictionaryItem, Prisma } from '@prisma/client'
+import type { Prisma } from '@prisma/client'
 import { plainToClass } from 'class-transformer'
 import _ from 'lodash'
 import { I18nContext, I18nService } from 'nestjs-i18n'
@@ -21,15 +21,6 @@ export class DictionaryItemsService {
     private readonly prismaService: PrismaService,
     private readonly i18nService: I18nService<I18nTranslations>
   ) {}
-
-  // 检查字典项是否存在
-  private checkExists(dictionaryItem: DictionaryItem | null) {
-    if (!dictionaryItem) {
-      throw new NotFoundException(
-        this.i18nService.t('common.RESOURCE.NOT.FOUND', { lang: I18nContext.current()!.lang })
-      )
-    }
-  }
 
   // 创建字典项
   async create(createDictionaryItemDto: CreateDictionaryItemDto, userId: number) {
@@ -96,7 +87,9 @@ export class DictionaryItemsService {
       skip: (page - 1) * pageSize,
       take: pageSize
     })
+
     const total = await this.prismaService.dictionaryItem.count({ where })
+
     return plainToClass(PageDictionaryItemVo, { records, total, page, pageSize })
   }
 
@@ -108,7 +101,13 @@ export class DictionaryItemsService {
         deletedAt: null
       }
     })
-    this.checkExists(dictionaryItem)
+
+    if (!dictionaryItem) {
+      throw new NotFoundException(
+        this.i18nService.t('common.RESOURCE.NOT.FOUND', { lang: I18nContext.current()!.lang })
+      )
+    }
+
     return plainToClass(DictionaryItemVo, dictionaryItem)
   }
 

@@ -87,7 +87,7 @@ export class DictionaryItemsController {
   }
 
   @ApiOperation({ summary: '修改字典项' })
-  @ApiOkResponse()
+  @ApiOkResponse(DictionaryItemVo)
   @Patch(':id(\\d+)')
   async patch(
     @Param('id', new ParseIntPipe()) id: number,

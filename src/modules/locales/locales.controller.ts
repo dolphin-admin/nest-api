@@ -11,7 +11,7 @@ import {
   Put,
   Query
 } from '@nestjs/common'
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger'
 import { I18n, I18nContext } from 'nestjs-i18n'
 
 import { R } from '@/class'
@@ -53,6 +53,7 @@ export class LocalesController {
 
   @ApiOperation({ summary: '多语言资源 [根据语言]' })
   @ApiOkResponse(LocaleResourceVO, { isArray: true })
+  @ApiParam({ name: 'lang', description: '语言标识', enum: Lang, example: Lang['en-US'] })
   @Get(':lang')
   async findManyByLang(
     @Param(

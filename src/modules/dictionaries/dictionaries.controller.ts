@@ -4,13 +4,14 @@ import {
   Delete,
   Get,
   Param,
+  ParseArrayPipe,
   ParseIntPipe,
   Patch,
   Post,
   Put,
   Query
 } from '@nestjs/common'
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiExtraModels, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger'
 import { I18n, I18nContext } from 'nestjs-i18n'
 
 import { R } from '@/class'
@@ -30,7 +31,8 @@ import {
   PatchDictionaryDto,
   UpdateDictionaryDto
 } from './dto'
-import { DictionaryVo } from './vo'
+import { DictionaryVo, ListDictionarySelectItemVo } from './vo'
+import { DictionarySelectItemVo } from './vo/dictionary-select-item.vo'
 
 @ApiTags('字典')
 @ApiBearerAuth('bearer')
@@ -57,27 +59,38 @@ export class DictionariesController {
   @ApiPageQuery('keywords', 'date')
   @Get()
   async findMany(@Query() pageDictionaryDto: PageDictionaryDto) {
-    return new R({
-      data: await this.dictionariesService.findMany(pageDictionaryDto)
-    })
+    return new R({ data: await this.dictionariesService.findMany(pageDictionaryDto) })
   }
 
   @ApiOperation({ summary: '字典详情 [ID]' })
   @ApiOkResponse(DictionaryVo)
   @Get(':id(\\d+)')
   async findOneById(@Param('id') id: number) {
-    return new R({
-      data: await this.dictionariesService.findOneById(id)
-    })
+    return new R({ data: await this.dictionariesService.findOneById(id) })
   }
 
-  @ApiOperation({ summary: '字典详情 [Code]' })
-  @ApiOkResponse(DictionaryVo)
+  @ApiOperation({ summary: '字典数据 [Codes]' })
+  @ApiOkResponse(ListDictionarySelectItemVo, { isArray: true })
+  @ApiExtraModels(DictionarySelectItemVo)
+  @ApiQuery({
+    name: 'codes',
+    description: '字典编码（多个编码用逗号分隔）',
+    type: String,
+    required: true,
+    example: 'AUTH_TYPE,GENDER'
+  })
+  @Get('codes')
+  async findManyByCodes(
+    @Query('codes', new ParseArrayPipe({ items: String, separator: ',' })) codes: string[]
+  ) {
+    return new R({ data: await this.dictionariesService.findManyByCodes(codes) })
+  }
+
+  @ApiOperation({ summary: '字典数据 [Code]' })
+  @ApiOkResponse(ListDictionarySelectItemVo)
   @Get(':code')
   async findOneByCode(@Param('code') code: string) {
-    return new R({
-      data: await this.dictionariesService.findOneByCode(code)
-    })
+    return new R({ data: await this.dictionariesService.findOneByCode(code) })
   }
 
   @ApiOperation({ summary: '更新字典' })
@@ -119,8 +132,6 @@ export class DictionariesController {
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
     await this.dictionariesService.remove(id, userId)
-    return new R({
-      msg: i18n.t('common.DELETE.SUCCESS')
-    })
+    return new R({ msg: i18n.t('common.DELETE.SUCCESS') })
   }
 }

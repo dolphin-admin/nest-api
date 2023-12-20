@@ -7,7 +7,7 @@ import { UpdateUserDto } from './update-user.dto'
 
 const { t } = I18nUtils
 
-export class PatchUserDto extends OmitType(UpdateUserDto, ['username']) {
+export class PatchUserDto extends OmitType(UpdateUserDto, ['username'] as const) {
   @ApiPropertyOptional({ description: '用户名' })
   @IsString({ message: t('user.USERNAME.INVALID') })
   @IsOptional()

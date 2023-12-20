@@ -2,7 +2,7 @@ import type { Type } from '@nestjs/common'
 import { applyDecorators, HttpStatus } from '@nestjs/common'
 import { ApiExtraModels, ApiResponse, getSchemaPath } from '@nestjs/swagger'
 
-export function ApiCreatedResponse<T extends Type>(type?: T): ReturnType<typeof applyDecorators> {
+export function ApiCreatedResponse<T extends Type>(type?: T) {
   return applyDecorators(
     ...(type ? [ApiExtraModels(type)] : []),
     ApiResponse({
