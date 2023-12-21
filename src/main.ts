@@ -10,10 +10,9 @@ import type { NestExpressApplication } from '@nestjs/platform-express'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import compression from 'compression'
 import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n'
-import SwaggerStatus from 'swagger-stats'
 
 import { R } from './class'
-import type { AppConfig, DevConfig, SwaggerStatsConfig } from './configs'
+import type { AppConfig, DevConfig } from './configs'
 import { HttpExceptionFilter, MongoExceptionFilter, PrismaExceptionFilter } from './filters'
 import { AppModule } from './modules/app.module'
 import { Logger } from './shared/logger/logger.service'
@@ -29,8 +28,6 @@ async function bootstrap() {
   const configService = app.get(ConfigService)
   const appConfig = configService.get<ConfigType<typeof AppConfig>>('app')!
   const devConfig = configService.get<ConfigType<typeof DevConfig>>('dev')!
-  const swaggerStatsConfig =
-    configService.get<ConfigType<typeof SwaggerStatsConfig>>('swagger-stats')!
 
   app.use(compression())
   app.useLogger(new Logger(appConfig))
@@ -136,19 +133,6 @@ async function bootstrap() {
     .build()
   await SwaggerModule.loadPluginMetadata(() => import('./metadata'))
   const document = SwaggerModule.createDocument(app, config, {})
-
-  // Swagger Stats 配置
-  app.use(
-    SwaggerStatus.getMiddleware({
-      name: appConfig.name,
-      version: appConfig.version,
-      swaggerSpec: document,
-      authentication: Boolean(swaggerStatsConfig.username && swaggerStatsConfig.password),
-      onAuthenticate: (_, username, password) =>
-        username === swaggerStatsConfig.username && password === swaggerStatsConfig.password,
-      uriPath: '/swagger-stats'
-    })
-  )
 
   // 启用 Swagger 文档
   if (devConfig.enableSwagger) {
