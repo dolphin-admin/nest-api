@@ -37,24 +37,16 @@ import { RedisModule } from '../shared/redis/redis.module'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { AuthModule } from './auth/auth.module'
-import { CronJobLogsModule } from './cron-job-logs/cron-job-logs.module'
-import { CronJobsModule } from './cron-jobs/cron-jobs.module'
-import { DepartmentsModule } from './departments/departments.module'
 import { DictionariesModule } from './dictionaries/dictionaries.module'
 import { DictionaryItemsModule } from './dictionary-items/dictionary-items.module'
 import { FilesModule } from './files/files.module'
 import { LocalesModule } from './locales/locales.module'
 import { LoginLogsModule } from './login-logs/login-logs.module'
 import { MenuItemsModule } from './menu-items/menu-items.module'
-import { NotificationsModule } from './notifications/notifications.module'
 import { OperationLogsModule } from './operation-logs/operation-logs.module'
 import { PermissionsModule } from './permissions/permissions.module'
-import { PositionsModule } from './positions/positions.module'
 import { RolesModule } from './roles/roles.module'
 import { SettingsModule } from './settings/settings.module'
-import { SseModule } from './sse/sse.module'
-import { UserSettingsModule } from './user-settings/user-settings.module'
-import { UserTrafficRecordsModule } from './user-traffic-records/user-traffic-records.module'
 import { UserTrafficsModule } from './user-traffics/user-traffics.module'
 import { UsersModule } from './users/users.module'
 
@@ -146,21 +138,13 @@ import { UsersModule } from './users/users.module'
     UsersModule,
     RolesModule,
     PermissionsModule,
-    DepartmentsModule,
-    PositionsModule,
     MenuItemsModule,
     SettingsModule,
-    UserSettingsModule,
     DictionariesModule,
     DictionaryItemsModule,
     FilesModule,
-    NotificationsModule,
-    CronJobsModule,
-    SseModule,
     UserTrafficsModule,
-    UserTrafficRecordsModule,
     OperationLogsModule,
-    CronJobLogsModule,
     LoginLogsModule,
     LocalesModule
   ],

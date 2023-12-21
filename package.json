@@ -105,7 +105,7 @@
     "@types/swagger-stats": "^0.95.11",
     "@types/uuid": "^9.0.7",
     "commitizen": "^4.3.0",
-    "cspell": "^8.2.0",
+    "cspell": "^8.2.1",
     "cz-git": "^1.8.0",
     "eslint": "^8.56.0",
     "husky": "^8.0.3",

@@ -6,7 +6,14 @@ import { LocalesService } from './locales.service'
 import { Locale, LocaleSchema } from './schemas'
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Locale.name, schema: LocaleSchema }])],
+  imports: [
+    MongooseModule.forFeature([
+      {
+        name: Locale.name,
+        schema: LocaleSchema
+      }
+    ])
+  ],
   controllers: [LocalesController],
   providers: [LocalesService]
 })

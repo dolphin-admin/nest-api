@@ -9,18 +9,19 @@ export type LocaleDocument = HydratedDocument<Locale>
   autoIndex: true
 })
 export class Locale {
+  // 多语言的 key
   @Prop({ required: true })
   key: string
 
+  // 命名空间
   @Prop({ required: true })
   ns: string
 
-  @Prop({ default: 0 })
-  sort?: number
-
+  // 英文
   @Prop()
   'en-US': string
 
+  // 简体中文
   @Prop()
   'zh-CN': string
 }

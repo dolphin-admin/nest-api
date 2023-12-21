@@ -163,11 +163,7 @@ export class UsersService {
       include: {
         auths: true,
         userRoles: true,
-        userPositions: true,
-        userSettings: true,
-        userTraffics: true,
-        loginLogs: true,
-        operationLogs: true
+        userPositions: true
       }
     })
     await Promise.all(deletePromises)
