@@ -10,11 +10,15 @@ import { JwtConfig } from '@/configs'
 import { SKIP_AUTH } from '@/constants'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 import type { CustomRequest, JWTPayload } from '@/interfaces'
+import { CacheKeyService } from '@/shared/redis/cache-key.service'
+import { RedisService } from '@/shared/redis/redis.service'
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     private readonly jwtService: JwtService,
+    private readonly redisService: RedisService,
+    private readonly cacheKeyService: CacheKeyService,
     private readonly reflector: Reflector,
     @Inject(JwtConfig.KEY) private readonly jwtConfig: ConfigType<typeof JwtConfig>
   ) {}
@@ -24,25 +28,38 @@ export class AuthGuard implements CanActivate {
       context.getHandler(),
       context.getClass()
     ])
+
     if (skipAuth) {
       return true
     }
 
     const request = context.switchToHttp().getRequest<CustomRequest>()
     const token = this.extractTokenFromHeader(request)
-
     const i18n = I18nContext.current<I18nTranslations>()!
+
     if (!token) {
       throw new UnauthorizedException(i18n.t('auth.UNAUTHORIZED'))
     }
+
+    // 验证 jwt token
+    let payload: JWTPayload
     try {
-      const payload = await this.jwtService.verifyAsync<JWTPayload>(token, {
+      payload = await this.jwtService.verifyAsync<JWTPayload>(token, {
         secret: this.jwtConfig.secret
       })
       request.user = payload
     } catch {
       throw new UnauthorizedException(i18n.t('auth.UNAUTHORIZED'))
     }
+
+    // 检查用户是否在线
+    const cachedValue = await this.redisService.client.get(
+      this.cacheKeyService.getOnlineUserCacheKey(payload.sub)
+    )
+    if (!cachedValue) {
+      throw new UnauthorizedException(i18n.t('auth.UNAUTHORIZED'))
+    }
+
     return true
   }
 

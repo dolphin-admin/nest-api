@@ -7,6 +7,7 @@ import { Model } from 'mongoose'
 import { I18nContext, I18nService } from 'nestjs-i18n'
 
 import type { I18nTranslations } from '@/generated/i18n.generated'
+import { CacheKeyService } from '@/shared/redis/cache-key.service'
 import { RedisService } from '@/shared/redis/redis.service'
 
 import type { CreateLocaleDto, PageLocaleDto, UpdateLocaleDto } from './dto'
@@ -18,19 +19,14 @@ export class LocalesService {
   constructor(
     @InjectModel(Locale.name) private readonly LocaleModel: Model<Locale>,
     private readonly i18nService: I18nService<I18nTranslations>,
-    private readonly redisService: RedisService
+    private readonly redisService: RedisService,
+    private readonly cacheKeyService: CacheKeyService
   ) {}
 
-  private readonly LOCALE_RESOURCES_CACHE_KEY = 'locales:resources'
-
-  private getLocaleResourcesCacheKey(lang: string) {
-    return `${this.LOCALE_RESOURCES_CACHE_KEY}:${lang}`
-  }
-
   private clearAllResourcesCache() {
-    Object.values(Lang).forEach((lang) => {
-      this.redisService.delete(this.getLocaleResourcesCacheKey(lang))
-    })
+    Object.values(Lang).forEach((lang) =>
+      this.redisService.client.del(this.cacheKeyService.getLocaleResourcesCacheKey(lang))
+    )
   }
 
   async create(createLocaleDto: CreateLocaleDto) {
@@ -71,8 +67,8 @@ export class LocalesService {
   }
 
   async findManyByLang(lang: string) {
-    const CACHE_KEY = this.getLocaleResourcesCacheKey(lang)
-    const cache = await this.redisService.get(CACHE_KEY)
+    const CACHE_KEY = this.cacheKeyService.getLocaleResourcesCacheKey(lang)
+    const cache = await this.redisService.client.get(CACHE_KEY)
     if (cache) {
       return JSON.parse(cache)
     }

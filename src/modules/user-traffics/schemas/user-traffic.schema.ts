@@ -7,7 +7,8 @@ export type UserTrafficDocument = HydratedDocument<UserTraffic>
 
 @Schema({
   id: true,
-  timestamps: true
+  timestamps: true,
+  collection: 'user_traffics'
 })
 export class UserTraffic {
   // 应用名称

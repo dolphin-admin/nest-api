@@ -6,7 +6,8 @@ export type LocaleDocument = HydratedDocument<Locale>
 @Schema({
   id: true,
   timestamps: true,
-  autoIndex: true
+  autoIndex: true,
+  collection: 'locales'
 })
 export class Locale {
   // 多语言的 key

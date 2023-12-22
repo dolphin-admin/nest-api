@@ -5,7 +5,8 @@ export type LoginLogDocument = HydratedDocument<LoginLog>
 
 @Schema({
   id: true,
-  timestamps: true
+  timestamps: true,
+  collection: 'login_logs'
 })
 export class LoginLog {
   // 认证类型

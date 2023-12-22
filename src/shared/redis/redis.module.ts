@@ -4,12 +4,14 @@ import { createClient } from 'redis'
 
 import { REDIS_CLIENT } from '@/constants'
 
+import { CacheKeyService } from './cache-key.service'
 import { RedisService } from './redis.service'
 
 @Global()
 @Module({
   providers: [
     RedisService,
+    CacheKeyService,
     {
       provide: REDIS_CLIENT,
       async useFactory(configService: ConfigService) {
@@ -28,6 +30,6 @@ import { RedisService } from './redis.service'
       inject: [ConfigService]
     }
   ],
-  exports: [RedisService]
+  exports: [RedisService, CacheKeyService]
 })
 export class RedisModule {}

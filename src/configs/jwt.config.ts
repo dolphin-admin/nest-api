@@ -6,7 +6,7 @@ import { registerAs } from '@nestjs/config'
 export const JwtConfig = registerAs('jwt', () =>
   Object.freeze({
     secret: env.JWT_SECRET ?? 'dolphin-admin-nest',
-    accessTokenExp: env.JWT_ACCESS_TOKEN_EXP ?? 1000 * 60 * 5, // 5m
-    refreshTokenExp: env.JWT_REFRESH_TOKEN_EXP ?? 1000 * 60 * 60 * 24 // 1d
+    accessTokenExp: env.JWT_ACCESS_TOKEN_EXP ?? '5m',
+    refreshTokenExp: env.JWT_REFRESH_TOKEN_EXP ?? '1d'
   })
 )
