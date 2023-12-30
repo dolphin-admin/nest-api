@@ -15,11 +15,12 @@ import { I18n, I18nContext } from 'nestjs-i18n'
 
 import { R } from '@/class'
 import {
-  ApiCreatedResponse,
+  ApiCreatedObjectResponse,
+  ApiOkObjectResponse,
   ApiOkResponse,
   ApiPageOKResponse,
   ApiPageQuery,
-  User
+  Jwt
 } from '@/decorators'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 
@@ -39,11 +40,11 @@ export class DictionaryItemsController {
   constructor(private readonly dictionaryItemsService: DictionaryItemsService) {}
 
   @ApiOperation({ summary: '创建字典项' })
-  @ApiCreatedResponse(DictionaryItemVo)
+  @ApiCreatedObjectResponse(DictionaryItemVo)
   @Post()
   async create(
     @Body() createDictionaryDto: CreateDictionaryItemDto,
-    @User('sub') userId: number,
+    @Jwt('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
     return new R({
@@ -63,7 +64,7 @@ export class DictionaryItemsController {
   }
 
   @ApiOperation({ summary: '字典项详情' })
-  @ApiOkResponse(DictionaryItemVo)
+  @ApiOkObjectResponse(DictionaryItemVo)
   @Get(':id(\\d+)')
   async findOneById(@Param('id') id: number) {
     return new R({
@@ -72,12 +73,12 @@ export class DictionaryItemsController {
   }
 
   @ApiOperation({ summary: '更新字典项' })
-  @ApiOkResponse(DictionaryItemVo)
+  @ApiOkObjectResponse(DictionaryItemVo)
   @Put(':id(\\d+)')
   async update(
     @Param('id', new ParseIntPipe()) id: number,
     @Body() updateDictionaryItemDto: UpdateDictionaryItemDto,
-    @User('sub') userId: number,
+    @Jwt('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
     return new R({
@@ -87,12 +88,12 @@ export class DictionaryItemsController {
   }
 
   @ApiOperation({ summary: '修改字典项' })
-  @ApiOkResponse(DictionaryItemVo)
+  @ApiOkObjectResponse(DictionaryItemVo)
   @Patch(':id(\\d+)')
   async patch(
     @Param('id', new ParseIntPipe()) id: number,
     @Body() patchDictionaryItemDto: PatchDictionaryItemDto,
-    @User('sub') userId: number,
+    @Jwt('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
     return new R({
@@ -106,7 +107,7 @@ export class DictionaryItemsController {
   @Delete(':id(\\d+)')
   async remove(
     @Param('id', new ParseIntPipe()) id: number,
-    @User('sub') userId: number,
+    @Jwt('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
     await this.dictionaryItemsService.remove(id, userId)

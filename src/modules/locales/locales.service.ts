@@ -12,6 +12,7 @@ import { RedisService } from '@/shared/redis/redis.service'
 
 import type { CreateLocaleDto, PageLocaleDto, UpdateLocaleDto } from './dto'
 import { Locale } from './schemas'
+import type { LocaleResourceVO } from './vo'
 import { LocaleVo, PageLocaleVo } from './vo'
 
 @Injectable()
@@ -24,9 +25,10 @@ export class LocalesService {
   ) {}
 
   private clearAllResourcesCache() {
-    Object.values(Lang).forEach((lang) =>
-      this.redisService.client.del(this.cacheKeyService.getLocaleResourcesCacheKey(lang))
-    )
+    Object.values(Lang).forEach((lang) => {
+      const cacheKey = this.cacheKeyService.getLocalesCacheKey(lang)
+      this.redisService.del(cacheKey)
+    })
   }
 
   async create(createLocaleDto: CreateLocaleDto) {
@@ -67,12 +69,12 @@ export class LocalesService {
   }
 
   async findManyByLang(lang: string) {
-    const CACHE_KEY = this.cacheKeyService.getLocaleResourcesCacheKey(lang)
-    const cache = await this.redisService.client.get(CACHE_KEY)
-    if (cache) {
-      return JSON.parse(cache)
+    const CACHE_KEY = this.cacheKeyService.getLocalesCacheKey(lang)
+    const cachedResult = await this.redisService.jsonGet<LocaleResourceVO[]>(CACHE_KEY)
+    if (cachedResult) {
+      return cachedResult
     }
-    const results = await this.LocaleModel.aggregate([
+    const result = (await this.LocaleModel.aggregate([
       {
         $match: {
           $and: [
@@ -104,9 +106,9 @@ export class LocalesService {
           }
         }
       }
-    ]).exec()
-    await this.redisService.set(CACHE_KEY, JSON.stringify(results), 60 * 60 * 24)
-    return results
+    ]).exec()) as LocaleResourceVO[]
+    await this.redisService.jsonSet(CACHE_KEY, result, 60 * 60 * 24)
+    return result
   }
 
   async findOneById(id: string) {

@@ -1,5 +1,6 @@
-export interface JWTPayload {
+export interface JwtPayload {
   sub: number
   username: string
-  roles?: string[]
+  iat?: string
+  exp?: string
 }

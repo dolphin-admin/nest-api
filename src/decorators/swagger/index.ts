@@ -1,4 +1,7 @@
+export * from './api-created-object-response.decorator'
 export * from './api-created-response.decorator'
+export * from './api-ok-boolean-response.decorator'
+export * from './api-ok-object-response.decorator'
 export * from './api-ok-response.decorator'
 export * from './api-page-ok-response.decorator'
 export * from './api-page-query.decorator'

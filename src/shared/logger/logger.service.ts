@@ -1,16 +1,21 @@
-import { Inject, Injectable, type LoggerService } from '@nestjs/common'
+import { stdout } from 'node:process'
+
+import { Inject, Injectable, type LoggerService, Optional } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 import dayjs from 'dayjs'
 import pc from 'picocolors'
-import { stdout } from 'process'
 
 import { AppConfig } from '@/configs'
 
 type LogLevel = 'log' | 'error' | 'warn' | 'debug' | 'verbose' | 'fatal'
 
 @Injectable()
-export class Logger implements LoggerService {
-  constructor(@Inject(AppConfig.KEY) private readonly appConfig: ConfigType<typeof AppConfig>) {}
+export class CustomLogger implements LoggerService {
+  constructor(
+    @Optional()
+    @Inject(AppConfig.KEY)
+    private readonly appConfig?: ConfigType<typeof AppConfig>
+  ) {}
 
   private lastTimestamp: number = Date.now()
 
@@ -46,11 +51,12 @@ export class Logger implements LoggerService {
   }
 
   private print(level: LogLevel, message: any, context?: string, ...optionalParams: any[]) {
-    const { name } = this.appConfig
     const levelColor = this.getColorByLogLevel(level)
     const printLogLevel = pc.italic(levelColor(`${level.toUpperCase()}`))
     const printCurrentTime = `- ${pc.dim(dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss'))}`
-    const printContext = context ? pc.blue(`[${context}]`) : pc.blue(`[${name}]`)
+    const printContext = context
+      ? pc.blue(`[${context}]`)
+      : pc.blue(`[${this.appConfig?.name || '--'}]`)
     const printMessage = levelColor(message)
     const printParams = optionalParams.map((param) => pc.green(param))
     const printTimestampDiff = pc.dim(`- ${this.getTimestampDiff()}\n`)

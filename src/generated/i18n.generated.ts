@@ -7,6 +7,9 @@ export type I18nTranslations = {
             "SUCCESS": string;
             "TYPE.NOT.SUPPORTED": string;
         };
+        "LOGOUT": {
+            "SUCCESS": string;
+        };
         "SIGN.UP": {
             "SUCCESS": string;
         };

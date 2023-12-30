@@ -15,7 +15,14 @@ import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger'
 import { I18n, I18nContext } from 'nestjs-i18n'
 
 import { R } from '@/class'
-import { ApiCreatedResponse, ApiOkResponse, ApiPageOKResponse, ApiPageQuery } from '@/decorators'
+import {
+  ApiCreatedObjectResponse,
+  ApiOkObjectResponse,
+  ApiOkResponse,
+  ApiPageOKResponse,
+  ApiPageQuery
+} from '@/decorators'
+import { ApiOkArrayResponse } from '@/decorators/swagger/api-ok-array-response.decorator'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 
 import { PageLocaleDto } from './dto'
@@ -31,7 +38,7 @@ export class LocalesController {
   constructor(private readonly localesService: LocalesService) {}
 
   @ApiOperation({ summary: '创建多语言资源' })
-  @ApiCreatedResponse(LocaleVo)
+  @ApiCreatedObjectResponse(LocaleVo)
   @Post()
   async create(
     @Body() createLocaleDto: CreateLocaleDto,
@@ -52,7 +59,7 @@ export class LocalesController {
   }
 
   @ApiOperation({ summary: '多语言资源 [根据语言]' })
-  @ApiOkResponse(LocaleResourceVO, { isArray: true })
+  @ApiOkArrayResponse(LocaleResourceVO)
   @ApiParam({ name: 'lang', description: '语言标识', enum: Lang, example: Lang['en-US'] })
   @Get(':lang')
   async findManyByLang(
@@ -71,14 +78,14 @@ export class LocalesController {
   }
 
   @ApiOperation({ summary: '多语言资源详情' })
-  @ApiOkResponse(LocaleVo)
+  @ApiOkObjectResponse(LocaleVo)
   @Get(':id')
   async findOneById(@Param('id') id: string) {
     return new R({ data: await this.localesService.findOneById(id) })
   }
 
   @ApiOperation({ summary: '修改多语言资源' })
-  @ApiOkResponse(LocaleVo)
+  @ApiOkObjectResponse(LocaleVo)
   @Put(':id')
   async update(
     @Param('id') id: string,

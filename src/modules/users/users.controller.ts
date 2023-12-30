@@ -14,7 +14,14 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { I18n, I18nContext } from 'nestjs-i18n'
 
 import { R } from '@/class'
-import { ApiOkResponse, ApiPageOKResponse, ApiPageQuery, User } from '@/decorators'
+import {
+  ApiCreatedObjectResponse,
+  ApiOkObjectResponse,
+  ApiOkResponse,
+  ApiPageOKResponse,
+  ApiPageQuery,
+  Jwt
+} from '@/decorators'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 
 import { CreateUserDto, PageUserDto, PatchUserDto, UpdateUserDto } from './dto'
@@ -28,10 +35,11 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @ApiOperation({ summary: '创建用户' })
+  @ApiCreatedObjectResponse(UserVo)
   @Post()
   async create(
     @Body() createUserDto: CreateUserDto,
-    @User('sub') userId: number,
+    @Jwt('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
     return new R({
@@ -49,25 +57,26 @@ export class UsersController {
   }
 
   @ApiOperation({ summary: '个人信息' })
+  @ApiOkObjectResponse(UserVo)
   @Get('me')
-  async findCurrent(@User('sub') id: number) {
+  async findCurrent(@Jwt('sub') id: number) {
     return new R({ data: await this.usersService.findOneById(id) })
   }
 
   @ApiOperation({ summary: '用户详情 [id]' })
-  @ApiOkResponse(UserVo)
+  @ApiOkObjectResponse(UserVo)
   @Get(':id(\\d+)')
   async findOneById(@Param('id') id: number) {
     return new R({ data: await this.usersService.findOneById(id) })
   }
 
   @ApiOperation({ summary: '更新用户' })
-  @ApiOkResponse(UserVo)
+  @ApiOkObjectResponse(UserVo)
   @Put(':id(\\d+)')
   async update(
     @Param('id', new ParseIntPipe()) id: number,
     @Body() updateUserDto: UpdateUserDto,
-    @User('sub') userId: number,
+    @Jwt('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
     return new R({
@@ -77,12 +86,12 @@ export class UsersController {
   }
 
   @ApiOperation({ summary: '修改用户' })
-  @ApiOkResponse(UserVo)
+  @ApiOkObjectResponse(UserVo)
   @Patch(':id(\\d+)')
   async patch(
     @Param('id', new ParseIntPipe()) id: number,
     @Body() patchUserDto: PatchUserDto,
-    @User('sub') userId: number,
+    @Jwt('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
     return new R({
@@ -96,7 +105,7 @@ export class UsersController {
   @Delete(':id(\\d+)')
   async remove(
     @Param('id', new ParseIntPipe()) id: number,
-    @User('sub') userId: number,
+    @Jwt('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
     await this.usersService.remove(id, userId)

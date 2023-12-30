@@ -24,9 +24,10 @@ import {
   PostgresConfig,
   RedisConfig
 } from '@/configs'
-import { AuthGuard } from '@/guards'
+import { AccessTokenGuard } from '@/guards'
 import { ErrorsInterceptor, LoggingInterceptor } from '@/interceptors'
 import { DelayMiddleware } from '@/middlewares'
+import { SessionModule } from '@/shared/session/session.module'
 
 import { CosModule } from '../shared/cos/cos.module'
 import { EmailModule } from '../shared/email/email.module'
@@ -68,6 +69,10 @@ import { UsersModule } from './users/users.module'
       cache: true, // 开启缓存，提高性能
       expandVariables: true // 允许变量扩展
     }),
+    // Jwt 模块
+    JwtModule.register({
+      global: true
+    }),
     // Mongoose 模块
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
@@ -85,15 +90,6 @@ import { UsersModule } from './users/users.module'
       },
       resolvers: [{ use: QueryResolver, options: ['lang'] }, AcceptLanguageResolver],
       typesOutputPath: path.join(__dirname, '../../src/generated/i18n.generated.ts')
-    }),
-    // JWT 模块
-    JwtModule.registerAsync({
-      global: true,
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET')
-      }),
-      inject: [ConfigService]
     }),
     // 限流模块
     ThrottlerModule.forRoot([
@@ -128,6 +124,7 @@ import { UsersModule } from './users/users.module'
     // Providers
     PrismaModule,
     RedisModule,
+    SessionModule,
     EmailModule,
     LoggerModule,
     CosModule,
@@ -152,7 +149,7 @@ import { UsersModule } from './users/users.module'
     // 注册全局限流守卫
     { provide: APP_GUARD, useClass: ThrottlerGuard },
     // 注册全局认证守卫
-    { provide: APP_GUARD, useClass: AuthGuard },
+    { provide: APP_GUARD, useClass: AccessTokenGuard },
     // 注册全局日志拦截器
     { provide: APP_INTERCEPTOR, useClass: LoggingInterceptor },
     // 注册全局错误拦截器
