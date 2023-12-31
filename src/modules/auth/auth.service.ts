@@ -1,14 +1,9 @@
-import {
-  BadRequestException,
-  Inject,
-  Injectable,
-  NotImplementedException,
-  UnauthorizedException
-} from '@nestjs/common'
+import { BadRequestException, Inject, Injectable, NotImplementedException } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 import { compare } from '@node-rs/bcrypt'
 import { plainToClass } from 'class-transformer'
+import ms from 'ms'
 import { I18nContext, I18nService } from 'nestjs-i18n'
 
 import { JwtConfig } from '@/configs'
@@ -18,8 +13,8 @@ import type { CustomRequest, JwtPayload } from '@/interfaces'
 import { UsersService } from '@/modules/users/users.service'
 import { PrismaService } from '@/shared/prisma/prisma.service'
 import { CacheKeyService } from '@/shared/redis/cache-key.service'
-import { SessionService } from '@/shared/session/session.service'
-import { UserAgentUtil } from '@/utils'
+import { RedisService } from '@/shared/redis/redis.service'
+import { GeneratorUtils, UserAgentUtil } from '@/utils'
 
 import { UserVo } from '../users/vo'
 import type { LoginDto, SignupDto } from './dto'
@@ -30,29 +25,30 @@ export class AuthService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly jwtService: JwtService,
-    private readonly cacheKeyService: CacheKeyService,
-    private readonly sessionService: SessionService,
     private readonly usersService: UsersService,
+    private readonly redisService: RedisService,
+    private readonly cacheKeyService: CacheKeyService,
     private readonly i18nService: I18nService<I18nTranslations>,
     @Inject(JwtConfig.KEY) private readonly jwtConfig: ConfigType<typeof JwtConfig>
   ) {}
 
-  // 注册
-  async signup(signupDto: SignupDto) {
+  async signup(signupDto: SignupDto, req: CustomRequest) {
     const userVo = await this.usersService.create(signupDto)
 
-    // 生成 tokens
-    const { id, username } = userVo
-    const tokens = await this.generateTokens({ sub: id, username })
+    const jwtPayload: JwtPayload = { sub: userVo.id, jti: GeneratorUtils.generateUuid() }
+    const tokens = await this.generateTokens(jwtPayload)
+    const tokenVo = new TokenVo({ ...tokens })
 
-    return new TokenVo({ ...tokens })
+    req.jwtPayload = jwtPayload
+
+    await this.setJwtMetadata(tokenVo, req)
+
+    return tokenVo
   }
 
-  // 登录
   async login(loginDto: LoginDto, type: string, req: CustomRequest) {
     let userVo: UserVo
 
-    // 处理登录类型
     switch (type) {
       case LoginType.USERNAME:
         userVo = await this.loginByUsername(loginDto)
@@ -62,20 +58,18 @@ export class AuthService {
         userVo = this.loginByEmail()
     }
 
-    // 生成 tokens
-    const { id, username } = userVo
-    const jwtPayload = { sub: id, username }
+    const { id } = userVo
+    const jwtPayload: JwtPayload = { sub: id, jti: GeneratorUtils.generateUuid() }
     const tokens = await this.generateTokens(jwtPayload)
     const tokenVo = new TokenVo({ ...tokens })
 
     req.jwtPayload = jwtPayload
 
-    const sid = await this.createSession(tokenVo, req)
+    await this.setJwtMetadata(tokenVo, req)
 
-    return { tokenVo, sid }
+    return tokenVo
   }
 
-  // 用户名登录
   async loginByUsername(loginDto: LoginDto) {
     // 判断用户名是否存在
     const user = await this.prismaService.user.findUnique({
@@ -98,7 +92,11 @@ export class AuthService {
       )
     }
 
-    return plainToClass(UserVo, user)
+    const userVo = plainToClass(UserVo, user)
+
+    await this.usersService.setUserCache(userVo)
+
+    return userVo
   }
 
   loginByEmail(): UserVo {
@@ -107,50 +105,33 @@ export class AuthService {
     )
   }
 
-  // 登出
-  async logout(sid: string) {
-    if (!sid || !(await this.sessionService.existsSession(sid))) {
+  async logout(jti: string) {
+    const cacheKey = this.cacheKeyService.getJwtMetadataCacheKey(jti)
+    if (!(await this.redisService.exists(cacheKey))) {
       throw new BadRequestException(
         this.i18nService.t('common.OPERATE.FAILED', { lang: I18nContext.current()!.lang })
       )
     }
-    // 删除 Redis 中的 Session
-    await this.sessionService.deleteSession(sid)
+    await this.redisService.del(cacheKey)
   }
 
-  // 刷新令牌
-  async refreshTokens(userId: number, sid: string) {
-    const user = await this.usersService.findOneById(userId)
-    if (!user) {
-      throw new UnauthorizedException(
-        this.i18nService.t('auth.UNAUTHORIZED', { lang: I18nContext.current()!.lang })
-      )
-    }
+  async refreshTokens(jwtPayload: JwtPayload) {
+    const { sub, jti } = jwtPayload
+    const user = await this.usersService.findOneById(sub)
 
-    // 生成新的 tokens
-    const { id, username } = user
     const { accessToken, refreshToken } = await this.generateTokens({
-      sub: id,
-      username
+      sub: user.id,
+      jti
     })
 
-    // 刷新 Session 中存储的令牌
-    await this.sessionService.refreshSessionTokens(sid, accessToken, refreshToken)
+    const cacheKey = this.cacheKeyService.getJwtMetadataCacheKey(jti)
+    await this.redisService.hSet(cacheKey, 'accessToken', accessToken)
+    await this.redisService.hSet(cacheKey, 'refreshToken', refreshToken)
+    await this.redisService.expire(cacheKey, ms(this.jwtConfig.refreshTokenExp) / 1000)
 
     return new TokenVo({ accessToken, refreshToken })
   }
 
-  // 强制下线
-  async forceLogout(sid: string) {
-    if (!(await this.sessionService.existsSession(sid))) {
-      throw new BadRequestException(
-        this.i18nService.t('common.OPERATE.FAILED', { lang: I18nContext.current()!.lang })
-      )
-    }
-    await this.sessionService.deleteSession(sid)
-  }
-
-  // 生成令牌
   private async generateTokens(payload: JwtPayload) {
     const { accessTokenSecret, accessTokenExp, refreshTokenSecret, refreshTokenExp } =
       this.jwtConfig
@@ -163,28 +144,31 @@ export class AuthService {
     return { accessToken, refreshToken }
   }
 
-  // 创建 Session
-  async createSession(tokenVo: TokenVo, request: CustomRequest) {
+  async setJwtMetadata(tokenVo: TokenVo, request: CustomRequest) {
     const { accessToken, refreshToken } = tokenVo
-    const { sub: userId, username } = request.jwtPayload!
+    const { sub: userId, jti } = request.jwtPayload!
     const { ip, headers } = request
     const { userAgent, browser, os } = UserAgentUtil.parseUserAgent(headers['user-agent'])
     const { source } = headers
-    const sid = this.sessionService.generateSid()
-    await this.sessionService.setSession(sid, {
-      sid,
-      accessToken,
-      refreshToken,
-      userId,
-      username,
-      ip,
-      area: '', // TODO: 解析 IP 地址
-      source: (source as string) ?? '',
-      userAgent,
-      browser,
-      os,
-      loginAt: new Date().toISOString()
-    })
-    return sid
+
+    const cacheKey = this.cacheKeyService.getJwtMetadataCacheKey(jti)
+    await this.redisService.del(cacheKey)
+    await this.redisService.hSetObj(
+      cacheKey,
+      {
+        jti,
+        userId,
+        accessToken,
+        refreshToken,
+        ip,
+        area: '', // TODO: 解析 IP 地址
+        source: (source as string) ?? '',
+        userAgent,
+        browser,
+        os,
+        loginAt: new Date().toISOString()
+      },
+      ms(this.jwtConfig.refreshTokenExp) / 1000
+    )
   }
 }

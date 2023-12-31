@@ -27,7 +27,6 @@ import {
 import { AccessTokenGuard } from '@/guards'
 import { ErrorsInterceptor, LoggingInterceptor } from '@/interceptors'
 import { DelayMiddleware } from '@/middlewares'
-import { SessionModule } from '@/shared/session/session.module'
 
 import { CosModule } from '../shared/cos/cos.module'
 import { EmailModule } from '../shared/email/email.module'
@@ -124,7 +123,6 @@ import { UsersModule } from './users/users.module'
     // Providers
     PrismaModule,
     RedisModule,
-    SessionModule,
     EmailModule,
     LoggerModule,
     CosModule,

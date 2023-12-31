@@ -3,15 +3,39 @@ import { Injectable } from '@nestjs/common'
 @Injectable()
 export class CacheKeyService {
   /**
+   * Jwt Metadata 缓存键
+   */
+  private readonly JWT_METADATA_CACHE_KEY_PREFIX = 'jwt_metadata'
+
+  getJwtMetadataCacheKey(pattern: string) {
+    if (!pattern) {
+      throw new Error('Pattern is required!')
+    }
+    return `${this.JWT_METADATA_CACHE_KEY_PREFIX}:${pattern}`
+  }
+
+  /**
+   * 用户信息缓存键
+   */
+  private readonly USER_CACHE_KEY_PREFIX = 'user'
+
+  getUserCacheKey(pattern: number | string) {
+    if (!pattern) {
+      throw new Error('Pattern is required!')
+    }
+    return `${this.USER_CACHE_KEY_PREFIX}:${pattern}`
+  }
+
+  /**
    * 在线用户信息缓存键
    */
   private readonly ONLINE_USER_CACHE_KEY_PREFIX = 'online_user'
 
-  getOnlineUserCacheKey(id: number | string) {
-    if (!id) {
-      throw new Error('ID is required!')
+  getOnlineUserCacheKey(pattern: number | string) {
+    if (!pattern) {
+      throw new Error('Pattern is required!')
     }
-    return `${this.ONLINE_USER_CACHE_KEY_PREFIX}:${id}`
+    return `${this.ONLINE_USER_CACHE_KEY_PREFIX}:${pattern}`
   }
 
   /**
@@ -19,10 +43,10 @@ export class CacheKeyService {
    */
   private readonly LOCALES_CACHE_KEY_PREFIX = 'locales'
 
-  getLocalesCacheKey(lang: string) {
-    if (!lang) {
-      throw new Error('Lang is required!')
+  getLocalesCacheKey(pattern: string) {
+    if (!pattern) {
+      throw new Error('Pattern is required!')
     }
-    return `${this.LOCALES_CACHE_KEY_PREFIX}:${lang}`
+    return `${this.LOCALES_CACHE_KEY_PREFIX}:${pattern}`
   }
 }

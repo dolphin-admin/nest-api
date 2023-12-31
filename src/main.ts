@@ -9,7 +9,7 @@ import { NestFactory, Reflector } from '@nestjs/core'
 import type { NestExpressApplication } from '@nestjs/platform-express'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import compression from 'compression'
-import cookieParser from 'cookie-parser'
+import helmet from 'helmet'
 import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n'
 
 import { R } from '@/class'
@@ -31,8 +31,8 @@ async function bootstrap() {
     const appConfig = configService.get<ConfigType<typeof AppConfig>>('app')!
     const devConfig = configService.get<ConfigType<typeof DevConfig>>('dev')!
 
+    app.use(helmet())
     app.use(compression())
-    app.use(cookieParser())
     app.useLogger(new CustomLogger(appConfig))
 
     // 跨域白名单

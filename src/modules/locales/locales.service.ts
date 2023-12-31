@@ -24,16 +24,20 @@ export class LocalesService {
     private readonly cacheKeyService: CacheKeyService
   ) {}
 
-  private clearAllResourcesCache() {
-    Object.values(Lang).forEach((lang) => {
-      const cacheKey = this.cacheKeyService.getLocalesCacheKey(lang)
-      this.redisService.del(cacheKey)
-    })
+  private async clearAllResourcesCache() {
+    await Promise.all(
+      Object.values(Lang).map((lang) => {
+        const cacheKey = this.cacheKeyService.getLocalesCacheKey(lang)
+        return this.redisService.del(cacheKey)
+      })
+    )
   }
 
   async create(createLocaleDto: CreateLocaleDto) {
     const locale = await new this.LocaleModel(createLocaleDto).save()
-    this.clearAllResourcesCache()
+
+    await this.clearAllResourcesCache()
+
     return plainToClass(LocaleVo, locale)
   }
 
@@ -69,8 +73,8 @@ export class LocalesService {
   }
 
   async findManyByLang(lang: string) {
-    const CACHE_KEY = this.cacheKeyService.getLocalesCacheKey(lang)
-    const cachedResult = await this.redisService.jsonGet<LocaleResourceVO[]>(CACHE_KEY)
+    const cacheKey = this.cacheKeyService.getLocalesCacheKey(lang)
+    const cachedResult = await this.redisService.jsonGet<LocaleResourceVO[]>(cacheKey)
     if (cachedResult) {
       return cachedResult
     }
@@ -107,7 +111,9 @@ export class LocalesService {
         }
       }
     ]).exec()) as LocaleResourceVO[]
-    await this.redisService.jsonSet(CACHE_KEY, result, 60 * 60 * 24)
+
+    await this.redisService.jsonSet(cacheKey, result, 60 * 60 * 24)
+
     return result
   }
 
@@ -118,18 +124,23 @@ export class LocalesService {
         this.i18nService.t('common.RESOURCE.NOT.FOUND', { lang: I18nContext.current()!.lang })
       )
     }
+
     return plainToClass(LocaleVo, locale)
   }
 
   async update(id: string, updateLocaleDto: UpdateLocaleDto) {
     await this.findOneById(id)
+
     const locale = await this.LocaleModel.findByIdAndUpdate(id, updateLocaleDto).exec()
-    this.clearAllResourcesCache()
+
+    await this.clearAllResourcesCache()
+
     return plainToClass(LocaleVo, locale)
   }
 
   async remove(id: string) {
     await this.findOneById(id)
+
     await this.LocaleModel.findByIdAndDelete(id).exec()
   }
 }

@@ -8,8 +8,11 @@ import { REDIS_CLIENT } from '@/constants'
 export class RedisService implements OnModuleDestroy {
   constructor(@Inject(REDIS_CLIENT) private readonly redisClient: RedisClientType) {}
 
+  readonly DATA_DEFAULT_TTL = 60 * 60
+
   async get(key: string) {
-    return this.redisClient.get(key)
+    const result = await this.redisClient.get(key)
+    return result
   }
 
   async set(key: string, value: string | number, ttl?: number) {
@@ -22,7 +25,7 @@ export class RedisService implements OnModuleDestroy {
 
   // 是否存在缓存
   async exists(key: string) {
-    return !!this.redisClient.exists(key)
+    return !!(await this.redisClient.exists(key))
   }
 
   // 设置 TTL
@@ -37,12 +40,14 @@ export class RedisService implements OnModuleDestroy {
 
   // 获取缓存 keys
   async keys(pattern: string) {
-    return this.redisClient.keys(pattern)
+    const result = await this.redisClient.keys(pattern)
+    return result
   }
 
   // 批量获取缓存
   async mGet(keys: string[]) {
-    return this.redisClient.mGet(keys)
+    const result = await this.redisClient.mGet(keys)
+    return result
   }
 
   // 批量获取 JSON 缓存
@@ -61,19 +66,20 @@ export class RedisService implements OnModuleDestroy {
   }
 
   // 获取 JSON 缓存
-  async jsonGet<T>(key: string): Promise<T> {
+  async jsonGet<T>(key: string): Promise<T | null> {
     const value = await this.redisClient.get(key)
     return value ? JSON.parse(value) : null
   }
 
   // 获取 Hash 缓存
-  async hGet<T>(key: string, field: string): Promise<T> {
-    return this.redisClient.hGet(key, field) as T
+  async hGet<T>(key: string, field: string): Promise<T | null> {
+    const result = await this.redisClient.hGet(key, field)
+    return result ? JSON.parse(result) : null
   }
 
   // 设置 Hash 缓存
-  async hSet(key: string, field: string | number, value: any) {
-    await this.redisClient.hSet(key, field, value)
+  async hSet(key: string, field: string, value: unknown) {
+    await this.redisClient.hSet(key, field, JSON.stringify(value))
   }
 
   // 删除 Hash 缓存
@@ -82,14 +88,25 @@ export class RedisService implements OnModuleDestroy {
   }
 
   // 获取 Hash 对象缓存
-  async hGetAll<T>(key: string): Promise<T> {
-    return this.redisClient.hGetAll(key) as T
+  async hGetAll<T>(key: string): Promise<T | null> {
+    if (!(await this.exists(key))) {
+      return null
+    }
+    const result = await this.redisClient.hGetAll(key)
+
+    const parsedResult: Record<string, unknown> = {}
+
+    Object.entries(result).forEach(([field, value]) => {
+      parsedResult[field] = JSON.parse(value)
+    })
+
+    return parsedResult as T
   }
 
   // 设置 Hash 对象缓存
-  async hSetObj(key: string, obj: Record<string, string | number>, ttl?: number) {
+  async hSetObj(key: string, obj: Record<string, unknown>, ttl?: number) {
     const hSetPromises = Object.keys(obj).map((field) =>
-      this.redisClient.hSet(key, field, obj[field])
+      this.redisClient.hSet(key, field, JSON.stringify(obj[field]))
     )
 
     await Promise.all(hSetPromises)
@@ -106,12 +123,13 @@ export class RedisService implements OnModuleDestroy {
 
   // 获取 Set 缓存
   async sMembers(key: string) {
-    return this.redisClient.sMembers(key)
+    const result = await this.redisClient.sMembers(key)
+    return result
   }
 
   // 判断 Set 缓存是否存在
   async sIsMember(key: string, value: string) {
-    return this.redisClient.sIsMember(key, value)
+    return !!(await this.redisClient.sIsMember(key, value))
   }
 
   // 删除 Set 缓存
@@ -121,7 +139,8 @@ export class RedisService implements OnModuleDestroy {
 
   // 获取 Set 缓存长度
   async sCard(key: string) {
-    return this.redisClient.sCard(key)
+    const result = await this.redisClient.sCard(key)
+    return result
   }
 
   // 关闭连接

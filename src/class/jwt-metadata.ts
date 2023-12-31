@@ -1,18 +1,15 @@
-export class SessionPayload {
-  // Session ID
-  sid: string
+export class JwtMetadata {
+  // JWT ID
+  jti: string
+
+  // 用户 ID
+  userId: number
 
   // 访问令牌
   accessToken: string
 
   // 刷新令牌
   refreshToken: string
-
-  // 用户 ID
-  userId: number
-
-  // 用户名
-  username: string
 
   // IP
   ip?: string
@@ -35,7 +32,7 @@ export class SessionPayload {
   // 登录时间
   loginAt: string
 
-  constructor(sessionPayload?: SessionPayload) {
-    Object.assign(this, sessionPayload)
+  constructor(jwtMetadata?: JwtMetadata) {
+    Object.assign(this, jwtMetadata)
   }
 }

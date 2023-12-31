@@ -9,5 +9,5 @@ import type { CustomRequest, JwtPayload } from '@/interfaces'
  */
 export const Jwt = createParamDecorator<keyof JwtPayload>((key, ctx: ExecutionContext) => {
   const { jwtPayload } = ctx.switchToHttp().getRequest<CustomRequest>()
-  return key ? jwtPayload?.[key] ?? null : jwtPayload
+  return key ? jwtPayload?.[key] : jwtPayload
 })

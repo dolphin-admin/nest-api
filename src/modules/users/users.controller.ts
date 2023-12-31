@@ -53,21 +53,27 @@ export class UsersController {
   @ApiPageQuery('keywords', 'date')
   @Get()
   async findMany(@Query() pageUserDto: PageUserDto) {
-    return new R({ data: await this.usersService.findMany(pageUserDto) })
+    return new R({
+      data: await this.usersService.findMany(pageUserDto)
+    })
   }
 
   @ApiOperation({ summary: '个人信息' })
   @ApiOkObjectResponse(UserVo)
-  @Get('me')
+  @Get('profile')
   async findCurrent(@Jwt('sub') id: number) {
-    return new R({ data: await this.usersService.findOneById(id) })
+    return new R({
+      data: await this.usersService.findOneById(id)
+    })
   }
 
   @ApiOperation({ summary: '用户详情 [id]' })
   @ApiOkObjectResponse(UserVo)
   @Get(':id(\\d+)')
   async findOneById(@Param('id') id: number) {
-    return new R({ data: await this.usersService.findOneById(id) })
+    return new R({
+      data: await this.usersService.findOneById(id)
+    })
   }
 
   @ApiOperation({ summary: '更新用户' })

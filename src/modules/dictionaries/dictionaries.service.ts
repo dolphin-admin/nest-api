@@ -24,13 +24,13 @@ export class DictionariesService {
   ) {}
 
   // 创建字典
-  async create(createDictionaryDto: CreateDictionaryDto, userId: number) {
+  async create(createDictionaryDto: CreateDictionaryDto, createdBy: number) {
     return plainToClass(
       DictionaryVo,
       await this.prismaService.dictionary.create({
         data: {
           ...createDictionaryDto,
-          createdBy: userId
+          createdBy
         }
       })
     )
@@ -184,7 +184,7 @@ export class DictionariesService {
   }
 
   // 更新字典
-  async update(id: number, updateDictionaryDto: UpdateDictionaryDto, userId: number) {
+  async update(id: number, updateDictionaryDto: UpdateDictionaryDto, updatedBy: number) {
     return plainToClass(
       DictionaryVo,
       await this.prismaService.dictionary.update({
@@ -194,13 +194,13 @@ export class DictionariesService {
         },
         data: {
           ...updateDictionaryDto,
-          updatedBy: userId
+          updatedBy
         }
       })
     )
   }
 
-  async patch(id: number, patchDictionaryDto: PatchDictionaryDto, userId: number) {
+  async patch(id: number, patchDictionaryDto: PatchDictionaryDto, updatedBy: number) {
     return plainToClass(
       DictionaryVo,
       await this.prismaService.dictionary.update({
@@ -210,7 +210,7 @@ export class DictionariesService {
         },
         data: {
           ...patchDictionaryDto,
-          updatedBy: userId
+          updatedBy
         }
       })
     )
@@ -220,7 +220,7 @@ export class DictionariesService {
    * 删除字典
    * @description 删除字典时，同时删除字典下的全部字典项
    */
-  async remove(id: number, userId: number) {
+  async remove(id: number, deletedBy: number) {
     const deleteDictionaryItem = this.prismaService.dictionaryItem.updateMany({
       where: {
         dictionaryId: id,
@@ -228,7 +228,7 @@ export class DictionariesService {
       },
       data: {
         deletedAt: new Date().toISOString(),
-        deletedBy: userId
+        deletedBy
       }
     })
 
@@ -239,7 +239,7 @@ export class DictionariesService {
       },
       data: {
         deletedAt: new Date().toISOString(),
-        deletedBy: userId
+        deletedBy
       }
     })
 
