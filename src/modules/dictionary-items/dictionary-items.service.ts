@@ -112,7 +112,7 @@ export class DictionaryItemsService {
   }
 
   // 更新字典项
-  async update(id: number, updateDictionaryItemDto: UpdateDictionaryItemDto, userId: number) {
+  async update(id: number, updateDictionaryItemDto: UpdateDictionaryItemDto, updatedBy: number) {
     return plainToClass(
       DictionaryItemVo,
       await this.prismaService.dictionaryItem.update({
@@ -122,14 +122,14 @@ export class DictionaryItemsService {
         },
         data: {
           ...updateDictionaryItemDto,
-          updatedBy: userId
+          updatedBy
         }
       })
     )
   }
 
   // 修改字典项
-  async patch(id: number, patchDictionaryItemDto: PatchDictionaryItemDto, userId: number) {
+  async patch(id: number, patchDictionaryItemDto: PatchDictionaryItemDto, updatedBy: number) {
     return plainToClass(
       DictionaryItemVo,
       await this.prismaService.dictionaryItem.update({
@@ -139,14 +139,14 @@ export class DictionaryItemsService {
         },
         data: {
           ...patchDictionaryItemDto,
-          updatedBy: userId
+          updatedBy
         }
       })
     )
   }
 
   // 删除字典项
-  async remove(id: number, userId: number) {
+  async remove(id: number, deletedBy: number) {
     await this.prismaService.dictionaryItem.update({
       where: {
         id,
@@ -154,7 +154,7 @@ export class DictionaryItemsService {
       },
       data: {
         deletedAt: new Date().toISOString(),
-        deletedBy: userId
+        deletedBy
       }
     })
   }

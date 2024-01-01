@@ -1,27 +1,24 @@
-import {
-  BadRequestException,
-  Inject,
-  Injectable,
-  NotImplementedException,
-  UnauthorizedException
-} from '@nestjs/common'
+import { BadRequestException, Inject, Injectable, NotImplementedException } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 import { compare } from '@node-rs/bcrypt'
 import { plainToClass } from 'class-transformer'
+import ms from 'ms'
 import { I18nContext, I18nService } from 'nestjs-i18n'
 
 import { JwtConfig } from '@/configs'
 import { LoginType } from '@/enums'
 import type { I18nTranslations } from '@/generated/i18n.generated'
-import type { JWTPayload } from '@/interfaces'
+import type { CustomRequest, JwtPayload } from '@/interfaces'
 import { UsersService } from '@/modules/users/users.service'
 import { PrismaService } from '@/shared/prisma/prisma.service'
+import { CacheKeyService } from '@/shared/redis/cache-key.service'
+import { RedisService } from '@/shared/redis/redis.service'
+import { GeneratorUtils, UserAgentUtil } from '@/utils'
 
-import { OnlineUsersService } from '../users/online-users.service'
 import { UserVo } from '../users/vo'
 import type { LoginDto, SignupDto } from './dto'
-import { AuthVo, TokenVo } from './vo'
+import { TokenVo } from './vo'
 
 @Injectable()
 export class AuthService {
@@ -29,25 +26,27 @@ export class AuthService {
     private readonly prismaService: PrismaService,
     private readonly jwtService: JwtService,
     private readonly usersService: UsersService,
-    private readonly onlineUsersService: OnlineUsersService,
+    private readonly redisService: RedisService,
+    private readonly cacheKeyService: CacheKeyService,
     private readonly i18nService: I18nService<I18nTranslations>,
     @Inject(JwtConfig.KEY) private readonly jwtConfig: ConfigType<typeof JwtConfig>
   ) {}
 
-  // 注册
-  async signup(signupDto: SignupDto) {
+  async signup(signupDto: SignupDto, req: CustomRequest) {
     const userVo = await this.usersService.create(signupDto)
 
-    const { id, username } = userVo
-    const tokens = this.generateTokens(id, username)
+    const jwtPayload: JwtPayload = { sub: userVo.id, jti: GeneratorUtils.generateUuid() }
+    const tokens = await this.generateTokens(jwtPayload)
+    const tokenVo = new TokenVo({ ...tokens })
 
-    await this.onlineUsersService.setOnlineUser(id, userVo)
+    req.jwtPayload = jwtPayload
 
-    return new AuthVo({ user: userVo, ...tokens })
+    await this.setJwtMetadata(tokenVo, req)
+
+    return tokenVo
   }
 
-  // 登录
-  async login(loginDto: LoginDto, type: string) {
+  async login(loginDto: LoginDto, type: string, req: CustomRequest) {
     let userVo: UserVo
 
     switch (type) {
@@ -59,93 +58,117 @@ export class AuthService {
         userVo = this.loginByEmail()
     }
 
-    const { id, username } = userVo
-    const tokens = this.generateTokens(id, username)
+    const { id } = userVo
+    const jwtPayload: JwtPayload = { sub: id, jti: GeneratorUtils.generateUuid() }
+    const tokens = await this.generateTokens(jwtPayload)
+    const tokenVo = new TokenVo({ ...tokens })
 
-    await this.onlineUsersService.setOnlineUser(id, userVo)
+    req.jwtPayload = jwtPayload
 
-    return new AuthVo({ user: userVo, ...tokens })
+    await this.setJwtMetadata(tokenVo, req)
+
+    return tokenVo
   }
 
-  // 用户名登录
   async loginByUsername(loginDto: LoginDto) {
+    // 判断用户名是否存在
     const user = await this.prismaService.user.findUnique({
       where: {
         username: loginDto.username,
+        enabled: true,
         deletedAt: null
       }
     })
-
     if (!user) {
       throw new BadRequestException(
         this.i18nService.t('auth.USERNAME.OR.PASSWORD.ERROR', { lang: I18nContext.current()!.lang })
       )
     }
 
+    // 判断密码是否正确
     if (!(await compare(loginDto.password, user.password ?? ''))) {
       throw new BadRequestException(
         this.i18nService.t('auth.USERNAME.OR.PASSWORD.ERROR', { lang: I18nContext.current()!.lang })
       )
     }
 
-    return plainToClass(UserVo, user)
+    const userVo = plainToClass(UserVo, user)
+
+    await this.usersService.setUserCache(userVo)
+
+    return userVo
   }
 
-  // 邮箱登录
   loginByEmail(): UserVo {
     throw new NotImplementedException(
       this.i18nService.t('auth.LOGIN.TYPE.NOT.SUPPORTED', { lang: I18nContext.current()!.lang })
     )
   }
 
-  // 刷新令牌
-  async refresh(token: string) {
-    let id: number
-    try {
-      const jwtPayload = await this.jwtService.verifyAsync<JWTPayload>(token)
-      id = jwtPayload.sub
-    } catch {
-      throw new UnauthorizedException(this.i18nService.t('auth.UNAUTHORIZED'))
+  async logout(jti: string) {
+    const cacheKey = this.cacheKeyService.getJwtMetadataCacheKey(jti)
+    if (!(await this.redisService.exists(cacheKey))) {
+      throw new BadRequestException(
+        this.i18nService.t('common.OPERATE.FAILED', { lang: I18nContext.current()!.lang })
+      )
     }
+    await this.redisService.del(cacheKey)
+  }
 
-    const user = await this.prismaService.user.findUnique({
-      where: {
-        id,
-        deletedAt: null
-      }
+  async refreshTokens(jwtPayload: JwtPayload) {
+    const { sub, jti } = jwtPayload
+    const user = await this.usersService.findOneById(sub)
+
+    const { accessToken, refreshToken } = await this.generateTokens({
+      sub: user.id,
+      jti
     })
 
-    if (!user) {
-      throw new UnauthorizedException(this.i18nService.t('auth.UNAUTHORIZED'))
-    }
+    const cacheKey = this.cacheKeyService.getJwtMetadataCacheKey(jti)
+    await this.redisService.hSet(cacheKey, 'accessToken', accessToken)
+    await this.redisService.hSet(cacheKey, 'refreshToken', refreshToken)
+    await this.redisService.expire(cacheKey, ms(this.jwtConfig.refreshTokenExp) / 1000)
 
-    const tokens = this.generateTokens(id, user.username)
-
-    const userVo = plainToClass(UserVo, user)
-    await this.onlineUsersService.setOnlineUser(id, userVo)
-
-    return new TokenVo({ ...tokens })
+    return new TokenVo({ accessToken, refreshToken })
   }
 
-  // 生成 access token
-  private generateAccessToken(id: number, username: string): string {
-    const payload: JWTPayload = { sub: id, username }
-    const { accessTokenExp } = this.jwtConfig
-    return this.jwtService.sign(payload, { expiresIn: accessTokenExp })
+  private async generateTokens(payload: JwtPayload) {
+    const { accessTokenSecret, accessTokenExp, refreshTokenSecret, refreshTokenExp } =
+      this.jwtConfig
+
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.signAsync(payload, { secret: accessTokenSecret, expiresIn: accessTokenExp }),
+      this.jwtService.signAsync(payload, { secret: refreshTokenSecret, expiresIn: refreshTokenExp })
+    ])
+
+    return { accessToken, refreshToken }
   }
 
-  // 生成 refresh token
-  private generateRefreshToken(id: number, username: string): string {
-    const payload: JWTPayload = { sub: id, username }
-    const { refreshTokenExp } = this.jwtConfig
-    return this.jwtService.sign(payload, { expiresIn: refreshTokenExp })
-  }
+  async setJwtMetadata(tokenVo: TokenVo, request: CustomRequest) {
+    const { accessToken, refreshToken } = tokenVo
+    const { sub: userId, jti } = request.jwtPayload!
+    const { ip, headers } = request
+    const { userAgent, browser, os } = UserAgentUtil.parseUserAgent(headers['user-agent'])
+    const { source } = headers
 
-  // 生成 token
-  generateTokens(id: number, username: string) {
-    return {
-      accessToken: this.generateAccessToken(id, username),
-      refreshToken: this.generateRefreshToken(id, username)
-    }
+    const cacheKey = this.cacheKeyService.getJwtMetadataCacheKey(jti)
+    await this.redisService.del(cacheKey)
+    await this.redisService.hSetObj(
+      cacheKey,
+      {
+        jti,
+        userId,
+        accessToken,
+        refreshToken,
+        ip,
+        area: '', // TODO: 解析 IP 地址
+        source: (source as string) ?? '',
+        userAgent,
+        browser,
+        os,
+        loginAt: new Date().toISOString()
+      },
+      ms(this.jwtConfig.refreshTokenExp) / 1000
+    )
   }
 }

@@ -1,10 +1,5 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common'
-import { ConfigType } from '@nestjs/config'
-import ms from 'ms'
-import { I18nContext, I18nService } from 'nestjs-i18n'
+import { Injectable } from '@nestjs/common'
 
-import { JwtConfig } from '@/configs'
-import type { I18nTranslations } from '@/generated/i18n.generated'
 import { CacheKeyService } from '@/shared/redis/cache-key.service'
 import { RedisService } from '@/shared/redis/redis.service'
 
@@ -14,49 +9,34 @@ import type { UserVo } from './vo'
 export class OnlineUsersService {
   constructor(
     private readonly redisService: RedisService,
-    private readonly cacheKeyService: CacheKeyService,
-    private readonly i18nService: I18nService<I18nTranslations>,
-    @Inject(JwtConfig.KEY) private readonly jwtConfig: ConfigType<typeof JwtConfig>
+    private readonly cacheKeyService: CacheKeyService
   ) {}
 
-  /**
-   * 设置在线用户
-   * @description
-   * - 使用了 refreshTokenExp 作为 TTL
-   * - refreshTokenExp 兼容 ms 格式
-   * - Redis TTL 以秒为单位，故转化为秒
-   *
-   * @see https://github.com/vercel/ms
-   */
-  async setOnlineUser(id: number, user: UserVo) {
-    await this.redisService.set(
-      this.cacheKeyService.getOnlineUserCacheKey(id),
-      JSON.stringify(user),
-      ms(this.jwtConfig.refreshTokenExp) / 1000
+  // 添加在线用户
+  async create(userId: number, jti: string) {
+    const cacheKey = this.cacheKeyService.getOnlineUserCacheKey(userId)
+    await this.redisService.hSetObj(
+      cacheKey,
+      {
+        userId,
+        jti,
+        lastActivityAt: new Date().toISOString()
+      },
+      this.redisService.ONLINE_USER_TTL
     )
   }
 
   // 在线用户列表
   async findMany() {
-    const cacheKeys = await this.redisService.client.keys(
-      this.cacheKeyService.getOnlineUserCacheKey('*')
-    )
-
-    return (await this.redisService.client.mGet(cacheKeys))
-      .filter((i) => i)
-      .map<UserVo>((i) => JSON.parse(i!))
+    const pattern = this.cacheKeyService.getOnlineUserCacheKey('*')
+    const cacheKeys = await this.redisService.keys(pattern)
+    const result = await this.redisService.mGetToJSON<UserVo>(cacheKeys)
+    return result
   }
 
-  // 强制下线
-  async remove(id: number) {
-    const cacheKey = this.cacheKeyService.getOnlineUserCacheKey(id)
-
-    if (!(await this.redisService.client.exists(cacheKey))) {
-      throw new NotFoundException(
-        this.i18nService.t('common.RESOURCE.NOT.FOUND', { lang: I18nContext.current()!.lang })
-      )
-    }
-
-    await this.redisService.client.del(cacheKey)
+  // 删除在线用户
+  async delete(userId: number) {
+    const cacheKey = this.cacheKeyService.getOnlineUserCacheKey(userId)
+    await this.redisService.del(cacheKey)
   }
 }

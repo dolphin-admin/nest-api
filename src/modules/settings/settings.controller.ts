@@ -10,16 +10,16 @@ import {
   Put,
   Query
 } from '@nestjs/common'
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { I18n, I18nContext } from 'nestjs-i18n'
 
 import { R } from '@/class'
 import {
-  ApiCreatedResponse,
-  ApiOkResponse,
+  ApiCreatedObjectResponse,
+  ApiOkObjectResponse,
   ApiPageOKResponse,
   ApiPageQuery,
-  User
+  Jwt
 } from '@/decorators'
 import type { I18nTranslations } from '@/generated/i18n.generated'
 
@@ -37,11 +37,11 @@ export class SettingsController {
   constructor(private readonly settingsService: SettingsService) {}
 
   @ApiOperation({ summary: '创建设置' })
-  @ApiCreatedResponse(SettingVo)
+  @ApiCreatedObjectResponse(SettingVo)
   @Post()
   async create(
     @Body() createSettingDto: CreateSettingDto,
-    @User('sub') userId: number,
+    @Jwt('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
     return new R({
@@ -61,7 +61,7 @@ export class SettingsController {
   }
 
   @ApiOperation({ summary: '设置详情 [ID]' })
-  @ApiOkResponse(SettingVo)
+  @ApiOkObjectResponse(SettingVo)
   @Get(':id(\\d+)')
   async findOneById(@Param('id', new ParseIntPipe()) id: number) {
     return new R({
@@ -70,7 +70,7 @@ export class SettingsController {
   }
 
   @ApiOperation({ summary: '设置详情 [Key]' })
-  @ApiOkResponse(SettingVo)
+  @ApiOkObjectResponse(SettingVo)
   @Get(':key')
   async findOneByKey(@Param('key') key: string) {
     return new R({
@@ -79,12 +79,12 @@ export class SettingsController {
   }
 
   @ApiOperation({ summary: '更新设置' })
-  @ApiOkResponse(SettingVo)
+  @ApiOkObjectResponse(SettingVo)
   @Put(':id(\\d+)')
   async update(
     @Param('id', new ParseIntPipe()) id: number,
     @Body() updateSettingDto: UpdateSettingDto,
-    @User('sub') userId: number,
+    @Jwt('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
     return new R({
@@ -94,12 +94,12 @@ export class SettingsController {
   }
 
   @ApiOperation({ summary: '修改设置' })
-  @ApiOkResponse(SettingVo)
+  @ApiOkObjectResponse(SettingVo)
   @Patch(':id(\\d+)')
   async patch(
     @Param('id', new ParseIntPipe()) id: number,
     @Body() patchSettingDto: PatchSettingDto,
-    @User('sub') userId: number,
+    @Jwt('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
     return new R({
@@ -113,7 +113,7 @@ export class SettingsController {
   @Delete(':id(\\d+)')
   async remove(
     @Param('id', new ParseIntPipe()) id: number,
-    @User('sub') userId: number,
+    @Jwt('sub') userId: number,
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
     await this.settingsService.remove(id, userId)

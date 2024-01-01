@@ -53,9 +53,17 @@ export class OperationLog {
   @Prop()
   responseBusinessCode?: number
 
+  // 响应状态
+  @Prop()
+  responseStatus?: string
+
   // 响应消息
   @Prop()
   responseMessage?: string
+
+  // 响应时间
+  @Prop()
+  responseDuration?: number
 
   // IP
   @Prop()

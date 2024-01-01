@@ -12,6 +12,7 @@ import { RedisService } from '@/shared/redis/redis.service'
 
 import type { CreateLocaleDto, PageLocaleDto, UpdateLocaleDto } from './dto'
 import { Locale } from './schemas'
+import type { LocaleResourceVO } from './vo'
 import { LocaleVo, PageLocaleVo } from './vo'
 
 @Injectable()
@@ -23,15 +24,20 @@ export class LocalesService {
     private readonly cacheKeyService: CacheKeyService
   ) {}
 
-  private clearAllResourcesCache() {
-    Object.values(Lang).forEach((lang) =>
-      this.redisService.client.del(this.cacheKeyService.getLocaleResourcesCacheKey(lang))
+  private async clearAllResourcesCache() {
+    await Promise.all(
+      Object.values(Lang).map((lang) => {
+        const cacheKey = this.cacheKeyService.getLocalesCacheKey(lang)
+        return this.redisService.del(cacheKey)
+      })
     )
   }
 
   async create(createLocaleDto: CreateLocaleDto) {
     const locale = await new this.LocaleModel(createLocaleDto).save()
-    this.clearAllResourcesCache()
+
+    await this.clearAllResourcesCache()
+
     return plainToClass(LocaleVo, locale)
   }
 
@@ -67,12 +73,12 @@ export class LocalesService {
   }
 
   async findManyByLang(lang: string) {
-    const CACHE_KEY = this.cacheKeyService.getLocaleResourcesCacheKey(lang)
-    const cache = await this.redisService.client.get(CACHE_KEY)
-    if (cache) {
-      return JSON.parse(cache)
+    const cacheKey = this.cacheKeyService.getLocalesCacheKey(lang)
+    const cachedResult = await this.redisService.jsonGet<LocaleResourceVO[]>(cacheKey)
+    if (cachedResult) {
+      return cachedResult
     }
-    const results = await this.LocaleModel.aggregate([
+    const result = (await this.LocaleModel.aggregate([
       {
         $match: {
           $and: [
@@ -104,9 +110,11 @@ export class LocalesService {
           }
         }
       }
-    ]).exec()
-    await this.redisService.set(CACHE_KEY, JSON.stringify(results), 60 * 60 * 24)
-    return results
+    ]).exec()) as LocaleResourceVO[]
+
+    await this.redisService.jsonSet(cacheKey, result, 60 * 60 * 24)
+
+    return result
   }
 
   async findOneById(id: string) {
@@ -116,18 +124,23 @@ export class LocalesService {
         this.i18nService.t('common.RESOURCE.NOT.FOUND', { lang: I18nContext.current()!.lang })
       )
     }
+
     return plainToClass(LocaleVo, locale)
   }
 
   async update(id: string, updateLocaleDto: UpdateLocaleDto) {
     await this.findOneById(id)
+
     const locale = await this.LocaleModel.findByIdAndUpdate(id, updateLocaleDto).exec()
-    this.clearAllResourcesCache()
+
+    await this.clearAllResourcesCache()
+
     return plainToClass(LocaleVo, locale)
   }
 
   async remove(id: string) {
     await this.findOneById(id)
+
     await this.LocaleModel.findByIdAndDelete(id).exec()
   }
 }

@@ -1,4 +1,6 @@
 export * from './base-resource'
+export * from './error'
+export * from './jwt-metadata'
 export * from './mongo-base-resource'
 export * from './page'
 export * from './page.dto'

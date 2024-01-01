@@ -31,13 +31,13 @@ export class SettingsService {
   }
 
   // 创建设置
-  async create(createSettingDto: CreateSettingDto, userId: number) {
+  async create(createSettingDto: CreateSettingDto, createdBy: number) {
     return plainToClass(
       SettingVo,
       await this.prismaService.setting.create({
         data: {
           ...createSettingDto,
-          createdBy: userId
+          createdBy
         }
       })
     )
@@ -121,7 +121,7 @@ export class SettingsService {
   }
 
   // 更新设置
-  async update(id: number, updateSettingDto: UpdateSettingDto, userId: number) {
+  async update(id: number, updateSettingDto: UpdateSettingDto, updatedBy: number) {
     return plainToClass(
       SettingVo,
       await this.prismaService.setting.update({
@@ -131,14 +131,14 @@ export class SettingsService {
         },
         data: {
           ...updateSettingDto,
-          updatedBy: userId
+          updatedBy
         }
       })
     )
   }
 
   // 修改设置
-  async patch(id: number, patchSettingDto: PatchSettingDto, userId: number) {
+  async patch(id: number, patchSettingDto: PatchSettingDto, updatedBy: number) {
     return plainToClass(
       SettingVo,
       await this.prismaService.setting.update({
@@ -148,14 +148,14 @@ export class SettingsService {
         },
         data: {
           ...patchSettingDto,
-          updatedBy: userId
+          updatedBy
         }
       })
     )
   }
 
   // 删除设置
-  async remove(id: number, userId: number): Promise<void> {
+  async remove(id: number, deletedBy: number): Promise<void> {
     await this.prismaService.setting.update({
       where: {
         id,
@@ -163,7 +163,7 @@ export class SettingsService {
       },
       data: {
         deletedAt: new Date().toISOString(),
-        deletedBy: userId
+        deletedBy
       }
     })
   }
