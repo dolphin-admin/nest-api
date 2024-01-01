@@ -10,7 +10,8 @@ export function ApiCreatedResponse() {
         properties: {
           msg: {
             type: 'string',
-            description: '提示信息'
+            description: '提示信息',
+            example: '创建成功'
           }
         }
       }

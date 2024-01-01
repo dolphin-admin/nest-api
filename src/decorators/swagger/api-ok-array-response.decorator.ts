@@ -12,7 +12,8 @@ export function ApiOkArrayResponse<T extends Type>(type: T) {
         properties: {
           msg: {
             type: 'string',
-            description: '提示信息'
+            description: '提示信息',
+            example: ''
           },
           data: {
             type: 'array',

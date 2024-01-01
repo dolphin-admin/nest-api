@@ -55,7 +55,9 @@ export class LocalesController {
   @ApiPageQuery('keywords', 'date')
   @Get()
   async findAll(@Query() pageLocaleDto: PageLocaleDto) {
-    return new R({ data: await this.localesService.findAll(pageLocaleDto) })
+    return new R({
+      data: await this.localesService.findAll(pageLocaleDto)
+    })
   }
 
   @ApiOperation({ summary: '多语言资源 [根据语言]' })
@@ -74,14 +76,18 @@ export class LocalesController {
     )
     lang: string
   ) {
-    return new R({ data: await this.localesService.findManyByLang(lang) })
+    return new R({
+      data: await this.localesService.findManyByLang(lang)
+    })
   }
 
   @ApiOperation({ summary: '多语言资源详情' })
   @ApiOkObjectResponse(LocaleVo)
   @Get(':id')
   async findOneById(@Param('id') id: string) {
-    return new R({ data: await this.localesService.findOneById(id) })
+    return new R({
+      data: await this.localesService.findOneById(id)
+    })
   }
 
   @ApiOperation({ summary: '修改多语言资源' })
@@ -103,6 +109,8 @@ export class LocalesController {
   @Delete(':id')
   async remove(@Param('id') id: string, @I18n() i18n: I18nContext<I18nTranslations>) {
     await this.localesService.remove(id)
-    return new R({ msg: i18n.t('common.DELETE.SUCCESS') })
+    return new R({
+      msg: i18n.t('common.DELETE.SUCCESS')
+    })
   }
 }

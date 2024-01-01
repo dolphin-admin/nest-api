@@ -8,7 +8,11 @@ import { REDIS_CLIENT } from '@/constants'
 export class RedisService implements OnModuleDestroy {
   constructor(@Inject(REDIS_CLIENT) private readonly redisClient: RedisClientType) {}
 
+  // 数据默认缓存时间
   readonly DATA_DEFAULT_TTL = 60 * 60
+
+  // 在线用户缓存时间
+  readonly ONLINE_USER_TTL = 60 * 5
 
   async get(key: string) {
     const result = await this.redisClient.get(key)

@@ -10,20 +10,29 @@ export const ApiPageOKResponse = <T extends Type>(type: T) =>
     ApiOkResponse({
       schema: {
         description: '分页数据',
-        allOf: [
-          { $ref: getSchemaPath(Page) },
-          {
-            properties: {
-              records: {
-                type: 'array',
-                description: '分页数据',
-                items: {
-                  $ref: getSchemaPath(type)
+        properties: {
+          msg: {
+            type: 'string',
+            description: '提示信息',
+            example: ''
+          },
+          data: {
+            allOf: [
+              { $ref: getSchemaPath(Page) },
+              {
+                properties: {
+                  records: {
+                    type: 'array',
+                    description: '分页数据',
+                    items: {
+                      $ref: getSchemaPath(type)
+                    }
+                  }
                 }
               }
-            }
+            ]
           }
-        ]
+        }
       }
     })
   )

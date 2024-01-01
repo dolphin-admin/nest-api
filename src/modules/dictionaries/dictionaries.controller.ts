@@ -61,14 +61,18 @@ export class DictionariesController {
   @ApiPageQuery('keywords', 'date')
   @Get()
   async findMany(@Query() pageDictionaryDto: PageDictionaryDto) {
-    return new R({ data: await this.dictionariesService.findMany(pageDictionaryDto) })
+    return new R({
+      data: await this.dictionariesService.findMany(pageDictionaryDto)
+    })
   }
 
   @ApiOperation({ summary: '字典详情 [ID]' })
   @ApiOkObjectResponse(DictionaryVo)
   @Get(':id(\\d+)')
   async findOneById(@Param('id') id: number) {
-    return new R({ data: await this.dictionariesService.findOneById(id) })
+    return new R({
+      data: await this.dictionariesService.findOneById(id)
+    })
   }
 
   @ApiOperation({ summary: '字典数据 [Codes]' })
@@ -85,14 +89,18 @@ export class DictionariesController {
   async findManyByCodes(
     @Query('codes', new ParseArrayPipe({ items: String, separator: ',' })) codes: string[]
   ) {
-    return new R({ data: await this.dictionariesService.findManyByCodes(codes) })
+    return new R({
+      data: await this.dictionariesService.findManyByCodes(codes)
+    })
   }
 
   @ApiOperation({ summary: '字典数据 [Code]' })
   @ApiOkObjectResponse(ListDictionarySelectItemVo)
   @Get(':code')
   async findOneByCode(@Param('code') code: string) {
-    return new R({ data: await this.dictionariesService.findOneByCode(code) })
+    return new R({
+      data: await this.dictionariesService.findOneByCode(code)
+    })
   }
 
   @ApiOperation({ summary: '更新字典' })
