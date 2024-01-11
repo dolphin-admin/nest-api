@@ -23,7 +23,6 @@ export class DictionariesService {
     private readonly i18nService: I18nService<I18nTranslations>
   ) {}
 
-  // 创建字典
   async create(createDictionaryDto: CreateDictionaryDto, createdBy: number) {
     return plainToClass(
       DictionaryVo,
@@ -36,7 +35,6 @@ export class DictionariesService {
     )
   }
 
-  // 字典列表
   async findMany(pageDictionaryDto: PageDictionaryDto) {
     const { page, pageSize, keywords, startTime, endTime, orderBy, code, enabled, id } =
       pageDictionaryDto
@@ -82,7 +80,6 @@ export class DictionariesService {
     return plainToClass(PageDictionaryVo, { records, total, page, pageSize })
   }
 
-  // 根据 ID 查询字典
   async findOneById(id: number) {
     const dictionary = await this.prismaService.dictionary.findUnique({
       where: {
@@ -90,15 +87,16 @@ export class DictionariesService {
         deletedAt: null
       }
     })
+
     if (!dictionary) {
       throw new NotFoundException(
         this.i18nService.t('common.RESOURCE.NOT.FOUND', { lang: I18nContext.current()!.lang })
       )
     }
+
     return plainToClass(DictionaryVo, dictionary)
   }
 
-  // 根据 Code 查询字典
   async findOneByCode(code: string) {
     const dictionary = await this.prismaService.dictionary.findUnique({
       where: {
@@ -141,20 +139,19 @@ export class DictionariesService {
     })
   }
 
-  // 根据 Codes 查询字典
   async findManyByCodes(codes: string[]) {
     const dictionaries = await this.prismaService.dictionary.findMany({
       where: {
         code: {
           in: codes
         },
-        enabled: true, // 只查询启用的字典
+        enabled: true,
         deletedAt: null
       },
       include: {
         dictionaryItems: {
           where: {
-            enabled: true, // 只查询启用的字典项
+            enabled: true,
             deletedAt: null
           },
           select: {
@@ -183,8 +180,11 @@ export class DictionariesService {
     })
   }
 
-  // 更新字典
-  async update(id: number, updateDictionaryDto: UpdateDictionaryDto, updatedBy: number) {
+  async update(
+    id: number,
+    updateOrPatchDictionaryDto: UpdateDictionaryDto | PatchDictionaryDto,
+    updatedBy: number
+  ) {
     return plainToClass(
       DictionaryVo,
       await this.prismaService.dictionary.update({
@@ -193,33 +193,13 @@ export class DictionariesService {
           deletedAt: null
         },
         data: {
-          ...updateDictionaryDto,
+          ...updateOrPatchDictionaryDto,
           updatedBy
         }
       })
     )
   }
 
-  async patch(id: number, patchDictionaryDto: PatchDictionaryDto, updatedBy: number) {
-    return plainToClass(
-      DictionaryVo,
-      await this.prismaService.dictionary.update({
-        where: {
-          id,
-          deletedAt: null
-        },
-        data: {
-          ...patchDictionaryDto,
-          updatedBy
-        }
-      })
-    )
-  }
-
-  /**
-   * 删除字典
-   * @description 删除字典时，同时删除字典下的全部字典项
-   */
   async remove(id: number, deletedBy: number) {
     const deleteDictionaryItem = this.prismaService.dictionaryItem.updateMany({
       where: {

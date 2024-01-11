@@ -12,7 +12,6 @@ export class OnlineUsersService {
     private readonly cacheKeyService: CacheKeyService
   ) {}
 
-  // 添加在线用户
   async create(userId: number, jti: string) {
     const cacheKey = this.cacheKeyService.getOnlineUserCacheKey(userId)
     await this.redisService.hSetObj(
@@ -26,7 +25,6 @@ export class OnlineUsersService {
     )
   }
 
-  // 在线用户列表
   async findMany() {
     const pattern = this.cacheKeyService.getOnlineUserCacheKey('*')
     const cacheKeys = await this.redisService.keys(pattern)
@@ -34,7 +32,6 @@ export class OnlineUsersService {
     return result
   }
 
-  // 删除在线用户
   async delete(userId: number) {
     const cacheKey = this.cacheKeyService.getOnlineUserCacheKey(userId)
     await this.redisService.del(cacheKey)

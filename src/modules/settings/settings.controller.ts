@@ -93,7 +93,7 @@ export class SettingsController {
     })
   }
 
-  @ApiOperation({ summary: '修改设置' })
+  @ApiOperation({ summary: '部分更新' })
   @ApiOkObjectResponse(SettingVo)
   @Patch(':id(\\d+)')
   async patch(
@@ -103,7 +103,7 @@ export class SettingsController {
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
     return new R({
-      data: await this.settingsService.patch(id, patchSettingDto, userId),
+      data: await this.settingsService.update(id, patchSettingDto, userId),
       msg: i18n.t('common.OPERATE.SUCCESS')
     })
   }

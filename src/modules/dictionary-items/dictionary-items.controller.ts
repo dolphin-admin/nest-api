@@ -87,7 +87,7 @@ export class DictionaryItemsController {
     })
   }
 
-  @ApiOperation({ summary: '修改字典项' })
+  @ApiOperation({ summary: '部分更新' })
   @ApiOkObjectResponse(DictionaryItemVo)
   @Patch(':id(\\d+)')
   async patch(
@@ -97,7 +97,7 @@ export class DictionaryItemsController {
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
     return new R({
-      data: await this.dictionaryItemsService.patch(id, patchDictionaryItemDto, userId),
+      data: await this.dictionaryItemsService.update(id, patchDictionaryItemDto, userId),
       msg: i18n.t('common.OPERATE.SUCCESS')
     })
   }

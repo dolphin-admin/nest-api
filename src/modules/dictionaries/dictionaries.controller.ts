@@ -118,7 +118,7 @@ export class DictionariesController {
     })
   }
 
-  @ApiOperation({ summary: '修改字典' })
+  @ApiOperation({ summary: '部分更新' })
   @ApiOkObjectResponse(DictionaryVo)
   @Patch(':id(\\d+)')
   async patch(
@@ -128,7 +128,7 @@ export class DictionariesController {
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
     return new R({
-      data: await this.dictionariesService.patch(id, patchDictionaryDto, userId),
+      data: await this.dictionariesService.update(id, patchDictionaryDto, userId),
       msg: i18n.t('common.OPERATE.SUCCESS')
     })
   }
@@ -142,6 +142,8 @@ export class DictionariesController {
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
     await this.dictionariesService.remove(id, userId)
-    return new R({ msg: i18n.t('common.DELETE.SUCCESS') })
+    return new R({
+      msg: i18n.t('common.DELETE.SUCCESS')
+    })
   }
 }

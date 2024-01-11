@@ -85,7 +85,12 @@ export class UsersService {
 
     const total = await this.prismaService.user.count({ where })
 
-    return plainToClass(PageUserVo, { records, total, page, pageSize })
+    return plainToClass(PageUserVo, {
+      records,
+      total,
+      page,
+      pageSize
+    })
   }
 
   async findOneById(id: number) {
@@ -105,6 +110,7 @@ export class UsersService {
         this.i18nService.t('common.RESOURCE.NOT.FOUND', { lang: I18nContext.current()!.lang })
       )
     }
+
     const userVo = plainToClass(UserVo, user)
 
     await this.setUserCache(userVo)
@@ -112,7 +118,7 @@ export class UsersService {
     return userVo
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto, updatedBy?: number) {
+  async update(id: number, updateOrPatchUserDto: UpdateUserDto | PatchUserDto, updatedBy?: number) {
     const userVo = plainToClass(
       UserVo,
       await this.prismaService.user.update({
@@ -121,27 +127,7 @@ export class UsersService {
           deletedAt: null
         },
         data: {
-          ...updateUserDto,
-          updatedBy
-        }
-      })
-    )
-
-    await this.setUserCache(userVo)
-
-    return userVo
-  }
-
-  async patch(id: number, patchUserDto: PatchUserDto, updatedBy?: number) {
-    const userVo = plainToClass(
-      UserVo,
-      await this.prismaService.user.update({
-        where: {
-          id,
-          deletedAt: null
-        },
-        data: {
-          ...patchUserDto,
+          ...updateOrPatchUserDto,
           updatedBy
         }
       })
@@ -169,11 +155,7 @@ export class UsersService {
 
   async getUserCache(id: number) {
     const cacheKey = this.cacheKeyService.getUserCacheKey(id)
-    const cachedResult = await this.redisService.hGetAll<UserVo>(cacheKey)
-    if (cachedResult) {
-      return cachedResult
-    }
-    return null
+    return (await this.redisService.hGetAll<UserVo>(cacheKey)) ?? null
   }
 
   async setUserCache(userVo: UserVo) {

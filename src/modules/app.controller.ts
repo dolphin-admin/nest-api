@@ -16,12 +16,16 @@ export class AppController {
   @Render('index')
   @Get()
   getApp() {
-    return { title: 'Dolphin Admin Nest' }
+    return {
+      title: 'Dolphin Admin Nest'
+    }
   }
 
   @ApiOperation({ summary: '应用信息' })
   @Get('info')
   getVersion() {
-    return new R({ data: this.appService.getAppInfo() })
+    return new R({
+      data: this.appService.getAppInfo()
+    })
   }
 }

@@ -22,20 +22,18 @@ export class DictionaryItemsService {
     private readonly i18nService: I18nService<I18nTranslations>
   ) {}
 
-  // 创建字典项
-  async create(createDictionaryItemDto: CreateDictionaryItemDto, userId: number) {
+  async create(createDictionaryItemDto: CreateDictionaryItemDto, createdBy: number) {
     return plainToClass(
       DictionaryItemVo,
       await this.prismaService.dictionaryItem.create({
         data: {
           ...createDictionaryItemDto,
-          createdBy: userId
+          createdBy
         }
       })
     )
   }
 
-  // 字典项列表
   async findMany(pageDictionaryItemDto: PageDictionaryItemDto) {
     const {
       page,
@@ -93,7 +91,6 @@ export class DictionaryItemsService {
     return plainToClass(PageDictionaryItemVo, { records, total, page, pageSize })
   }
 
-  // 根据 ID 查询字典项
   async findOneById(id: number) {
     const dictionaryItem = await this.prismaService.dictionaryItem.findUnique({
       where: {
@@ -111,8 +108,11 @@ export class DictionaryItemsService {
     return plainToClass(DictionaryItemVo, dictionaryItem)
   }
 
-  // 更新字典项
-  async update(id: number, updateDictionaryItemDto: UpdateDictionaryItemDto, updatedBy: number) {
+  async update(
+    id: number,
+    updateOrPatchDictionaryItemDto: UpdateDictionaryItemDto | PatchDictionaryItemDto,
+    updatedBy: number
+  ) {
     return plainToClass(
       DictionaryItemVo,
       await this.prismaService.dictionaryItem.update({
@@ -121,31 +121,13 @@ export class DictionaryItemsService {
           deletedAt: null
         },
         data: {
-          ...updateDictionaryItemDto,
+          ...updateOrPatchDictionaryItemDto,
           updatedBy
         }
       })
     )
   }
 
-  // 修改字典项
-  async patch(id: number, patchDictionaryItemDto: PatchDictionaryItemDto, updatedBy: number) {
-    return plainToClass(
-      DictionaryItemVo,
-      await this.prismaService.dictionaryItem.update({
-        where: {
-          id,
-          deletedAt: null
-        },
-        data: {
-          ...patchDictionaryItemDto,
-          updatedBy
-        }
-      })
-    )
-  }
-
-  // 删除字典项
   async remove(id: number, deletedBy: number) {
     await this.prismaService.dictionaryItem.update({
       where: {

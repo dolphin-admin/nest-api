@@ -91,7 +91,7 @@ export class UsersController {
     })
   }
 
-  @ApiOperation({ summary: '修改用户' })
+  @ApiOperation({ summary: '部分更新' })
   @ApiOkObjectResponse(UserVo)
   @Patch(':id(\\d+)')
   async patch(
@@ -101,7 +101,7 @@ export class UsersController {
     @I18n() i18n: I18nContext<I18nTranslations>
   ) {
     return new R({
-      data: await this.usersService.patch(id, patchUserDto, userId),
+      data: await this.usersService.update(id, patchUserDto, userId),
       msg: i18n.t('common.OPERATE.SUCCESS')
     })
   }
