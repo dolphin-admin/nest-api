@@ -63,7 +63,7 @@
     "@nestjs/swagger": "^7.1.17",
     "@nestjs/throttler": "^5.1.1",
     "@node-rs/bcrypt": "^1.9.1",
-    "@prisma/client": "5.8.0",
+    "@prisma/client": "5.17.0",
     "axios": "^1.6.5",
     "bull": "^4.12.0",
     "class-transformer": "^0.5.1",
